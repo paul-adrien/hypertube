@@ -36,10 +36,9 @@ html {
 
   --primary-color: #aa0505;
   --secondary-color: #fbcf0a;
-  --color-text: black;
-  --color-reverse: white;
-  --background-color-grey: #eaeaea;
-  --background-color-primary: white;
+  --color-text: white;
+  --background-color-grey: #464646;
+  --background-color-primary: black;
 
   &::-webkit-scrollbar {
     display: none !important;
@@ -51,6 +50,7 @@ html {
 
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+  filter: brightness(0.9) contrast(1.1);
 }
 
 .dark,
@@ -62,7 +62,6 @@ html {
   --primary-color: #aa0505;
   --secondary-color: #fbcf0a;
   --color-text: black;
-  --color-reverse: white;
   --background-color-grey: #eaeaea;
   --background-color-primary: white;
 }
@@ -71,7 +70,6 @@ html {
   --color-text: white;
   --background-color-grey: #464646;
   --background-color-primary: black;
-  filter: brightness(0.8) contrast(1.2);
 }
 
 input,
