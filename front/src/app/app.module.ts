@@ -9,22 +9,24 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { authInterceptorProviders } from './_helpers/auth-interceptor';
 import { ProfileComponent } from './profile/profile.component';
+import { NavigationBarComponent } from './nav-bar/nav-bar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     LoginComponent,
-    ProfileComponent
+    ProfileComponent,
+    NavigationBarComponent,
   ],
   imports: [
     HttpClientModule,
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    AppRoutingModule
+    AppRoutingModule,
   ],
   providers: [authInterceptorProviders],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

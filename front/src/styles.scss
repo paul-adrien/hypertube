@@ -1,1 +1,104 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+@font-face {
+  font-family: Roboto-medium;
+  src: url("./fonts/Roboto/Roboto-Medium.ttf");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: Roboto-bold;
+  src: url("./fonts/Roboto/Roboto-Bold.ttf");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: Roboto;
+  src: url("./fonts/Roboto/Roboto-Regular.ttf");
+}
+
+@font-face {
+  font-family: Roboto-light;
+  src: url("./fonts/Roboto/Roboto-Light.ttf");
+  font-weight: 300;
+}
+
+body,
+html {
+  font-family: Roboto !important;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  color: var(--color-text);
+  background: var(--primary-color) !important;
+  overflow: hidden;
+
+  --primary-color: #aa0505;
+  --secondary-color: #fbcf0a;
+  --color-text: black;
+  --color-reverse: white;
+  --background-color-grey: #eaeaea;
+  --background-color-primary: white;
+
+  &::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  @media screen and (max-width: 600px) {
+    font-size: 14px;
+  }
+
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.dark,
+.light {
+  color: var(--color-text);
+}
+
+.light {
+  --primary-color: #aa0505;
+  --secondary-color: #fbcf0a;
+  --color-text: black;
+  --color-reverse: white;
+  --background-color-grey: #eaeaea;
+  --background-color-primary: white;
+}
+
+.dark {
+  --color-text: white;
+  --background-color-grey: #464646;
+  --background-color-primary: black;
+  filter: brightness(0.8) contrast(1.2);
+}
+
+input,
+button,
+select,
+select::placeholder,
+input::placeholder {
+  font-family: Roboto;
+  color: var(--color-text);
+  background-color: var(--background-color-grey);
+}
+
+input::placeholder {
+  color: rgb(177, 177, 177);
+}
+
+.primary-button {
+  box-sizing: border-box;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  background-color: var(--secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: white;
+  border: 1px solid var(--secondary-color);
+  padding: 12px;
+}

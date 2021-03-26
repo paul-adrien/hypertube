@@ -6,25 +6,22 @@ import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from './_services/auth-guard';
 
 const routes: Routes = [
-  { path: "login", component: LoginComponent },
+  { path: 'login', component: LoginComponent },
   {
-    path: "home",
+    path: 'home',
     component: HomeComponent,
-    children: [
-    { path: "profile", canActivate: [AuthGuard], component: ProfileComponent },
-    ],
   },
+  { path: 'profile', canActivate: [AuthGuard], component: ProfileComponent },
   {
-    path: "",
-    redirectTo: "/home",
-    pathMatch: "full",
+    path: '',
+    redirectTo: '/home',
+    pathMatch: 'full',
   },
-  { path: "**", redirectTo: "/home",
-  pathMatch: "full", },
+  { path: '**', redirectTo: '/home', pathMatch: 'full' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
