@@ -29,9 +29,8 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./nav-bar.component.scss'],
 })
-export class NavigationBarComponent implements OnChanges, OnDestroy {
+export class NavigationBarComponent implements OnInit, OnDestroy {
   @Input() public selectedId = '';
-  @Input() public isLog = false;
 
   public items = [
     {
@@ -40,7 +39,7 @@ export class NavigationBarComponent implements OnChanges, OnDestroy {
         check: './assets/user-check.svg',
         default: './assets/user.svg',
       },
-      route: 'login',
+      route: 'profile',
       selected: false,
     },
     {
@@ -69,14 +68,7 @@ export class NavigationBarComponent implements OnChanges, OnDestroy {
     private authService: AuthService
   ) {}
 
-  ngOnChanges(): void {
-    if (this.isLog) {
-      this.items.forEach((item) => {
-        if (item.id === 'profile') {
-          item.route = 'profile';
-        }
-      });
-    }
+  ngOnInit(): void {
     if (this.selectedId) {
       this.selectItem(this.selectedId);
     }
@@ -95,6 +87,7 @@ export class NavigationBarComponent implements OnChanges, OnDestroy {
 
   public logOut() {
     this.authService.logOut();
+    this.selectItem('home');
   }
 
   ngOnDestroy() {}

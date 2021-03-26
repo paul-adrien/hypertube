@@ -4,6 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from './_services/auth-guard';
+import { ProfileGuard } from './_services/profile-guard';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -11,7 +12,7 @@ const routes: Routes = [
     path: 'home',
     component: HomeComponent,
   },
-  { path: 'profile', canActivate: [AuthGuard], component: ProfileComponent },
+  { path: 'profile', canActivate: [ProfileGuard], component: ProfileComponent },
   {
     path: '',
     redirectTo: '/home',

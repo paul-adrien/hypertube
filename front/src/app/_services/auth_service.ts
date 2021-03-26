@@ -1,24 +1,25 @@
-import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { Router } from "@angular/router";
-import { User } from "libs/user";
+import { ChangeDetectorRef, Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { User } from 'libs/user';
+import { tap } from 'rxjs/operators';
 
-const AUTH_API = "http://localhost:8080/api/";
+const AUTH_API = 'http://localhost:8080/api/';
 
 const httpOptions = {
-  headers: new HttpHeaders({ "Content-Type": "application/json" }),
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
 };
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class AuthService {
   constructor(private http: HttpClient, private route: Router) {}
 
   login(user: Partial<User>): Observable<any> {
     return this.http.post(
-      AUTH_API + "authenticate",
+      AUTH_API + 'authenticate',
       {
         userName: user.userName,
         password: user.password,
@@ -29,12 +30,12 @@ export class AuthService {
 
   logOut() {
     localStorage.clear();
-    this.route.navigate(["/home"]);
+    this.route.navigate(['/home']);
   }
 
   register(user: Partial<User>): Observable<any> {
     return this.http.post(
-      AUTH_API + "register",
+      AUTH_API + 'register',
       {
         userName: user.userName,
         email: user.email,

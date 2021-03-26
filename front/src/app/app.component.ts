@@ -18,12 +18,7 @@ import { AuthService } from './_services/auth_service';
 export class AppComponent implements OnInit {
   title = 'front';
 
-  public isLog: Observable<boolean> = this.authService.checkIfUserCo().pipe(
-    map((el) => {
-      const data = JSON.parse(el);
-      return data.status;
-    })
-  );
+  public idNavBar = '';
 
   constructor(
     private route: Router,
@@ -31,5 +26,19 @@ export class AppComponent implements OnInit {
     private authService: AuthService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (
+      this.route.url.includes('profile') &&
+      !this.route.url.includes('profile-')
+    ) {
+      this.idNavBar = 'profile';
+    } else if (
+      this.route.url.includes('messaging') ||
+      this.route.url.includes('discussion/')
+    ) {
+      this.idNavBar = 'message';
+    } else if (this.route.url.includes('home')) {
+      this.idNavBar = 'home';
+    }
+  }
 }
