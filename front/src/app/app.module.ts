@@ -10,6 +10,9 @@ import { LoginComponent } from './login/login.component';
 import { authInterceptorProviders } from './_helpers/auth-interceptor';
 import { ProfileComponent } from './profile/profile.component';
 import { NavigationBarComponent } from './nav-bar/nav-bar.component';
+import { ListMoviesComponent } from './list-movies/list-movies.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { DetailMovieComponent } from './detail-movie/detail-movie.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +21,8 @@ import { NavigationBarComponent } from './nav-bar/nav-bar.component';
     LoginComponent,
     ProfileComponent,
     NavigationBarComponent,
+    ListMoviesComponent,
+    DetailMovieComponent,
   ],
   imports: [
     HttpClientModule,
@@ -25,6 +30,7 @@ import { NavigationBarComponent } from './nav-bar/nav-bar.component';
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
+    InfiniteScrollModule,
   ],
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent],

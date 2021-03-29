@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { DetailMovieComponent } from './detail-movie/detail-movie.component';
 import { HomeComponent } from './home/home.component';
+import { ListMoviesComponent } from './list-movies/list-movies.component';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from './_services/auth-guard';
@@ -13,6 +15,8 @@ const routes: Routes = [
     component: HomeComponent,
   },
   { path: 'profile', canActivate: [ProfileGuard], component: ProfileComponent },
+  { path: 'list-Movies', canActivate: [AuthGuard], component: ListMoviesComponent },
+  { path: 'detail-movie/:id', canActivate: [AuthGuard], component: DetailMovieComponent },
   {
     path: '',
     redirectTo: '/home',

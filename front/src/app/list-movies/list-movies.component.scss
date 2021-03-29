@@ -1,0 +1,13 @@
+.body {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    .list {
+        display: flex;
+        height: 100%;
+        flex-grow: 1;
+        overflow: scroll;
+        flex-direction: column;
+    }
+}

@@ -51,6 +51,15 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
       route: 'home',
       selected: true,
     },
+    {
+      id: 'list-Movies',
+      src: {
+        check: './assets/message-circle-check.svg',
+        default: './assets/message-circle.svg',
+      },
+      route: 'list-Movies',
+      selected: false,
+    },
   ];
 
   constructor(
