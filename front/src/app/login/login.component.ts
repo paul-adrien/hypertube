@@ -322,6 +322,6 @@ export class LoginComponent implements OnInit {
     }
   }
   public Oauth42() {
-    location.href = 'http://localhost:8081/oauth/42';
+    location.href = 'http://localhost:8080/api/authenticate/42';
   }
 }

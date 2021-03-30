@@ -28,6 +28,10 @@ export class AuthService {
     );
   }
 
+  loginOauth(strategy: string): Observable<any> {
+    return this.http.get(AUTH_API + `authenticate/${strategy}`, httpOptions);
+  }
+
   logOut() {
     localStorage.clear();
     this.route.navigate(['/home']);

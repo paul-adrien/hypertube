@@ -1,6 +1,8 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
+  AfterContentInit,
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -15,7 +17,7 @@ import { AuthService } from './_services/auth_service';
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements AfterContentInit {
   title = 'front';
 
   public idNavBar = '';
@@ -26,7 +28,7 @@ export class AppComponent implements OnInit {
     private authService: AuthService
   ) {}
 
-  ngOnInit() {
+  ngAfterContentInit() {
     if (
       this.route.url.includes('profile') &&
       !this.route.url.includes('profile-')

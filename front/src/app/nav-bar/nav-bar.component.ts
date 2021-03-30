@@ -74,6 +74,23 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngAfterViewChecked() {
+    console.log(this.router.url);
+    if (
+      this.router.url.includes('profile') &&
+      !this.router.url.includes('profile-')
+    ) {
+      this.selectItem('profile');
+    } else if (
+      this.router.url.includes('messaging') ||
+      this.router.url.includes('discussion/')
+    ) {
+      this.selectItem('message');
+    } else if (this.router.url.includes('home')) {
+      this.selectItem('home');
+    }
+  }
+
   public selectItem(id: string) {
     this.items.forEach((item) => {
       if (item.id === id) {
