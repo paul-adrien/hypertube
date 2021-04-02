@@ -39,9 +39,9 @@ export class ListMoviesComponent implements OnInit {
 
   async getMovies(page: number) {
     if (this.ListYTS.length == 0)
-      this.ListYTS = await this.YTSServices.ListYTSMovies(page);
+      this.ListYTS = await this.YTSServices.ListYTSMovies(page, null, "title");
     else
-      this.ListYTS = this.ListYTS.concat(await this.YTSServices.ListYTSMovies(page));
+      this.ListYTS = this.ListYTS.concat(await this.YTSServices.ListYTSMovies(page, null, "title"));
     this.cd.detectChanges();
   }
 

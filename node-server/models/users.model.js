@@ -18,4 +18,4 @@ const checkUserExist = async function (username, email) {
   return user;
 };
 
-module.exports = { User, checkUserExist };
+module.exports = User;

@@ -18,14 +18,15 @@ const httpOptions = {
 export class YTSService {
   constructor(private http: HttpClient, private route: Router) {}
 
-  async ListYTSMovies(page: number) {
+  async ListYTSMovies(page: number, genre: string, sort: string) {
     const source = axios.CancelToken.source();
     searchCancelTokenFetch.source = source;
     const data = await axios.get(YTS_LIST, {
         params: {
           page: page,
-          genre: null,
-          sort_by: null,
+          genre: genre,
+          sort_by: sort,
+          order_by: 'asc'
         },
         withCredentials: false,
         cancelToken: searchCancelTokenFetch.source.token,

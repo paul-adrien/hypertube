@@ -1,0 +1,11 @@
+.body {
+    height: 100%;
+    width: 100%;
+    .comment {
+        display: flex;
+        height: 20rem;
+        flex-grow: 1;
+        overflow: scroll;
+        flex-direction: column;
+    }
+}
