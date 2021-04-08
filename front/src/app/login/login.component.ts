@@ -308,7 +308,7 @@ export class LoginComponent implements OnInit {
         (data) => {
           console.log(data);
           this.authService.saveToken(data.accessToken);
-          this.authService.saveUser(data);
+          this.authService.saveUser(data.user);
 
           this.route.navigate(['/home']);
           this.isSuccessful = true;

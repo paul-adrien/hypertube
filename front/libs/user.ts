@@ -1,8 +1,18 @@
 export interface User {
-    id: string;
-    lastName: string;
-    firstName: string;
-    email: string;
-    password: string;
-    userName: string;
-  }
+  id: string;
+  lastName: string;
+  firstName: string;
+  email: string;
+  password: string;
+  userName: string;
+}
+
+export function mapUserBackToUserFront(user: any): Partial<User> {
+  return {
+    id: user['id'],
+    userName: user['userName'],
+    firstName: user['firstName'],
+    lastName: user['lastName'],
+    email: user['email'],
+  };
+}

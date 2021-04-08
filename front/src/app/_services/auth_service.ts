@@ -2,8 +2,8 @@ import { ChangeDetectorRef, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { User } from 'libs/user';
-import { tap } from 'rxjs/operators';
+import { mapUserBackToUserFront, User } from 'libs/user';
+import { map, tap } from 'rxjs/operators';
 
 const AUTH_API = 'http://localhost:8080/api/';
 
@@ -18,14 +18,20 @@ export class AuthService {
   constructor(private http: HttpClient, private route: Router) {}
 
   login(user: Partial<User>): Observable<any> {
-    return this.http.post(
-      AUTH_API + 'authenticate',
-      {
-        userName: user.userName,
-        password: user.password,
-      },
-      httpOptions
-    );
+    return this.http
+      .post(
+        AUTH_API + 'authenticate',
+        {
+          userName: user.userName,
+          password: user.password,
+        },
+        httpOptions
+      )
+      .pipe(
+        map((res: any) => {
+          return { user: mapUserBackToUserFront(res), token: res.accessToken };
+        })
+      );
   }
 
   loginOauth(strategy: string): Observable<any> {

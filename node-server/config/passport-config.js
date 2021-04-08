@@ -1,7 +1,10 @@
 const { keys } = require("./auth.js");
-const { checkUserExist } = require("../models/users.model");
+const { checkUserExist, getUser } = require("../models/lib-user.model");
 const FortyTwoStrategy = require("passport-42").Strategy;
+const User = require("../models/users.model");
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
+const config = require("../config/auth");
 
 passport.use(
   new FortyTwoStrategy(
@@ -15,20 +18,19 @@ passport.use(
       console.log(
         await checkUserExist(profile._json.login, profile._json.email)
       );
-      const user = await getUser({ userID: `42_${profile.id}` }, "userID");
-      if (user) return done(null, user.userID);
+      const user = await getUser({ id: `42_${profile.id}` });
+      if (user) return done(null, user.id);
       if (
         profile &&
         profile._json &&
         !(await checkUserExist(profile._json.login, profile._json.email))
       ) {
-        const token = crypto.randomUUID();
-
         const user = new User({
+          id: `42_${profile.id}`,
           userName: profile._json.login,
           email: profile._json.email,
-          lastName: profile._json.lastName,
-          firstName: profile._json.firstName,
+          lastName: profile._json.last_name,
+          firstName: profile._json.first_name,
         });
 
         user.save((err, user) => {
@@ -39,7 +41,9 @@ passport.use(
             });
           }
 
-          res.send({ message: "User was registered successfully!" });
+          const token = jwt.sign({ id: profile._id }, config.secret, {
+            expiresIn: 86400, // 24 hours
+          });
         });
         return done(null, `42_${profile.id}`);
       } else return done(null, false);
@@ -52,7 +56,7 @@ passport.serializeUser((userID, done) => {
 });
 
 passport.deserializeUser(async (userID, done) => {
-  const user = await getUser({ userID }, "userName");
+  const user = await getUser({ id: userID });
   if (user) return done(null, userID);
   return done(null, false);
 });

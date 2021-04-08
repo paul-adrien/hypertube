@@ -8,14 +8,8 @@ const User = mongoose.model(
     lastName: String,
     firstName: String,
     password: String,
+    id: String,
   })
 );
-
-const checkUserExist = async function (username, email) {
-  const user = await User.findOne({
-    $or: [{ userName: username }, { email: email }],
-  }).exec();
-  return user;
-};
 
 module.exports = User;
