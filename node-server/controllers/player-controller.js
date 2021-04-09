@@ -9,6 +9,7 @@ const cheerio = require("cheerio");
 const unzipper = require("unzipper").Parse;
 const streamz = require("streamz");
 const srt2vtt = require("srt-to-vtt");
+const config = require('../config/stream');
 
 function convertStream(file, start, end) {
     try {
@@ -175,7 +176,7 @@ async function getSubsLink(imdb_id) {
                 `https://yifysubtitles.org/subtitle/${arrEN[0].split("/")[2]}.zip`,
         };
     } catch (e) {
-        throw new Error(e.message);
+        return null;
     }
 }
 
@@ -237,7 +238,10 @@ exports.getSubtitles = async (req, res) => {
             path: `../movies/${imdb_id}/subs/fr/${imdb_id}.vtt`,
             fileName: `${imdb_id}.vtt`,
         });
-        return existingSubs
+        return res.json({
+            status: true,
+            subs: existingSubs
+        });
     }
     if (!enfilesExist)
         await fs.mkdirSync(`../movies/${imdb_id}/subs/en/`, { recursive: true });
@@ -263,7 +267,28 @@ exports.getSubtitles = async (req, res) => {
                 fileName: `${imdb_id}.vtt`,
             });
         }
-        return subs
+        return res.json({
+            status: true,
+            subs: subs
+        });
     }
-    console.log(`Got links Fr: ${links.French} En: ${links.English}`);
+    console.log('no subs available');
+    return res.json({
+        status: true,
+        subs: null
+    });
 }
+
+exports.getSubtitleFile = (req, res) => {
+    var path = `/${req.params.imdb_id}/subs/${req.params.lang}/${req.params.imdb_id}.vtt`;
+    console.log(path);
+    res.sendFile(config.movie_folder + path, function (err) {
+        if (err) {
+            console.log(err);
+            res.status(err.status).end();
+        }
+        else {
+            console.log('Sent:', config.movie_folder + path);
+        }
+    });
+};

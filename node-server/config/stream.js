@@ -1,4 +1,6 @@
 const trackers = {
+    movie_folder: '/home/paul-adrien/Bureau/Projet42/hypertube/movies',
+
     trackers: [
         'udp://p4p.arenabg.com:1337',
         'udp://tracker.leechers-paradise.org:6969',

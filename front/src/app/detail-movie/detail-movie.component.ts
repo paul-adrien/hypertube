@@ -21,7 +21,7 @@ function ValidatorLength(control: FormControl) {
 @Component({
   selector: 'app-detail-movie',
   template: `
-  <!-- <app-player *ngIf="loadPlayer" style="width: 100%; height: 200px" [hash]="detailMovie.torrents[0].hash" [imdb_code]="detailMovie.imdb_code"></app-player> -->
+  <app-player *ngIf="loadPlayer" style="width: 100%; height: 400px" [hash]="detailMovie.torrents[0].hash" [imdb_code]="detailMovie.imdb_code"></app-player>
 
     <div class="body" *ngIf="detailMovie">
       <img src="{{detailMovie.large_cover_image}}" style="height: 30%">
@@ -79,8 +79,7 @@ export class DetailMovieComponent implements OnInit {
     private cd: ChangeDetectorRef,
     public route: ActivatedRoute,
     private auth_service: AuthService,
-    private commentsService: commentsService,
-    private movieService: movieService) { }
+    private commentsService: commentsService) { }
 
   ngOnInit(): void {
     this.id = this.route.snapshot.params["id"];
@@ -91,20 +90,8 @@ export class DetailMovieComponent implements OnInit {
   async getMovieDetail(id: number) {
     this.detailMovie = await this.YTSServices.detailYTSMovies(id);
     this.loadPlayer = true;
-    this.getSubtitles();
     this.getComments();
     this.cd.detectChanges();
-  }
-
-  getSubtitles() {
-    this.movieService.getSubtitles(this.detailMovie.imdb_code).subscribe(
-      data => {
-
-      },
-      err => {
-        console.log(err);
-      }
-    );
   }
 
   getComments() {
