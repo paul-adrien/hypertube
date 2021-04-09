@@ -6,6 +6,13 @@
   align-items: center;
   justify-content: center;
 
+  .title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-family: Roboto-bold;
+    text-align: center;
+  }
+
   .logo {
     display: flex;
     flex-direction: column;
@@ -20,49 +27,33 @@
     width: 100%;
   }
 
+  .log-button {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+  }
+
   .container-login {
     background-color: var(--background-color-primary);
     max-width: 30rem;
     width: 80%;
-    height: 50%;
-    max-height: 33rem;
-    flex-grow: 1;
+    height: fit-content;
+    max-height: 82%;
     display: flex;
     flex-direction: column;
     border-radius: 4px;
-    margin-bottom: 2rem;
     z-index: 5;
-
-    .top-container {
-      height: 3rem;
-      display: flex;
-      background: var(--background-color-grey);
-      border-radius: 4px 4px 0 0;
-
-      .case {
-        width: 50%;
-        text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-
-        &.select {
-          border-radius: 4px 4px 0 0;
-          background-color: var(--background-color-primary);
-        }
-      }
-    }
+    overflow: scroll;
+    padding: 1rem;
+    box-sizing: border-box;
+    margin-bottom: 3rem;
 
     .form-container {
       display: flex;
-      justify-content: space-between;
       flex-direction: column;
-      margin: 1rem;
-      height: 50%;
-      flex-grow: 1;
+
       align-items: center;
-      overflow: scroll;
       position: relative;
 
       .inputs {
@@ -72,7 +63,7 @@
       }
 
       input {
-        height: 3rem;
+        height: 2.5rem;
         width: 100%;
         border: 1px solid #4e4e4e;
         padding: 6px 12px;
@@ -88,6 +79,20 @@
       }
     }
 
+    .separator {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+
+      .bar {
+        width: 44%;
+        height: 0;
+        border-top: 1px solid;
+      }
+    }
+
     .error {
       font-size: 12px;
       padding: 6px 12px;
@@ -98,8 +103,28 @@
     }
   }
 
+  .buttons-auth {
+    display: flex;
+    flex-direction: column;
+
+    .primary-button {
+      margin-top: 1rem;
+    }
+
+    .forty-two {
+      background-color: #02b9bb;
+      border-color: #02b9bb;
+    }
+
+    .google {
+      background-color: #d94f40;
+      border-color: #d94f40;
+    }
+  }
+
   .forgot-password {
     text-align: center;
-    margin-bottom: 1rem;
+    margin-top: 1rem;
+    color: lightsteelblue;
   }
 }

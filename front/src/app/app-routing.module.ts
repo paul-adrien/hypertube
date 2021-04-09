@@ -14,9 +14,17 @@ const routes: Routes = [
     path: 'home',
     component: HomeComponent,
   },
-  { path: 'profile', canActivate: [ProfileGuard], component: ProfileComponent },
-  { path: 'list-Movies', canActivate: [AuthGuard], component: ListMoviesComponent },
-  { path: 'detail-movie/:id', canActivate: [AuthGuard], component: DetailMovieComponent },
+  { path: 'profile', canActivate: [AuthGuard], component: ProfileComponent },
+  {
+    path: 'list-Movies',
+    canActivate: [AuthGuard],
+    component: ListMoviesComponent,
+  },
+  {
+    path: 'detail-movie/:id',
+    canActivate: [AuthGuard],
+    component: DetailMovieComponent,
+  },
   {
     path: '',
     redirectTo: '/home',

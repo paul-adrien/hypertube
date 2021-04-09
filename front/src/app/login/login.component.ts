@@ -50,21 +50,8 @@ function ValidatorPass(control: FormControl) {
   selector: 'app-login',
   template: `
     <div class="container-login">
-      <div class="top-container">
-        <div
-          (click)="this.signInOrSignUp(false)"
-          class="case"
-          [class.select]="!this.loginMode"
-        >
-          S'inscrire
-        </div>
-        <div
-          (click)="this.signInOrSignUp(true)"
-          class="case"
-          [class.select]="this.loginMode"
-        >
-          Se connecter
-        </div>
+      <div class="title">
+        {{ this.loginMode ? 'Création de compte' : 'Se connecter' }}
       </div>
       <form
         [formGroup]="this.registerForm"
@@ -236,7 +223,6 @@ function ValidatorPass(control: FormControl) {
           {{ this.loginMode ? 'Se connecter' : 'Créer un compte' }}
         </button>
       </form>
-      <div class="primary-button" (click)="this.Oauth42()"></div>
       <a
         class="forgot-password"
         *ngIf="this.loginMode"
@@ -244,6 +230,21 @@ function ValidatorPass(control: FormControl) {
         routerLinkActive="active"
         >Mot de passe oublié ?
       </a>
+      <div class="log-button" (click)="this.loginMode = !loginMode">
+        {{ this.loginMode ? 'Je crée un compte' : "J'ai déjà un compte" }}
+      </div>
+      <div class="separator">
+        <div class="bar"></div>
+        <div>Or</div>
+        <div class="bar"></div>
+      </div>
+      <div class="buttons-auth">
+        <div class="primary-button forty-two" (click)="this.Oauth42()">
+          Se connecter avec 42
+        </div>
+        <div class="primary-button google">Se connecter avec Google</div>
+        <div class="primary-button google">Se connecter avec Jsp</div>
+      </div>
     </div>
   `,
   styleUrls: ['./login.component.scss'],

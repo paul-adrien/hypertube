@@ -40,7 +40,7 @@ export class AuthService {
 
   logOut() {
     localStorage.clear();
-    this.route.navigate(['/home']);
+    this.route.navigate(['/login']);
   }
 
   register(user: Partial<User>): Observable<any> {
