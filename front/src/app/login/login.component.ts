@@ -242,7 +242,9 @@ function ValidatorPass(control: FormControl) {
         <div class="primary-button forty-two" (click)="this.Oauth42()">
           Se connecter avec 42
         </div>
-        <div class="primary-button google">Se connecter avec Google</div>
+        <div class="primary-button google" (click)="this.OauthGoogle()">
+          Se connecter avec Google
+        </div>
         <div class="primary-button google">Se connecter avec Jsp</div>
       </div>
     </div>
@@ -322,7 +324,12 @@ export class LoginComponent implements OnInit {
       );
     }
   }
+
   public Oauth42() {
     location.href = 'http://localhost:8080/api/authenticate/42';
+  }
+
+  public OauthGoogle() {
+    location.href = 'http://localhost:8080/api/authenticate/google';
   }
 }

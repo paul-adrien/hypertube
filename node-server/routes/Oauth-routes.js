@@ -43,4 +43,37 @@ module.exports = function (app) {
       }
     )(req, res, next);
   });
+
+  app.get(
+    "/api/authenticate/google",
+    passport.authenticate("google", { scope: ["profile"] })
+  );
+  app.get("/api/authenticate/google/callback", (req, res, next) => {
+    console.log(req);
+    passport.authenticate(
+      "google",
+      {
+        failureRedirect: "http://localhost:8081/login",
+      },
+      async (err, userId) => {
+        // Successful authentication, redirect home.
+        const userDb = await getUser({ id: userId });
+        console.log("callback", userDb);
+
+        const token = jwt.sign({ id: userDb._id }, config.secret, {
+          expiresIn: 86400, // 24 hours
+        });
+
+        return res.redirect(
+          "http://localhost:8081/home?data=" +
+            encodeURI(
+              JSON.stringify({
+                user: userDb,
+                token: token,
+              })
+            )
+        );
+      }
+    )(req, res, next);
+  });
 };

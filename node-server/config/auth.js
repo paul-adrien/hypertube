@@ -7,5 +7,10 @@ module.exports = {
       clientSecret:
         "86eae82787d249fb2b1f3830ec72afeb91f57723dbadb4dadfb6d9c469ff9025",
     },
+    google: {
+      clientID:
+        "282935529175-c7soofur8gb2iq51n9trt49bmglc977h.apps.googleusercontent.com",
+      clientSecret: "fPhFzqkAtzd6fcfI8pF92Ezb",
+    },
   },
 };
