@@ -12,18 +12,23 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "cheerio": "*",
     "cors": "^2.8.5",
     "dateformat": "^4.5.1",
     "express": "^4.17.1",
     "fluent-ffmpeg": "^2.1.2",
     "fs": "*",
+    "got": "^11.8.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.2",
     "passport": "^0.4.1",
     "passport-42": "^1.2.6",
     "path": "^0.12.7",
     "simple-websocket": "^9.1.0",
+    "srt-to-vtt": "^1.1.3",
+    "streamz": "^1.8.12",
     "torrent-stream": "^1.2.1",
+    "unzipper": "^0.10.11",
     "ws": "^3.3.1"
   }
 }

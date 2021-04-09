@@ -13,17 +13,17 @@ const httpOptions = {
   providedIn: "root",
 })
 export class commentsService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   addComment(comment: any, imdb_id: string, username: string): Observable<any> {
     return this.http.post(
-        AUTH_API + 'addComment',
-        {
-            comment: comment.comment,
-            imdb_id: imdb_id,
-            username: username
-        },
-        httpOptions
+      AUTH_API + 'addComment',
+      {
+        comment: comment.comment,
+        imdb_id: imdb_id,
+        username: username
+      },
+      httpOptions
     );
   }
 

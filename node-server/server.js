@@ -47,6 +47,8 @@ require("./routes/auth-routes")(app);
 require("./routes/user-routes")(app);
 require("./routes/Oauth-routes")(app);
 require("./routes/comments-routes")(app);
+const routes = require('./routes/movie-routes');
+app.use(routes);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

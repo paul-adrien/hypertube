@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../_services/auth_service';
 import { YTSService } from '../_services/yts_service';
 import { commentsService } from '../_services/comments_service';
+import { movieService } from '../_services/movie_service';
 
 function ValidatorLength(control: FormControl) {
   const test = /^(?=.{3,20}$)[a-zA-Z]+(?:[-' ][a-zA-Z]+)*$/;
@@ -20,6 +21,8 @@ function ValidatorLength(control: FormControl) {
 @Component({
   selector: 'app-detail-movie',
   template: `
+  <!-- <app-player *ngIf="loadPlayer" style="width: 100%; height: 200px" [hash]="detailMovie.torrents[0].hash" [imdb_code]="detailMovie.imdb_code"></app-player> -->
+
     <div class="body" *ngIf="detailMovie">
       <img src="{{detailMovie.large_cover_image}}" style="height: 30%">
       <p>{{detailMovie.title}}</p>
@@ -68,6 +71,7 @@ export class DetailMovieComponent implements OnInit {
   public commentForm = new FormGroup({
     comment: new FormControl('', ValidatorLength)
   })
+  public loadPlayer = false;
 
   public detailMovie = null;
 
@@ -75,7 +79,8 @@ export class DetailMovieComponent implements OnInit {
     private cd: ChangeDetectorRef,
     public route: ActivatedRoute,
     private auth_service: AuthService,
-    private commentsService: commentsService) { }
+    private commentsService: commentsService,
+    private movieService: movieService) { }
 
   ngOnInit(): void {
     this.id = this.route.snapshot.params["id"];
@@ -85,8 +90,21 @@ export class DetailMovieComponent implements OnInit {
 
   async getMovieDetail(id: number) {
     this.detailMovie = await this.YTSServices.detailYTSMovies(id);
+    this.loadPlayer = true;
+    this.getSubtitles();
     this.getComments();
     this.cd.detectChanges();
+  }
+
+  getSubtitles() {
+    this.movieService.getSubtitles(this.detailMovie.imdb_code).subscribe(
+      data => {
+
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   getComments() {

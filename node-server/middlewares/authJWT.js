@@ -6,15 +6,15 @@ verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
   if (!token) {
-    return  res.json({
+    return res.json({
       status: false,
       message: "No token"
     });
   }
 
   jwt.verify(token, config.secret, (err, decoded) => {
-    if (err) { 
-      return  res.json({
+    if (err) {
+      return res.json({
         status: false,
         message: "unauthorized !"
       });
