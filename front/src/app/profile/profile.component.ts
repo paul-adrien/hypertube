@@ -6,19 +6,18 @@ import { AuthService } from '../_services/auth_service';
   selector: 'app-profile',
   template: `
     <p>Profil:</p>
-    <p>{{user.firstName}}</p>
-    <p>{{user.lastName}}</p>
-    <p>{{user.email}}</p>
+    <img [src]="user.picture" />
+    <p>{{ user.firstName }}</p>
+    <p>{{ user.lastName }}</p>
+    <p>{{ user.email }}</p>
   `,
-  styleUrls: ['./profile.component.scss']
+  styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit {
-
   public user: User;
-  constructor(private auth_service: AuthService) { }
+  constructor(private auth_service: AuthService) {}
 
   ngOnInit(): void {
     this.user = this.auth_service.getUser();
   }
-
 }

@@ -1,8 +1,8 @@
 const User = require("./users.model");
 
 const getUser = async function (query) {
-  console.log(query);
   const user = await User.findOne(query).exec();
+  console.log(user);
   return user;
 };
 

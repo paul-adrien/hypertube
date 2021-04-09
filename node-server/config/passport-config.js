@@ -19,7 +19,7 @@ passport.use(
         await checkUserExist(profile._json.login, profile._json.email)
       );
       const user = await getUser({ id: `42_${profile.id}` });
-      if (user) return done(null, user.id);
+      if (user && user !== null) return done(null, user.id);
       if (
         profile &&
         profile._json &&
@@ -31,9 +31,10 @@ passport.use(
           email: profile._json.email,
           lastName: profile._json.last_name,
           firstName: profile._json.first_name,
+          picture: profile._json.image_url,
         });
 
-        user.save((err, user) => {
+        await user.save((err, user) => {
           if (err) {
             return res.json({
               status: false,

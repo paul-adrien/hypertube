@@ -25,7 +25,7 @@ module.exports = function (app) {
       async (err, userId) => {
         // Successful authentication, redirect home.
         const userDb = await getUser({ id: userId });
-        console.log(userDb);
+        console.log("callback", userDb);
 
         const token = jwt.sign({ id: userDb._id }, config.secret, {
           expiresIn: 86400, // 24 hours

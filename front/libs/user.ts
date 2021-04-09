@@ -5,6 +5,7 @@ export interface User {
   email: string;
   password: string;
   userName: string;
+  picture: string;
 }
 
 export function mapUserBackToUserFront(user: any): Partial<User> {

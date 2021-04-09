@@ -9,6 +9,7 @@ const User = mongoose.model(
     firstName: String,
     password: String,
     id: String,
+    picture: String,
   })
 );
 
