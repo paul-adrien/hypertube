@@ -13,17 +13,32 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'nav-bar',
   template: `
-    <a
-      class="case"
-      *ngFor="let item of this.items"
-      [routerLink]="item.route"
-      routerLinkActive="active"
-      (click)="this.selectItem(item.id)"
-    >
-      <img [src]="item.selected ? item.src.check : item.src.default" />
-    </a>
-    <div class="case">
-      <img (click)="this.logOut()" src="./assets/log-out.svg" />
+    <img class="logo" src="./assets/logo.png" />
+    <div class="left-case">
+      <div class="left-case" *ngIf="!this.onPageLogin">
+        <a
+          class="case"
+          *ngFor="let item of this.items"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          (click)="this.selectItem(item.id)"
+        >
+          <img
+            *ngIf="item.id !== 'profile'"
+            [src]="item.selected ? item.src.check : item.src.default"
+          />
+          <img
+            *ngIf="item.id === 'profile'"
+            class="picture"
+            [class.checked]="item.selected"
+            [src]="this.profilPicture"
+          />
+        </a>
+      </div>
+      <div class="case">Langue</div>
+      <div class="case" *ngIf="!this.onPageLogin">
+        <img (click)="this.logOut()" src="./assets/log-out.svg" />
+      </div>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,13 +69,17 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     {
       id: 'list-Movies',
       src: {
-        check: './assets/message-circle-check.svg',
-        default: './assets/message-circle.svg',
+        check: './assets/film-check.svg',
+        default: './assets/film.svg',
       },
       route: 'list-Movies',
       selected: false,
     },
   ];
+
+  public onPageLogin = false;
+
+  public profilPicture = '';
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -72,23 +91,26 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     if (this.selectedId) {
       this.selectItem(this.selectedId);
     }
+    this.profilPicture = JSON.parse(localStorage.getItem('auth-user'))?.picture;
   }
 
   ngAfterViewChecked() {
-    console.log(this.router.url);
     if (
       this.router.url.includes('profile') &&
       !this.router.url.includes('profile-')
     ) {
+      this.onPageLogin = false;
       this.selectItem('profile');
-    } else if (
-      this.router.url.includes('messaging') ||
-      this.router.url.includes('discussion/')
-    ) {
-      this.selectItem('message');
+    } else if (this.router.url.includes('list-Movies')) {
+      this.onPageLogin = false;
+      this.selectItem('list-Movies');
     } else if (this.router.url.includes('home')) {
+      this.onPageLogin = false;
       this.selectItem('home');
+    } else if (this.router.url.includes('login')) {
+      this.onPageLogin = true;
     }
+    this.cd.detectChanges();
   }
 
   public selectItem(id: string) {

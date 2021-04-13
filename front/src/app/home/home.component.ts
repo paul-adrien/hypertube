@@ -29,16 +29,6 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.router.queryParams.subscribe((params) => {
-      if (params.data) {
-        console.log(params.data);
-
-        const data = JSON.parse(decodeURI(params.data));
-        console.log(data);
-        this.authService.saveToken(data.token);
-        this.authService.saveUser(data.user);
-      }
-    });
     this.authService.checkIfUserCo().subscribe(
       (data) => {
         if (JSON.parse(data)['status'] === true) this.islog = true;

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { User } from 'libs/user';
 import { AuthService } from '../_services/auth_service';
 
@@ -276,10 +276,23 @@ export class LoginComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private route: Router,
+    private router: ActivatedRoute,
     private cd: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.router.queryParams.subscribe((params) => {
+      if (params.data) {
+        console.log(params.data);
+
+        const data = JSON.parse(decodeURI(params.data));
+        console.log(data);
+        this.authService.saveToken(data.token);
+        this.authService.saveUser(data.user);
+        this.route.navigate(['home']);
+      }
+    });
+  }
 
   signInOrSignUp(loginMode: boolean) {
     this.loginMode = loginMode;

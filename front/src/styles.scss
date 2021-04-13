@@ -35,9 +35,9 @@ html {
   overflow: hidden;
 
   --primary-color: #424242;
-  --secondary-color: #fbcf0a;
+  --secondary-color: #46a35e;
   --color-text: white;
-  --background-color-grey: #464646;
+  --background-color-grey: #424242;
   --background-color-primary: black;
 
   &::-webkit-scrollbar {
@@ -60,7 +60,7 @@ html {
 
 .light {
   --primary-color: #424242;
-  --secondary-color: #fbcf0a;
+  --secondary-color: #46a35e;
   --color-text: black;
   --background-color-grey: #eaeaea;
   --background-color-primary: white;
@@ -68,7 +68,7 @@ html {
 
 .dark {
   --color-text: white;
-  --background-color-grey: #464646;
+  --background-color-grey: #424242;
   --background-color-primary: black;
 }
 

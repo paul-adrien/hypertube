@@ -9,9 +9,10 @@ import { AuthGuard } from './_services/auth-guard';
 import { ProfileGuard } from './_services/profile-guard';
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
+  { path: 'login', component: LoginComponent, canActivate: [ProfileGuard] },
   {
     path: 'home',
+    canActivate: [AuthGuard],
     component: HomeComponent,
   },
   { path: 'profile', canActivate: [AuthGuard], component: ProfileComponent },

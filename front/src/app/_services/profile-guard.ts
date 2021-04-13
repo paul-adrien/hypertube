@@ -30,10 +30,10 @@ export class ProfileGuard implements CanActivate {
       .then(
         (data) => {
           if (JSON.parse(data)['status'] === true) {
-            return true;
-          } else {
-            this.router.navigate(['login']);
+            this.router.navigate(['home']);
             return false;
+          } else {
+            return true;
           }
         },
         (err) => {

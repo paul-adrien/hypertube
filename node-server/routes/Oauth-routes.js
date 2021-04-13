@@ -32,7 +32,7 @@ module.exports = function (app) {
         });
 
         return res.redirect(
-          "http://localhost:8081/home?data=" +
+          "http://localhost:8081/login?data=" +
             encodeURI(
               JSON.stringify({
                 user: userDb,
@@ -65,7 +65,7 @@ module.exports = function (app) {
         });
 
         return res.redirect(
-          "http://localhost:8081/home?data=" +
+          "http://localhost:8081/login?data=" +
             encodeURI(
               JSON.stringify({
                 user: userDb,

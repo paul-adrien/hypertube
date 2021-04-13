@@ -3,17 +3,43 @@
   width: 100%;
   height: 3rem;
   background: var(--background-color-primary);
+  justify-content: space-between;
+  align-items: center;
+
+  .left-case {
+    display: flex;
+    height: 100%;
+  }
+
+  .logo {
+    height: 2.2rem;
+    object-fit: contain;
+    margin-left: 1rem;
+  }
 
   .case {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: calc(100% / 3);
+    width: 3rem;
   }
 
   img {
     cursor: pointer;
+  }
+
+  .picture {
+    height: 24px;
+    width: 24px;
+    object-fit: contain;
+    border-radius: 1rem;
+    background: grey;
+    border: 2px solid gray;
+
+    &.checked {
+      border-color: var(--secondary-color);
+    }
   }
 
   .notif-circle {

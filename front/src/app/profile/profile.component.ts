@@ -5,11 +5,15 @@ import { AuthService } from '../_services/auth_service';
 @Component({
   selector: 'app-profile',
   template: `
-    <p>Profil:</p>
-    <img [src]="user.picture" />
-    <p>{{ user.firstName }}</p>
-    <p>{{ user.lastName }}</p>
-    <p>{{ user.email }}</p>
+    <div class="user-container">
+      <img
+        class="profile-picture"
+        [src]="user.picture ? user.picture : './assets/plus.svg'"
+      />
+      <div class="username">{{ user.userName }}</div>
+      <div class="name">({{ user.firstName + ' ' + user.lastName }})</div>
+      <div class="name">{{ user.email }}</div>
+    </div>
   `,
   styleUrls: ['./profile.component.scss'],
 })
