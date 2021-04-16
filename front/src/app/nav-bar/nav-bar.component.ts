@@ -94,6 +94,10 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     this.profilPicture = JSON.parse(localStorage.getItem('auth-user'))?.picture;
   }
 
+  ngAfterViewInit() {
+    this.profilPicture = JSON.parse(localStorage.getItem('auth-user'))?.picture;
+  }
+
   ngAfterViewChecked() {
     if (
       this.router.url.includes('profile') &&

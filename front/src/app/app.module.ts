@@ -19,6 +19,9 @@ import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { PlayerComponent } from './player/player.component';
+import { PopUpComponent } from './pop-up/pop-up.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -30,9 +33,11 @@ import { PlayerComponent } from './player/player.component';
     ListMoviesComponent,
     DetailMovieComponent,
     PlayerComponent,
+    PopUpComponent,
   ],
   imports: [
     HttpClientModule,
+    BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
@@ -42,9 +47,11 @@ import { PlayerComponent } from './player/player.component';
     VgCoreModule,
     VgControlsModule,
     VgOverlayPlayModule,
-    VgBufferingModule
+    MatDialogModule,
+    VgBufferingModule,
   ],
+  entryComponents: [PopUpComponent],
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
