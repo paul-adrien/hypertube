@@ -22,7 +22,7 @@ const routes: Routes = [
     component: ListMoviesComponent,
   },
   {
-    path: 'detail-movie/:id',
+    path: 'detail-movie/:imdb_code',
     canActivate: [AuthGuard],
     component: DetailMovieComponent,
   },
@@ -38,4 +38,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

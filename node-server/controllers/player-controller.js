@@ -85,6 +85,7 @@ exports.streamTorrent = async (req, res) => {
       tracker: true,
       trackers,
       uploads: 10,
+      connection: 3000
     };
     console.log("test");
     const engine = await setupEngine(magnet, options)
@@ -210,24 +211,24 @@ async function DlSubs(link, lang, imdb_id) {
         );
         return parsedPath.ext == ".srt"
           ? entry
-              .pipe(srt2vtt())
-              .pipe(
-                fs.createWriteStream(
-                  `../movies/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
-                )
+            .pipe(srt2vtt())
+            .pipe(
+              fs.createWriteStream(
+                `../movies/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
               )
-              .on("error", (e) => {
-                throw new Error(e.message);
-              })
+            )
+            .on("error", (e) => {
+              throw new Error(e.message);
+            })
           : entry
-              .pipe(
-                fs.createWriteStream(
-                  `../movies/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
-                )
+            .pipe(
+              fs.createWriteStream(
+                `../movies/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
               )
-              .on("error", (e) => {
-                throw new Error(e.message);
-              });
+            )
+            .on("error", (e) => {
+              throw new Error(e.message);
+            });
       },
       {
         catch: (e) => console.log(`Streamz Error: ${e.message}`),

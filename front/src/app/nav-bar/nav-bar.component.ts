@@ -85,7 +85,7 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private router: Router,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     if (this.selectedId) {
@@ -129,5 +129,5 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     this.selectItem('home');
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() { }
 }

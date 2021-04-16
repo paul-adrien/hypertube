@@ -26,4 +26,20 @@ export class movieService {
         return this.http.get(AUTH_API + `movie/subtitles/${imdb_id}`);
     }
 
+    getListMovies(page: number, genre: string, sort: string): Observable<any> {
+        return this.http.post(
+            AUTH_API + 'movie/list',
+            {
+                page: page,
+                genre: genre,
+                sort: sort
+            },
+            httpOptions
+        );
+    }
+
+    getDetailMovie(imdb_id: string): Observable<any> {
+        return this.http.get(AUTH_API + `movie/detail/${imdb_id}`);
+    }
+
 }

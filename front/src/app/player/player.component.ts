@@ -77,6 +77,7 @@ export class PlayerComponent implements OnInit {
     this.api = api;
     this.api.getDefaultMedia().subscriptions.progress.subscribe(
       (progress) => {
+        console.log(progress);
         if (!progress.srcElement)
           return;
 

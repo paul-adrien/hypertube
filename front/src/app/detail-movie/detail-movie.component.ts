@@ -24,12 +24,12 @@ function ValidatorLength(control: FormControl) {
     <app-player
       *ngIf="loadPlayer"
       style="width: 100%; height: 400px"
-      [hash]="detailMovie.torrents[0].hash"
+      [hash]="hashs[0]['hash']"
       [imdb_code]="detailMovie.imdb_code"
     ></app-player>
 
     <div class="body" *ngIf="detailMovie">
-      <img src="{{ detailMovie.large_cover_image }}" style="height: 30%" />
+      <img src="{{ detailMovie.poster }}" style="height: 30%" />
       <p>{{ detailMovie.title }}</p>
       <div class="comment" *ngIf="comments !== null">
         <div *ngFor="let comment of comments">
@@ -66,14 +66,14 @@ function ValidatorLength(control: FormControl) {
   styleUrls: ['./detail-movie.component.scss'],
 })
 export class DetailMovieComponent implements OnInit {
-  id = 0;
+  imdb_code = '';
   private username = '';
   public comments = null;
   public commentForm = new FormGroup({
     comment: new FormControl('', ValidatorLength),
   });
   public loadPlayer = false;
-
+  public hashs = null;
   public detailMovie = null;
 
   constructor(
@@ -81,20 +81,38 @@ export class DetailMovieComponent implements OnInit {
     private cd: ChangeDetectorRef,
     public route: ActivatedRoute,
     private auth_service: AuthService,
-    private commentsService: commentsService
-  ) {}
+    private commentsService: commentsService,
+    private movieService: movieService
+  ) { }
 
   ngOnInit(): void {
-    this.id = this.route.snapshot.params['id'];
-    this.getMovieDetail(this.id);
+    this.imdb_code = this.route.snapshot.params['imdb_code'];
+    // this.getMovieDetail(this.imdb_code);
     this.username = this.auth_service.getUser().userName;
+    this.getDetailMovie();
   }
 
-  async getMovieDetail(id: number) {
-    this.detailMovie = await this.YTSServices.detailYTSMovies(id);
-    this.loadPlayer = true;
-    this.getComments();
-    this.cd.detectChanges();
+  // async getMovieDetail(imdb_code: string) {
+  //   this.detailMovie = await this.YTSServices.detailYTSMovies(imdb_code);
+  //   this.loadPlayer = true;
+  //   this.getComments();
+  //   this.cd.detectChanges();
+  // }
+
+  async getDetailMovie() {
+    this.movieService.getDetailMovie(this.imdb_code).subscribe(
+      (data) => {
+        this.detailMovie = data.movieDetail;
+        this.hashs = data.hashs;
+        console.log(data);
+        this.loadPlayer = true;
+        this.getComments();
+        this.cd.detectChanges();
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 
   getComments() {
