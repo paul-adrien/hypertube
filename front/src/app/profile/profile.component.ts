@@ -56,7 +56,7 @@ function ValidatorEmail(control: FormControl) {
         <div class="name">{{ user.email }}</div>
       </div>
       <div class="info-container">
-        <span>Informations</span>
+        <div class="title">Informations</div>
         <form
           class="form-container"
           [formGroup]="this.userForm"

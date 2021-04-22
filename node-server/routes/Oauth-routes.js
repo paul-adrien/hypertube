@@ -16,7 +16,6 @@ module.exports = function (app) {
 
   app.get("/api/authenticate/42", passport.authenticate("42"));
   app.get("/api/authenticate/42/callback", (req, res, next) => {
-    console.log(req);
     passport.authenticate(
       "42",
       {
@@ -24,6 +23,8 @@ module.exports = function (app) {
       },
       async (err, userId) => {
         // Successful authentication, redirect home.
+        console.log("callback1", userId);
+
         const userDb = await getUser({ id: userId });
         console.log("callback", userDb);
 
@@ -49,7 +50,6 @@ module.exports = function (app) {
     passport.authenticate("google", { scope: ["profile"] })
   );
   app.get("/api/authenticate/google/callback", (req, res, next) => {
-    console.log(req);
     passport.authenticate(
       "google",
       {

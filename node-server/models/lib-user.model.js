@@ -1,12 +1,16 @@
 const User = require("./users.model");
 
 const getUser = async function (query) {
-  const user = await User.findOne(query).exec();
-  console.log(user);
-  return user;
+  if (query !== null) {
+    const user = await User.findOne(query).exec();
+    return user;
+  } else return null;
 };
 
 const checkUserExist = async function (username, email) {
+  if (username === null || email === null) {
+    return false;
+  }
   const user = await User.findOne({
     $or: [{ userName: username }, { email: email }],
   }).exec();

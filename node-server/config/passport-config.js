@@ -15,24 +15,30 @@ passport.use(
       callbackURL: `http://localhost:8080/api/authenticate/42/callback`,
     },
     async function (accessToken, refreshToken, profile, done) {
-      console.log(profile);
+      console.log(profile._json.data.attributes);
       console.log(
-        await checkUserExist(profile._json.login, profile._json.email)
+        await checkUserExist(
+          profile._json.data.attributes.login,
+          profile._json.data.attributes.email
+        )
       );
-      const user = await getUser({ id: `42_${profile.id}` });
+      const user = await getUser({ id: `42_${profile._json.data.id}` });
       if (user && user !== null) return done(null, user.id);
       if (
         profile &&
-        profile._json &&
-        !(await checkUserExist(profile._json.login, profile._json.email))
+        profile._json.data.attributes &&
+        !(await checkUserExist(
+          profile._json.data.attributes.login,
+          profile._json.data.attributes.email
+        ))
       ) {
         const user = new User({
           id: `42_${profile.id}`,
-          userName: profile._json.login,
-          email: profile._json.email,
-          lastName: profile._json.last_name,
-          firstName: profile._json.first_name,
-          picture: profile._json.image_url,
+          userName: profile._json.data.attributes.login,
+          email: profile._json.data.attributes.email,
+          lastName: profile._json.data.attributes.last_name,
+          firstName: profile._json.data.attributes.first_name,
+          picture: profile._json.data.attributes.image_url,
         });
 
         user.save((err, user) => {
@@ -42,12 +48,8 @@ passport.use(
               message: err,
             });
           }
-
-          const token = jwt.sign({ id: profile._id }, config.secret, {
-            expiresIn: 86400, // 24 hours
-          });
         });
-        return done(null, `42_${profile.id}`);
+        return done(null, `42_${profile._json.data.id}`);
       } else return done(null, false);
     }
   )

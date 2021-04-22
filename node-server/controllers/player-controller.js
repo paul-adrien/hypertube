@@ -84,6 +84,7 @@ exports.streamTorrent = async (req, res) => {
       path,
       tracker: true,
       trackers,
+      connections: 30000,
       uploads: 10,
       connection: 3000
     };
