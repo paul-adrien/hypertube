@@ -14,7 +14,7 @@ import { YTSService } from '../_services/yts_service';
       <div *ngFor="let movie of this.moviesList" (click)="viewDetail(movie.imdb_code)">
         <div *ngIf="movie && movie.poster && movie.title">
           <img src="{{movie.poster}}" style='height: 200px; width: 200px'>
-          <p>{{movie.title}}</p>
+          <p>{{movie.title}} {{movie.see == true ? '(Déjà vu)' : ''}}</p>
         </div>
       </div>
     </div>
@@ -42,7 +42,7 @@ export class ListMoviesComponent implements OnInit {
   }
 
   getMovieList(page: number) {
-    this.movieService.getListMovies(page, null, "rating").subscribe(
+    this.movieService.getListMovies(page, null, "download_count").subscribe(
       (data) => {
         if (!this.moviesList || this.moviesList.length == 0)
           this.moviesList = data.movies;

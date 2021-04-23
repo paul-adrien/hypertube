@@ -5,6 +5,10 @@ const dbConfig = require("./config/db");
 const db = require("./models");
 const passport = require("passport");
 
+let torrent_engine = []
+
+global.torrent_engine = torrent_engine
+
 const app = express();
 
 var corsOptions = {

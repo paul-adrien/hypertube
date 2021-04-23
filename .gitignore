@@ -43,6 +43,7 @@ front/node_modules/
 front/package-lock.json
 node-server/package-lock.json
 jspm_packages/
+node_modules/
 
 # TypeScript v1 declaration files
 typings/
@@ -83,7 +84,7 @@ typings/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+front/dist
 
 # Gatsby files
 .cache/

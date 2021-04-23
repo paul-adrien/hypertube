@@ -24,13 +24,20 @@ function ValidatorLength(control: FormControl) {
     <app-player
       *ngIf="loadPlayer"
       style="width: 100%; height: 400px"
-      [hash]="hashs[0]['hash']"
+      [hash]="hashs[this.index].hash"
+      [quality]="hashs[this.index].quality"
       [imdb_code]="detailMovie.imdb_code"
     ></app-player>
 
     <div class="body" *ngIf="detailMovie">
       <img src="{{ detailMovie.poster }}" style="height: 30%" />
       <p>{{ detailMovie.title }}</p>
+      <div *ngIf="!loadPlayer">
+        <div *ngFor="let torrent of this.hashs; let index = index" style="margin-bottom: 5px;">
+          <button (click)="choiceOfTorrent(index)">{{torrent.source}} {{torrent.quality}} seeds: {{torrent.seeds}} peers: {{torrent.peers}} {{torrent.state ? 'state: '+torrent.state : ''}}</button>
+        </div>
+      </div>
+
       <div class="comment" *ngIf="comments !== null">
         <div *ngFor="let comment of comments">
           <p>{{ comment['username'] }} le {{ comment['date'] }}:</p>
@@ -67,6 +74,7 @@ function ValidatorLength(control: FormControl) {
 })
 export class DetailMovieComponent implements OnInit {
   imdb_code = '';
+  index = 0;
   private username = '';
   public comments = null;
   public commentForm = new FormGroup({
@@ -105,7 +113,6 @@ export class DetailMovieComponent implements OnInit {
         this.detailMovie = data.movieDetail;
         this.hashs = data.hashs;
         console.log(data);
-        this.loadPlayer = true;
         this.getComments();
         this.cd.detectChanges();
       },
@@ -113,6 +120,16 @@ export class DetailMovieComponent implements OnInit {
         console.log(err);
       }
     );
+  }
+
+  async choiceOfTorrent(index) {
+    this.cd.detectChanges();
+    this.index = index;
+    console.log(index);
+    let result = await this.movieService.download(this.hashs[index].hash, this.detailMovie.imdb_code, this.hashs[index].size, this.hashs[index].quality);
+    console.log(result);
+    this.loadPlayer = true;
+    this.cd.detectChanges();
   }
 
   getComments() {

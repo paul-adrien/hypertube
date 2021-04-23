@@ -42,4 +42,13 @@ export class movieService {
         return this.http.get(AUTH_API + `movie/detail/${imdb_id}`);
     }
 
+    download(hash, imdb_id, size, quality) {
+        let uri = `http://localhost:8080/download`;
+        return new Promise((fullfil, reject) => {
+            axios.post(uri, { hash: hash, movieId: imdb_id, size: size, quality: quality })
+                .then(result => { fullfil(result) })
+                .catch(err => { console.error(err); reject({ error: err }) })
+        })
+    }
+
 }

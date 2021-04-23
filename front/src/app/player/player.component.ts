@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { movieService } from '../_services/movie_service';
+import videojs from 'video.js';
 
 @Component({
   selector: 'app-player',
@@ -48,12 +49,13 @@ export class PlayerComponent implements OnInit {
 
   @Input() imdb_code: string;
   @Input() hash: string;
+  @Input() quality: string;
 
   constructor(private cd: ChangeDetectorRef,
     private movieService: movieService) { }
 
   ngOnInit(): void {
-    this.source = 'http://localhost:8080/api/' + `movie/watch/${this.imdb_code}?hash=${this.hash}`;
+    this.source = 'http://localhost:8080/' + `convert/${this.hash}/${this.quality}`;
     console.log(this.source);
     this.getSubtitles();
     this.cd.detectChanges();
