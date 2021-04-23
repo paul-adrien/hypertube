@@ -17,4 +17,10 @@ const checkUserExist = async function (username, email) {
   return !!user;
 };
 
-module.exports = { checkUserExist, getUser };
+const updateUser = async function (userId, user) {
+  const res = await User.updateOne({ id: userId }, { $set: user });
+  console.log(res);
+  return res;
+};
+
+module.exports = { checkUserExist, getUser, updateUser };

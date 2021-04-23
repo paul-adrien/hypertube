@@ -1,9 +1,15 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { User } from 'libs/user';
 import { PopUpComponent } from '../pop-up/pop-up.component';
 import { AuthService } from '../_services/auth_service';
+import { ProfileService } from '../_services/profile_service';
 
 function ValidatorUserNameLength(control: FormControl) {
   const test = /^(?=.{3,20}$)[a-zA-Z0-9]+(?:[-' ][a-zA-Z0-9]+)*$/;
@@ -60,57 +66,93 @@ function ValidatorEmail(control: FormControl) {
         <form
           class="form-container"
           [formGroup]="this.userForm"
-          (ngSubmit)="(f.form.valid)"
+          (ngSubmit)="f.form.valid && onSubmit()"
           #f="ngForm"
           novalidate
         >
           <div class="block">
             <div class="text">Nom d'utilisateur</div>
-            <input
-              class="input"
-              formControlName="userName"
-              required
-              placeholder="Nom d'utilisateur"
-            />
+            <div class="input-container">
+              <input
+                class="input"
+                formControlName="userName"
+                required
+                placeholder="Nom d'utilisateur"
+              />
+              <div
+                class="error"
+                *ngIf="this.userForm.get('userName').errors?.error"
+              >
+                {{ this.userForm.get('userName').errors.error }}
+              </div>
+            </div>
           </div>
           <div class="block">
             <div class="text">Prénom</div>
-            <input
-              class="input"
-              formControlName="firstName"
-              required
-              placeholder="Prénom"
-            />
+            <div class="input-container">
+              <input
+                class="input"
+                formControlName="firstName"
+                required
+                placeholder="Prénom"
+              />
+              <div
+                class="error"
+                *ngIf="this.userForm.get('firstName').errors?.error"
+              >
+                {{ this.userForm.get('firstName').errors.error }}
+              </div>
+            </div>
           </div>
           <div class="block">
             <div class="text">Nom</div>
-            <input
-              class="input"
-              formControlName="lastName"
-              required
-              placeholder="Nom"
-            />
+            <div class="input-container">
+              <input
+                class="input"
+                formControlName="lastName"
+                required
+                placeholder="Nom"
+              />
+              <div
+                class="error"
+                *ngIf="this.userForm.get('lastName').errors?.error"
+              >
+                {{ this.userForm.get('lastName').errors.error }}
+              </div>
+            </div>
           </div>
           <div class="block">
             <div class="text">Email</div>
-            <input
-              class="input"
-              formControlName="email"
-              required
-              placeholder="Email"
-            />
+            <div class="input-container">
+              <input
+                class="input"
+                formControlName="email"
+                required
+                placeholder="Email"
+              />
+              <div
+                class="error"
+                *ngIf="this.userForm.get('email').errors?.error"
+              >
+                {{ this.userForm.get('email').errors.error }}
+              </div>
+            </div>
           </div>
-          <button class="primary-button">Enregistrer</button>
+          <button (ngSubmit)="this.onSubmit()" class="primary-button">
+            Enregistrer
+          </button>
         </form>
       </div>
     </div>
   `,
   styleUrls: ['./profile.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileComponent implements OnInit {
   public user: User;
   constructor(
     private auth_service: AuthService,
+    private profile_service: ProfileService,
     private dialog: MatDialog,
     private cd: ChangeDetectorRef
   ) {}
@@ -120,12 +162,14 @@ export class ProfileComponent implements OnInit {
     firstName: new FormControl('', ValidatorLength),
     lastName: new FormControl('', ValidatorLength),
     email: new FormControl('', ValidatorEmail),
+    picture: new FormControl(''),
   });
 
   public picture = '';
 
   ngOnInit(): void {
     this.user = this.auth_service.getUser();
+    this.userForm.patchValue(this.user);
     this.picture = this.user.picture;
   }
 
@@ -149,6 +193,7 @@ export class ProfileComponent implements OnInit {
         };
         if ((reader.result as string).length > 5) {
           this.picture = reader.result as string;
+          this.userForm.get('picture').patchValue(reader.result as string);
           img.src = reader.result as string;
         } else {
           let dialogRef = this.dialog.open(PopUpComponent, {
@@ -161,5 +206,12 @@ export class ProfileComponent implements OnInit {
         }
       }
     };
+  }
+
+  public onSubmit() {
+    console.log(this.userForm.getRawValue());
+    this.profile_service
+      .updateProfile(this.user.id, this.userForm.getRawValue())
+      .subscribe();
   }
 }

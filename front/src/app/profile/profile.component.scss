@@ -77,13 +77,19 @@
 
       .block {
         display: flex;
-        align-items: center;
+        align-items: baseline;
         margin: 0.5rem 0;
         flex-wrap: wrap;
 
         .text {
-          width: 12rem;
+          width: 10rem;
           margin-bottom: 6px;
+        }
+
+        .input-container {
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
         }
 
         .input {
@@ -96,5 +102,13 @@
         }
       }
     }
+  }
+
+  .error {
+    font-size: 12px;
+    margin: 6px 0 0 12px;
+    color: red;
+    font-family: Roboto-light;
+    width: 100%;
   }
 }
