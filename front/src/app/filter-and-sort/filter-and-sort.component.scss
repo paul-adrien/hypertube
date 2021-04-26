@@ -1,0 +1,79 @@
+:host {
+  width: 100%;
+  max-width: 40rem;
+  margin: 1rem 0;
+
+  .form-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 1rem;
+    justify-content: space-around;
+  }
+
+  .custom-slider {
+    width: 100%;
+    max-width: 17rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .select {
+      margin: 1rem 0;
+      width: 14rem;
+
+      background-color: var(--background-color-primary);
+    }
+
+    &.sort {
+      max-width: 100%;
+    }
+  }
+
+  .primary-button {
+    width: 50%;
+  }
+
+  input {
+    height: 2.5rem;
+    width: 100%;
+    border: 1px solid #4e4e4e;
+    padding: 6px 12px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+    background-color: var(--background-color-primary);
+    color: var(--color-text);
+
+    &.error-input.ng-invalid {
+      margin: 0;
+    }
+  }
+}
+
+::ng-deep {
+  .custom-slider .ngx-slider .ngx-slider-pointer {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    top: -8px;
+    background-color: var(--secondary-color);
+    z-index: 3;
+    border-radius: 16px;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-pointer::after {
+    display: none;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-selection {
+    background: var(--secondary-color) !important;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-bar {
+    background: #fbcf0a44;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-bubble.ngx-slider-limit,
+  .custom-slider .ngx-slider .ngx-slider-bubble {
+    color: var(--color-text);
+  }
+}

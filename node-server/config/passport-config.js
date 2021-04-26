@@ -16,16 +16,15 @@ passport.use(
     },
     async function (accessToken, refreshToken, profile, done) {
       console.log(profile);
-      console.log(
-        await checkUserExist(profile._json.login, profile._json.email)
-      );
+      console.log(await checkUserExist(`42_${profile._json.id}`));
       const user = await getUser({ id: `42_${profile._json.id}` });
       if (user && user !== null) return done(null, user.id);
       if (
         profile &&
         profile._json &&
-        !(await checkUserExist(profile._json.login, profile._json.email))
+        !(await checkUserExist(`42_${profile._json.id}`))
       ) {
+        console.log("ça rentre");
         const user = new User({
           id: `42_${profile._json.id}`,
           userName: profile._json.login,
@@ -42,8 +41,8 @@ passport.use(
               message: err,
             });
           }
+          return done(null, `42_${profile._json.id}`);
         });
-        return done(null, `42_${profile._json.id}`);
       } else return done(null, false);
     }
   )
@@ -57,16 +56,14 @@ passport.use(
       callbackURL: `http://localhost:8080/api/authenticate/google/callback`,
     },
     async function (accessToken, refreshToken, profile, done) {
-      console.log(profile);
-      console.log(
-        await checkUserExist(profile._json.login, profile._json.email)
-      );
+      console.log("strategy", profile);
+      console.log(await checkUserExist(`google_${profile.id}`));
       const user = await getUser({ id: `google_${profile.id}` });
       if (user && user !== null) return done(null, user.id);
       if (
         profile &&
         profile._json &&
-        !(await checkUserExist(profile._json.login, profile._json.email))
+        !(await checkUserExist(`google_${profile.id}`))
       ) {
         const user = new User({
           id: `google_${profile.id}`,
@@ -84,12 +81,8 @@ passport.use(
               message: err,
             });
           }
-
-          const token = jwt.sign({ id: profile._id }, config.secret, {
-            expiresIn: 86400, // 24 hours
-          });
+          return done(null, `google_${profile.id}`);
         });
-        return done(null, `google_${profile.id}`);
       } else return done(null, false);
     }
   )

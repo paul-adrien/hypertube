@@ -22,6 +22,9 @@ import { PlayerComponent } from './player/player.component';
 import { PopUpComponent } from './pop-up/pop-up.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FilterAndSortComponent } from './filter-and-sort/filter-and-sort.component';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -34,6 +37,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     DetailMovieComponent,
     PlayerComponent,
     PopUpComponent,
+    FilterAndSortComponent,
   ],
   imports: [
     HttpClientModule,
@@ -49,6 +53,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     VgOverlayPlayModule,
     MatDialogModule,
     VgBufferingModule,
+    NgxSliderModule,
+    MatProgressSpinnerModule,
   ],
   entryComponents: [PopUpComponent],
   providers: [authInterceptorProviders],

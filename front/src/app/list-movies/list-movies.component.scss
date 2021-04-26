@@ -1,11 +1,42 @@
-.body {
+:host {
+  height: 100%;
+  width: 100%;
+
+  .body {
     height: 100%;
     width: 100%;
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
     .list {
+      display: flex;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: space-around;
+
+      .movie-container {
         display: flex;
-        height: 57rem;
-        flex-grow: 1;
-        overflow: scroll;
         flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 4rem;
+        width: 15rem;
+      }
+
+      .movie-img {
+        width: 100%;
+        object-fit: contain;
+      }
     }
+
+    .spinner {
+      height: 10rem !important;
+      width: 100% !important;
+      left: 50%;
+      transform: translateX(-50px);
+      margin-top: 8rem;
+    }
+  }
 }

@@ -7,12 +7,12 @@ const getUser = async function (query) {
   } else return null;
 };
 
-const checkUserExist = async function (username, email) {
-  if (username === null || email === null) {
+const checkUserExist = async function (userId) {
+  if (userId === null) {
     return false;
   }
   const user = await User.findOne({
-    $or: [{ userName: username }, { email: email }],
+    id: userId,
   }).exec();
   return !!user;
 };

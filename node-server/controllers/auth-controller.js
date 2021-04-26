@@ -6,6 +6,23 @@ var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
+  User.findOne({
+    $and: [
+      {
+        userName: "gguyot",
+      },
+
+      { id: { $not: { $regex: /42_/ } } },
+      { id: { $not: { $regex: /google_/ } } },
+    ],
+  }).exec((err, user) => {
+    if (user) {
+      return res.json({
+        status: false,
+        message: "userName already exist.",
+      });
+    }
+  });
   const user = new User({
     userName: req.body.userName,
     email: req.body.email,
@@ -14,6 +31,8 @@ exports.signup = (req, res) => {
     password: bcrypt.hashSync(req.body.password, 8),
   });
 
+  user.id = user._id;
+
   user.save((err, user) => {
     if (err) {
       return res.json({
@@ -21,14 +40,20 @@ exports.signup = (req, res) => {
         message: err,
       });
     }
-
     res.send({ message: "User was registered successfully!" });
   });
 };
 
 exports.signin = (req, res) => {
   User.findOne({
-    userName: req.body.userName,
+    $and: [
+      {
+        userName: "gguyot",
+      },
+
+      { id: { $not: { $regex: /42_/ } } },
+      { id: { $not: { $regex: /google_/ } } },
+    ],
   }).exec((err, user) => {
     if (err) {
       return res.json({
@@ -59,7 +84,7 @@ exports.signin = (req, res) => {
 
     res.json({
       status: true,
-      id: user._id,
+      id: user.id,
       userName: user.userName,
       email: user.email,
       lastName: user.lastName,
