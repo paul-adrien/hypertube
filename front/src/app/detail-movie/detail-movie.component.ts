@@ -32,7 +32,7 @@ function ValidatorLength(control: FormControl) {
     <div class="body" *ngIf="detailMovie">
       <img src="{{ detailMovie.poster }}" style="height: 30%" />
       <p>{{ detailMovie.title }}</p>
-      <div *ngIf="!loadPlayer">
+      <div *ngIf="!loadPlayer && !isChooseT">
         <div *ngFor="let torrent of this.hashs; let index = index" style="margin-bottom: 5px;">
           <button (click)="choiceOfTorrent(index)">{{torrent.source}} {{torrent.quality}} seeds: {{torrent.seeds}} peers: {{torrent.peers}} {{torrent.state ? 'state: '+torrent.state : ''}}</button>
         </div>
@@ -83,6 +83,7 @@ export class DetailMovieComponent implements OnInit {
   public loadPlayer = false;
   public hashs = null;
   public detailMovie = null;
+  public isChooseT = false;
 
   constructor(
     private YTSServices: YTSService,
@@ -123,6 +124,7 @@ export class DetailMovieComponent implements OnInit {
   }
 
   async choiceOfTorrent(index) {
+    this.isChooseT = true;
     this.cd.detectChanges();
     this.index = index;
     console.log(index);

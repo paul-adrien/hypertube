@@ -182,12 +182,9 @@ async function getHashYTS(imdb_code) {
   if (data && data.data && data.data.data && data.data.data.movies) {
     movies = [];
     i = 0;
-    await Promise.all(
-      data.data.data.movies[0].torrents.map(async (torrent) => {
-        state = await Movies.findOne(
-          { id: imdb_code, hash: torrent.hash },
-          "state"
-        ).exec();
+    await Promise.all(data.data.data.movies[0].torrents.map(async (torrent) => {
+      state = await Movies.findOne({ id: imdb_code, hash: torrent.hash }, 'state').exec();
+      if (torrent.quality === '1080p' || torrent.quality === '480p' || torrent.quality === '240p' || torrent.quality === '360p' || torrent.quality === '720p' || torrent.quality === 'XviD' || torrent.quality === 'BDRip')
         movies[i++] = {
           imdb_code: imdb_code,
           seeds: torrent.seeds,
@@ -196,38 +193,26 @@ async function getHashYTS(imdb_code) {
           quality: torrent.quality,
           size: torrent.size_bytes,
           source: "YTS",
-          state: state ? state.state : false,
+          state: state ? state.state : false
         };
-      })
-    );
+    }))
     return movies;
   } else return null;
 }
 
 async function getHashRARBG(imdb_code) {
   movies = [];
-  await rarbgApi
-    .search(imdb_code, null, "imdb")
-    .then(async (results) => {
-      const isQuality = (element) =>
-        element === "1080p" ||
-        element === "720p" ||
-        element === "2160p" ||
-        element === "3D" ||
-        element === "XviD" ||
-        element === "BDRip";
+  await rarbgApi.search(imdb_code, null, 'imdb')
+    .then(async results => {
+      const isQuality = (element) => element === '1080p' || element === '480p' || element === '240p' || element === '360p' || element === '720p' || element === 'XviD' || element === 'BDRip';
       i = 0;
-      await Promise.all(
-        results.map(async (torrent) => {
-          var title = torrent.title.split(".");
-          qualityId = title.findIndex(isQuality);
-          console.log(title[qualityId]);
-          var magnet = torrent.download.split(":");
-          var hash = magnet[3].split("&dn=");
-          state = await Movies.findOne(
-            { id: imdb_code, hash: hash[0] },
-            "state"
-          ).exec();
+      await Promise.all(results.map(async (torrent) => {
+        let title = torrent.title.split('.');
+        let qualityId = title.findIndex(isQuality);
+        let magnet = torrent.download.split(':');
+        let hash = magnet[3].split('&dn=');
+        let state = await Movies.findOne({ id: imdb_code, hash: hash[0] }, 'state').exec();
+        if (qualityId !== -1 && title[qualityId] !== undefined)
           movies[i++] = {
             imdb_code: imdb_code,
             seeds: torrent.seeders,
@@ -238,7 +223,7 @@ async function getHashRARBG(imdb_code) {
             source: "RARBG",
             state: state ? state.state : false,
           };
-        })
+      })
       );
     })
     .catch((err) => {

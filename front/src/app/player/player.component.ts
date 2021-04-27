@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { VgApiService } from '@videogular/ngx-videogular/core';
+import { AuthService } from '../_services/auth_service';
 import { movieService } from '../_services/movie_service';
 
 @Component({
@@ -56,7 +57,7 @@ import { movieService } from '../_services/movie_service';
           [src]="
             'http://localhost:8080/api/movie/subtitles/file/' +
             imdb_code +
-            '/en'
+            '/en?token='+ token
           "
           srclang="en"
         />
@@ -67,7 +68,7 @@ import { movieService } from '../_services/movie_service';
           [src]="
             'http://localhost:8080/api/movie/subtitles/file/' +
             imdb_code +
-            '/fr'
+            '/fr?token='+ token
           "
           srclang="fr"
         />
@@ -82,6 +83,7 @@ export class PlayerComponent implements OnInit {
   public subtitles = [];
   api: VgApiService;
   viewSend = false;
+  token = this.authService.getToken();
 
   @Input() imdb_code: string;
   @Input() hash: string;
@@ -89,12 +91,12 @@ export class PlayerComponent implements OnInit {
 
   constructor(
     private cd: ChangeDetectorRef,
-    private movieService: movieService
-  ) {}
+    private movieService: movieService,
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
-    this.source =
-      'http://localhost:8080/' + `convert/${this.hash}/${this.quality}`;
+    this.source = 'http://localhost:8080/api' + `/movie/convert/${this.hash}/${this.quality}?token=${this.token}`;
     console.log(this.source);
     this.getSubtitles();
     this.cd.detectChanges();

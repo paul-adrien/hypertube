@@ -24,7 +24,29 @@ verifyToken = (req, res, next) => {
   });
 };
 
+verifyTokenAxios = (req, res, next) => {
+  let token = req.query.token;
+
+  if (!token) {
+    return res.json({
+      status: false,
+      message: "No token"
+    });
+  }
+
+  jwt.verify(token, config.secret, (err, decoded) => {
+    if (err) {
+      return res.json({
+        status: false,
+        message: "unauthorized !"
+      });
+    }
+    next();
+  });
+};
+
 const authJwt = {
-  verifyToken
+  verifyToken,
+  verifyTokenAxios
 };
 module.exports = authJwt;

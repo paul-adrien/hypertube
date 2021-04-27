@@ -1,5 +1,5 @@
 const trackers = {
-  movie_folder: "/tmp",
+  movie_folder: "/home/paul-adrien/Bureau/Projet42/hypertube/movies",
 
   trackers: [
     "udp://p4p.arenabg.com:1337",
