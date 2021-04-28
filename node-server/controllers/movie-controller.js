@@ -6,7 +6,7 @@ const db = require("../models");
 const Movies = db.movies;
 var searchCancelTokenFetch = { id: null, source: null };
 
-async function getYTSMovies(page, genre, sort, note) {
+async function getYTSMovies(page, genre, sort, note, search, userId) {
   const source = axios.CancelToken.source();
   searchCancelTokenFetch.source = source;
   const data = await axios.get(YTS_LIST, {
@@ -15,6 +15,7 @@ async function getYTSMovies(page, genre, sort, note) {
       genre: genre ? genre : "all",
       sort_by: sort,
       minimum_rating: note,
+      query_term: search,
     },
     withCredentials: false,
     cancelToken: searchCancelTokenFetch.source.token,
@@ -30,8 +31,10 @@ async function getYTSMovies(page, genre, sort, note) {
     await Promise.all(
       data.data.data.movies.map(async (m) => {
         if (m && m.imdb_code && m.torrents) {
-          console.log(m);
-          see = await Movies.findOne({ id: m.imdb_code }, "state").exec();
+          see = await Movies.findOne(
+            { id: m.imdb_code, userId: userId },
+            "state"
+          ).exec();
           movies[i++] = {
             imdb_code: m.imdb_code,
             title: null,
@@ -48,7 +51,7 @@ async function getYTSMovies(page, genre, sort, note) {
   return movies;
 }
 
-async function getRarbgMovies(page, genre, sort) {
+async function getRarbgMovies(page, genre, sort, userId) {
   if (page >= 5) return null;
   if (sort === "seeds") sort = "seeders";
   let limit = 100;
@@ -65,7 +68,7 @@ async function getRarbgMovies(page, genre, sort) {
       results.map(async (m) => {
         if (m && m.episode_info && m.episode_info.imdb) {
           see = await Movies.findOne(
-            { id: m.episode_info.imdb },
+            { id: m.episode_info.imdb, userId: userId },
             "state"
           ).exec();
           movies[i++] = {
@@ -96,6 +99,7 @@ async function getInfoMovies(movies) {
           await imdb
             .get({ id: m.imdb_code }, { apiKey: "e8cb5cca" })
             .then(async (movie) => {
+              console.log(movie);
               tmp[
                 await movies.findIndex((j) => j.imdb_code === m.imdb_code)
               ] = {
@@ -105,6 +109,7 @@ async function getInfoMovies(movies) {
                 rating: movie.rating,
                 poster: movie.poster,
                 seeds: m.seeds,
+                runtime: movie.runtime,
                 see: m.see,
               };
               if (i + 1 == len) resolve(tmp);
@@ -116,17 +121,22 @@ async function getInfoMovies(movies) {
         }
         i++;
       });
-    }
+    } else resolve([]);
   });
 }
 
 exports.getListMovie = async (req, res) => {
-  const { page, genre, sort, note } = req.body;
-  console.log(page, genre, sort, note);
-  YTSmovies = await getYTSMovies(page, genre, sort, note);
+  const { userId, page, genre, sort, note, search } = req.body;
+  console.log(page, genre, sort, note, search);
+  YTSmovies = await getYTSMovies(page, genre, sort, note, search, userId);
   movies = [];
-  if (page == 1) {
-    RARBGmovies = await getRarbgMovies(page, genre, sort);
+  if (
+    page === 1 &&
+    (genre === undefined || genre === "all") &&
+    note === 0 &&
+    search === ""
+  ) {
+    RARBGmovies = await getRarbgMovies(page, genre, sort, userId);
     console.log("test");
     if (YTSmovies !== undefined) {
       YTSmovies = YTSmovies.filter(
@@ -139,8 +149,6 @@ exports.getListMovie = async (req, res) => {
       );
       movies = await getInfoMovies(YTSmovies);
     }
-    console.log("la");
-
     if (RARBGmovies !== undefined) {
       RARBGmovies = RARBGmovies.filter(
         (object, index) =>
@@ -153,13 +161,14 @@ exports.getListMovie = async (req, res) => {
       RARBGmovies_filtred = await getInfoMovies(RARBGmovies);
       movies = movies.concat(RARBGmovies_filtred);
     }
-    console.log(movies);
     res.json({
       status: true,
       movies: movies.filter((movie) => movie && movie.title && movie.poster),
     });
   } else {
+    console.log(YTSmovies);
     movies_filtred = await getInfoMovies(YTSmovies);
+    console.log("pppppp");
     res.json({
       status: true,
       movies: movies_filtred.filter(
@@ -169,7 +178,7 @@ exports.getListMovie = async (req, res) => {
   }
 };
 
-async function getHashYTS(imdb_code) {
+async function getHashYTS(imdb_code, userId) {
   const source = axios.CancelToken.source();
   searchCancelTokenFetch.source = source;
   const data = await axios.get(YTS_LIST, {
@@ -182,48 +191,73 @@ async function getHashYTS(imdb_code) {
   if (data && data.data && data.data.data && data.data.data.movies) {
     movies = [];
     i = 0;
-    await Promise.all(data.data.data.movies[0].torrents.map(async (torrent) => {
-      state = await Movies.findOne({ id: imdb_code, hash: torrent.hash }, 'state').exec();
-      if (torrent.quality === '1080p' || torrent.quality === '480p' || torrent.quality === '240p' || torrent.quality === '360p' || torrent.quality === '720p' || torrent.quality === 'XviD' || torrent.quality === 'BDRip')
-        movies[i++] = {
-          imdb_code: imdb_code,
-          seeds: torrent.seeds,
-          peers: torrent.peers,
-          hash: torrent.hash,
-          quality: torrent.quality,
-          size: torrent.size_bytes,
-          source: "YTS",
-          state: state ? state.state : false
-        };
-    }))
+    await Promise.all(
+      data.data.data.movies[0].torrents.map(async (torrent) => {
+        state = await Movies.findOne(
+          { id: imdb_code, hash: torrent.hash, userId: userId },
+          "state"
+        ).exec();
+        if (
+          torrent.quality === "1080p" ||
+          torrent.quality === "480p" ||
+          torrent.quality === "240p" ||
+          torrent.quality === "360p" ||
+          torrent.quality === "720p" ||
+          torrent.quality === "XviD" ||
+          torrent.quality === "BDRip"
+        )
+          movies[i++] = {
+            imdb_code: imdb_code,
+            seeds: torrent.seeds,
+            peers: torrent.peers,
+            hash: torrent.hash,
+            quality: torrent.quality,
+            size: torrent.size_bytes,
+            source: "YTS",
+            state: state ? state.state : false,
+          };
+      })
+    );
     return movies;
   } else return null;
 }
 
-async function getHashRARBG(imdb_code) {
+async function getHashRARBG(imdb_code, userId) {
   movies = [];
-  await rarbgApi.search(imdb_code, null, 'imdb')
-    .then(async results => {
-      const isQuality = (element) => element === '1080p' || element === '480p' || element === '240p' || element === '360p' || element === '720p' || element === 'XviD' || element === 'BDRip';
+  await rarbgApi
+    .search(imdb_code, null, "imdb")
+    .then(async (results) => {
+      const isQuality = (element) =>
+        element === "1080p" ||
+        element === "480p" ||
+        element === "240p" ||
+        element === "360p" ||
+        element === "720p" ||
+        element === "XviD" ||
+        element === "BDRip";
       i = 0;
-      await Promise.all(results.map(async (torrent) => {
-        let title = torrent.title.split('.');
-        let qualityId = title.findIndex(isQuality);
-        let magnet = torrent.download.split(':');
-        let hash = magnet[3].split('&dn=');
-        let state = await Movies.findOne({ id: imdb_code, hash: hash[0] }, 'state').exec();
-        if (qualityId !== -1 && title[qualityId] !== undefined)
-          movies[i++] = {
-            imdb_code: imdb_code,
-            seeds: torrent.seeders,
-            peers: torrent.leechers,
-            hash: hash[0],
-            quality: title[qualityId],
-            size: torrent.size,
-            source: "RARBG",
-            state: state ? state.state : false,
-          };
-      })
+      await Promise.all(
+        results.map(async (torrent) => {
+          let title = torrent.title.split(".");
+          let qualityId = title.findIndex(isQuality);
+          let magnet = torrent.download.split(":");
+          let hash = magnet[3].split("&dn=");
+          let state = await Movies.findOne(
+            { id: imdb_code, hash: hash[0], userId: userId },
+            "state"
+          ).exec();
+          if (qualityId !== -1 && title[qualityId] !== undefined)
+            movies[i++] = {
+              imdb_code: imdb_code,
+              seeds: torrent.seeders,
+              peers: torrent.leechers,
+              hash: hash[0],
+              quality: title[qualityId],
+              size: torrent.size,
+              source: "RARBG",
+              state: state ? state.state : false,
+            };
+        })
       );
     })
     .catch((err) => {
@@ -244,7 +278,7 @@ async function getInfoMovie(imdb_code) {
             year: movie.year,
             rating: movie.rating,
             poster: movie.poster,
-            genre: movie.genre,
+            genre: movie.genres,
             director: movie.director,
             author: movie.writer,
             actors: movie.actors,
@@ -253,6 +287,7 @@ async function getInfoMovie(imdb_code) {
             metascore: movie.metascore,
             boxoffice: movie.boxoffice,
             production: movie.production,
+            runtime: movie.runtime,
           };
         })
         .catch((err) => {
@@ -265,12 +300,13 @@ async function getInfoMovie(imdb_code) {
 
 exports.getDetailMovie = async (req, res) => {
   const imdb_id = req.params.imdb_id;
+  const userId = req.params.userId;
   hashs = null;
-  var hashs = await getHashRARBG(imdb_id);
+  var hashs = await getHashRARBG(imdb_id, userId);
   if (hashs) {
-    hashs = hashs.concat(await getHashYTS(imdb_id));
+    hashs = hashs.concat(await getHashYTS(imdb_id, userId));
   } else {
-    hashs = await getHashYTS(imdb_id);
+    hashs = await getHashYTS(imdb_id, userId);
   }
   hashs.sort(function (a, b) {
     return b.seeds - a.seeds;

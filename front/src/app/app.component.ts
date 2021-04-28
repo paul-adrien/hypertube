@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from './_services/auth_service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -25,8 +26,12 @@ export class AppComponent implements AfterContentInit {
   constructor(
     private route: Router,
     private cd: ChangeDetectorRef,
-    private authService: AuthService
-  ) {}
+    private authService: AuthService,
+    public translate: TranslateService
+  ) {
+    translate.addLangs(['en', 'fr']);
+    translate.setDefaultLang('en');
+  }
 
   ngAfterContentInit() {
     if (

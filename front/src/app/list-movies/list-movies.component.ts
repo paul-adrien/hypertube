@@ -1,3 +1,4 @@
+import { User } from './../../../libs/user';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -9,6 +10,7 @@ import { Router } from '@angular/router';
 import { List } from 'libs/movie';
 import { movieService } from '../_services/movie_service';
 import { YTSService } from '../_services/yts_service';
+import { AuthService } from '../_services/auth_service';
 
 @Component({
   selector: 'app-list-movies',
@@ -20,9 +22,9 @@ import { YTSService } from '../_services/yts_service';
       (scrolled)="onScrollDown()"
     >
       <app-filter-and-sort
+        [disabledButton]="this.loadingMovie"
         (sendParams)="this.getMovieListFilter($event)"
       ></app-filter-and-sort>
-      <p>Films:</p>
       <div class="list">
         <div
           *ngFor="let movie of this.moviesList"
@@ -30,7 +32,17 @@ import { YTSService } from '../_services/yts_service';
           class="movie-container"
         >
           <img src="{{ movie.poster }}" class="movie-img" />
-          <p>{{ movie.title }} {{ movie.see == true ? '(Déjà vu)' : '' }}</p>
+          <div class="bottom-container">
+            <div class="movie-title" [title]="movie.title">
+              {{ movie.title }} {{ movie.see == true ? '(Déjà vu)' : '' }}
+            </div>
+            <div class="movie-info">
+              <div>{{ movie.year }}</div>
+              <div>
+                {{ movie.runtime }}
+              </div>
+            </div>
+          </div>
         </div>
         <mat-spinner class="spinner" *ngIf="this.loadingMovie"></mat-spinner>
       </div>
@@ -44,48 +56,67 @@ export class ListMoviesComponent implements OnInit {
   public moviesList = [];
   public loadingMovie = false;
   public paramsFilterSort: any;
+  public user: User;
 
   constructor(
     private YTSServices: YTSService,
     private cd: ChangeDetectorRef,
     private route: Router,
-    private movieService: movieService
+    private movieService: movieService,
+    private auth_service: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.user = this.auth_service.getUser();
     this.getMovieList(this.pageNum);
   }
 
   onScrollDown() {
-    this.getMovieList(++this.pageNum);
+    if (!this.loadingMovie) {
+      this.pageNum++;
+    }
+    console.log(this.pageNum);
+    this.getMovieList(this.pageNum);
   }
 
   getMovieList(page: number) {
-    this.loadingMovie = true;
-    this.movieService
-      .getListMovies(
+    if (!this.loadingMovie) {
+      this.loadingMovie = true;
+      this.cd.detectChanges();
+      console.log(
         page,
         this.paramsFilterSort?.genre,
         'download_count',
-        this.paramsFilterSort?.note
-      )
-      .subscribe(
-        (data) => {
-          if (!this.moviesList || this.moviesList.length == 0)
-            this.moviesList = data.movies;
-          else this.moviesList = this.moviesList.concat(data.movies);
-          this.loadingMovie = false;
-          console.log(data);
-          this.cd.detectChanges();
-        },
-        (err) => {
-          console.log(err);
-        }
+        this.paramsFilterSort?.note,
+        this.paramsFilterSort?.name
       );
+      this.movieService
+        .getListMovies(
+          this.user.id,
+          page,
+          this.paramsFilterSort?.genre,
+          'download_count',
+          this.paramsFilterSort?.note,
+          this.paramsFilterSort?.name
+        )
+        .subscribe(
+          (data) => {
+            if (!this.moviesList || this.moviesList.length === 0)
+              this.moviesList = data.movies;
+            else this.moviesList = this.moviesList.concat(data.movies);
+            this.loadingMovie = false;
+            console.log(data);
+            this.cd.detectChanges();
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+    }
   }
 
   getMovieListFilter(params: any) {
-    this.pageNum = 0;
+    this.pageNum = 1;
     this.paramsFilterSort = params;
     this.moviesList = [];
     this.getMovieList(this.pageNum);

@@ -51,7 +51,7 @@ function ValidatorPass(control: FormControl) {
   template: `
     <div class="container-login">
       <div class="title">
-        {{ this.loginMode ? 'Création de compte' : 'Se connecter' }}
+        {{ this.loginMode ? ('signUp' | translate) : ('signIn' | translate) }}
       </div>
       <form
         [formGroup]="this.registerForm"
@@ -174,7 +174,7 @@ function ValidatorPass(control: FormControl) {
         </div>
         <div class="error">{{ this.errorMessageReg }}</div>
         <button class="primary-button" (click)="test()">
-          {{ this.loginMode ? 'Se connecter' : 'Créer un compte' }}
+          {{ this.loginMode ? ('signUp' | translate) : ('signIn' | translate) }}
         </button>
       </form>
       <form
@@ -220,7 +220,7 @@ function ValidatorPass(control: FormControl) {
         </div>
         <div class="error">{{ this.errorMessageLog }}</div>
         <button class="primary-button" (click)="test()">
-          {{ this.loginMode ? 'Se connecter' : 'Créer un compte' }}
+          {{ this.loginMode ? ('signUp' | translate) : ('signIn' | translate) }}
         </button>
       </form>
       <a
@@ -231,7 +231,11 @@ function ValidatorPass(control: FormControl) {
         >Mot de passe oublié ?
       </a>
       <div class="log-button" (click)="this.loginMode = !loginMode">
-        {{ this.loginMode ? 'Je crée un compte' : "J'ai déjà un compte" }}
+        {{
+          this.loginMode
+            ? ('createAccount' | translate)
+            : ('alreadyHaveAccount' | translate)
+        }}
       </div>
       <div class="separator">
         <div class="bar"></div>
@@ -240,12 +244,14 @@ function ValidatorPass(control: FormControl) {
       </div>
       <div class="buttons-auth">
         <div class="primary-button forty-two" (click)="this.Oauth42()">
-          Se connecter avec 42
+          {{ 'signInWith' | translate }} 42
         </div>
         <div class="primary-button google" (click)="this.OauthGoogle()">
-          Se connecter avec Google
+          {{ 'signInWith' | translate }} Google
         </div>
-        <div class="primary-button google">Se connecter avec Jsp</div>
+        <div class="primary-button google">
+          {{ 'signInWith' | translate }} Jsp
+        </div>
       </div>
     </div>
   `,

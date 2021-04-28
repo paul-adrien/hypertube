@@ -1,0 +1,13 @@
+{
+  "userName": "Username",
+  "lastName": "Last name",
+  "firstName": "First name",
+  "Password": "Password",
+  "signUp": "Register",
+  "signIn": "Log in",
+  "signInWith": "Log in with",
+  "alreadyHaveAccount": "Have already an account",
+  "createAccount": "Register an account",
+  "update": "Update",
+  "search": "Search"
+}

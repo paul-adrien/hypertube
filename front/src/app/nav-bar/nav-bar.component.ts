@@ -9,6 +9,7 @@ import {
   OnChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'nav-bar',
@@ -35,7 +36,20 @@ import { Router } from '@angular/router';
           />
         </a>
       </div>
-      <div class="case">Langue</div>
+      <select
+        class="case"
+        #selectedLang
+        (change)="switchLang(selectedLang.value)"
+      >
+        <option selected disabled hidden>Langue</option>
+        <option
+          *ngFor="let language of translate.getLangs()"
+          [value]="language"
+          [selected]="language === translate.currentLang"
+        >
+          {{ language }}
+        </option>
+      </select>
       <div class="case" *ngIf="!this.onPageLogin">
         <img (click)="this.logOut()" src="./assets/log-out.svg" />
       </div>
@@ -84,8 +98,9 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
   constructor(
     private cd: ChangeDetectorRef,
     private router: Router,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    public translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     if (this.selectedId) {
@@ -105,7 +120,10 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     ) {
       this.onPageLogin = false;
       this.selectItem('profile');
-    } else if (this.router.url.includes('list-Movies')) {
+    } else if (
+      this.router.url.includes('list-Movies') ||
+      this.router.url.includes('detail-movie')
+    ) {
       this.onPageLogin = false;
       this.selectItem('list-Movies');
     } else if (this.router.url.includes('home')) {
@@ -115,6 +133,10 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
       this.onPageLogin = true;
     }
     this.cd.detectChanges();
+  }
+
+  switchLang(lang: string) {
+    this.translate.use(lang);
   }
 
   public selectItem(id: string) {
@@ -133,5 +155,5 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     this.selectItem('home');
   }
 
-  ngOnDestroy() { }
+  ngOnDestroy() {}
 }

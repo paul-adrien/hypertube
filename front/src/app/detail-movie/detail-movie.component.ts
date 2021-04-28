@@ -1,3 +1,4 @@
+import { User } from './../../../libs/user';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -21,61 +22,73 @@ function ValidatorLength(control: FormControl) {
 @Component({
   selector: 'app-detail-movie',
   template: `
+    <div *ngIf="detailMovie" class="top-container">
+      <img [src]="detailMovie.poster" class="poster" />
+      <div class="info-container">
+        <div class="title">{{ detailMovie.title }}</div>
+        <div>
+          <span class="info-movie">{{ detailMovie.runtime }}</span>
+          <span class="info-movie">{{ detailMovie.genre }}</span>
+          <span class="info-movie">{{ detailMovie.year }}</span>
+        </div>
+
+        <div class="sub-title">Description</div>
+        <div>{{ detailMovie.resume }}</div>
+      </div>
+    </div>
+    <div *ngIf="!loadPlayer && !isChooseT" class="torrents-container">
+      <div
+        *ngFor="let torrent of this.hashs; let index = index"
+        (click)="choiceOfTorrent(index)"
+        class="torrent-button"
+      >
+        {{ torrent.source }} {{ torrent.quality }} seeds:
+        {{ torrent.seeds }} peers: {{ torrent.peers }}
+        {{ torrent.state ? 'state: ' + torrent.state : '' }}
+      </div>
+    </div>
     <app-player
       *ngIf="loadPlayer"
-      style="width: 100%; height: 400px"
+      style="width: 100%; height: calc(100vw / 2)"
       [hash]="hashs[this.index].hash"
       [quality]="hashs[this.index].quality"
       [imdb_code]="detailMovie.imdb_code"
     ></app-player>
 
-    <div class="body" *ngIf="detailMovie">
-      <img src="{{ detailMovie.poster }}" style="height: 30%" />
-      <p>{{ detailMovie.title }}</p>
-      <div *ngIf="!loadPlayer && !isChooseT">
-        <div *ngFor="let torrent of this.hashs; let index = index" style="margin-bottom: 5px;">
-          <button (click)="choiceOfTorrent(index)">{{torrent.source}} {{torrent.quality}} seeds: {{torrent.seeds}} peers: {{torrent.peers}} {{torrent.state ? 'state: '+torrent.state : ''}}</button>
-        </div>
+    <div class="comment" *ngIf="comments !== null">
+      <div *ngFor="let comment of comments">
+        <p>{{ comment[this.user.id] }} le {{ comment['date'] }}:</p>
+        <p>{{ comment['comment'] }}</p>
       </div>
-
-      <div class="comment" *ngIf="comments !== null">
-        <div *ngFor="let comment of comments">
-          <p>{{ comment['username'] }} le {{ comment['date'] }}:</p>
-          <p>{{ comment['comment'] }}</p>
-        </div>
-      </div>
-      <form
-        [formGroup]="this.commentForm"
-        class="form-container"
-        name="form"
-        (ngSubmit)="addComment()"
-        #f="ngForm"
-        novalidate
-      >
-        <input
-          type="text"
-          formControlName="comment"
-          id="comment"
-          required
-          [class.error-input]="this.commentForm.get('comment').errors?.error"
-          placeholder="Nom d'utilisateur"
-        />
-        <div
-          class="error"
-          *ngIf="this.commentForm.get('comment').errors?.error"
-        >
-          {{ this.commentForm.get('comment').errors.error }}
-        </div>
-        <button>envoyer</button>
-      </form>
     </div>
+    <form
+      [formGroup]="this.commentForm"
+      class="form-container"
+      name="form"
+      (ngSubmit)="addComment()"
+      #f="ngForm"
+      novalidate
+    >
+      <input
+        type="text"
+        formControlName="comment"
+        id="comment"
+        required
+        [class.error-input]="this.commentForm.get('comment').errors?.error"
+        placeholder="Nom d'utilisateur"
+      />
+      <div class="error" *ngIf="this.commentForm.get('comment').errors?.error">
+        {{ this.commentForm.get('comment').errors.error }}
+      </div>
+      <button>envoyer</button>
+    </form>
   `,
   styleUrls: ['./detail-movie.component.scss'],
 })
 export class DetailMovieComponent implements OnInit {
   imdb_code = '';
   index = 0;
-  private username = '';
+  private user: User;
   public comments = null;
   public commentForm = new FormGroup({
     comment: new FormControl('', ValidatorLength),
@@ -92,12 +105,12 @@ export class DetailMovieComponent implements OnInit {
     private auth_service: AuthService,
     private commentsService: commentsService,
     private movieService: movieService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.imdb_code = this.route.snapshot.params['imdb_code'];
     // this.getMovieDetail(this.imdb_code);
-    this.username = this.auth_service.getUser().userName;
+    this.user = this.auth_service.getUser();
     this.getDetailMovie();
   }
 
@@ -109,7 +122,7 @@ export class DetailMovieComponent implements OnInit {
   // }
 
   async getDetailMovie() {
-    this.movieService.getDetailMovie(this.imdb_code).subscribe(
+    this.movieService.getDetailMovie(this.imdb_code, this.user.id).subscribe(
       (data) => {
         this.detailMovie = data.movieDetail;
         this.hashs = data.hashs;
@@ -128,7 +141,13 @@ export class DetailMovieComponent implements OnInit {
     this.cd.detectChanges();
     this.index = index;
     console.log(index);
-    let result = await this.movieService.download(this.hashs[index].hash, this.detailMovie.imdb_code, this.hashs[index].size, this.hashs[index].quality);
+    let result = await this.movieService.download(
+      this.hashs[index].hash,
+      this.detailMovie.imdb_code,
+      this.hashs[index].size,
+      this.hashs[index].quality,
+      this.user.id
+    );
     console.log(result);
     this.loadPlayer = true;
     this.cd.detectChanges();
@@ -151,9 +170,9 @@ export class DetailMovieComponent implements OnInit {
 
   addComment() {
     const form: Partial<Comment> = this.commentForm.getRawValue();
-    console.log(form, this.detailMovie.imdb_code, this.username);
+    console.log(form, this.detailMovie.imdb_code, this.user.id);
     this.commentsService
-      .addComment(form, this.detailMovie.imdb_code, this.username)
+      .addComment(form, this.detailMovie.imdb_code, this.user.id)
       .subscribe(
         (data) => {
           if (data.status) console.log(data.message);

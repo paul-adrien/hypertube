@@ -1,20 +1,98 @@
-.body {
-    height: 100%;
+:host {
+  height: 100%;
+  width: 100%;
+  overflow: scroll;
+  max-width: 87rem;
+  padding: 1rem;
+  box-sizing: border-box;
+  margin: auto;
+
+  .top-container {
     width: 100%;
-    .comment {
-        display: flex;
-        height: 20rem;
-        flex-grow: 1;
-        overflow: scroll;
-        flex-direction: column;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 1rem;
+
+    .info-container {
+      display: flex;
+      flex-direction: column;
+      width: 68%;
+      flex-grow: 1;
+      margin: 1rem;
+      text-align: justify;
+
+      .title {
+        font-size: 1.3rem;
+        font-family: Roboto-Bold;
+        margin-bottom: 1rem;
+      }
+
+      .info-movie {
+        padding: 0 0.5rem;
+        border-right: 1px solid;
+
+        &:first-child {
+          padding-left: 0;
+        }
+
+        &:last-child {
+          border: none;
+        }
+      }
+
+      .sub-title {
+        font-size: 1.2rem;
+        font-family: "Roboto-medium";
+        margin: 1rem 0;
+      }
     }
+  }
+
+  .torrents-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .torrent-button {
+      padding: 6px;
+      background-color: #353535;
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      width: 13rem;
+      text-align: center;
+      cursor: pointer;
+    }
+  }
+
+  .poster {
+    height: 22rem;
+    object-fit: contain;
+  }
+
+  .comment {
+    display: flex;
+    height: 20rem;
+    flex-grow: 1;
+    overflow: scroll;
+    flex-direction: column;
+  }
 }
 
 vg-player > vg-scrub-bar:hover,
 vg-player > vg-scrub-bar:hover vg-scrub-bar-current-time,
-vg-player > vg-scrub-bar:hover vg-scrub-bar-buffering-time
-{ height: 20px; transition: height 0.5s; }
+vg-player > vg-scrub-bar:hover vg-scrub-bar-buffering-time {
+  height: 20px;
+  transition: height 0.5s;
+}
 
-vg-player > vg-scrub-bar, vg-scrub-bar-current-time, vg-scrub-bar-buffering-time { transition: height 0.5s; }
+vg-player > vg-scrub-bar,
+vg-scrub-bar-current-time,
+vg-scrub-bar-buffering-time {
+  transition: height 0.5s;
+}
 
-vg-player > vg-scrub-bar { background: rgba(255, 255, 255, 0.5)}
+vg-player > vg-scrub-bar {
+  background: rgba(255, 255, 255, 0.5);
+}

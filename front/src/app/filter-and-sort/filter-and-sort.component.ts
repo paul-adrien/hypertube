@@ -23,32 +23,26 @@ import { Observable } from 'rxjs';
       name="form"
       novalidate
     >
-      <input formControlName="name" />
-      <div class="custom-slider sort">
-        <span>Trier par:</span>
-        <select class="select" formControlName="sortBy">
-          <option *ngFor="let option of this.sortOptions" [ngValue]="option.id">
-            {{ option.name }}
-          </option>
-        </select>
+      <div class="input-button">
+        <input formControlName="name" />
+        <button [disabled]="this.disabledButton" class="primary-button">
+          {{ 'search' | translate }}
+        </button>
       </div>
       <div class="custom-slider sort">
         <select class="select" formControlName="genre">
+          <option selected disabled hidden>Genre</option>
           <option *ngFor="let option of this.genreOptions">
             {{ option }}
           </option>
         </select>
+        <select class="select" formControlName="note">
+          <option selected disabled hidden>Note</option>
+          <option *ngFor="let option of this.noteOptions">
+            {{ option }}
+          </option>
+        </select>
       </div>
-      <div class="custom-slider">
-        <span>Note</span>
-        <ngx-slider [options]="noteOptions" formControlName="note"></ngx-slider>
-      </div>
-      <div class="custom-slider">
-        <span>Age</span>
-        <ngx-slider [options]="ageOptions" formControlName="age"></ngx-slider>
-      </div>
-
-      <button class="primary-button">Filtrer</button>
     </form>
   `,
   styleUrls: ['./filter-and-sort.component.scss'],
@@ -56,22 +50,15 @@ import { Observable } from 'rxjs';
 })
 export class FilterAndSortComponent implements OnInit {
   @Input() public isSuggestion = false;
+  @Input() public disabledButton = false;
   @Output() public sendParams = new EventEmitter();
 
   constructor(private router: Router, private cd: ChangeDetectorRef) {}
 
   usersMatch = [];
 
-  sortOptions = [
-    { name: 'Aucun', id: '0' },
-    { name: 'Age', id: 'age' },
-    { name: 'Score de popularité', id: 'popu' },
-    { name: 'Distance', id: 'local' },
-    { name: 'Nombre de tags en commun', id: 'tags' },
-  ];
-
   genreOptions = [
-    'Aucun',
+    'Tout',
     'Action',
     'Adventure',
     'Animation',
@@ -98,38 +85,14 @@ export class FilterAndSortComponent implements OnInit {
     'Western',
   ];
 
+  public noteOptions = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
   sliderForm: FormGroup = new FormGroup({
     name: new FormControl(''),
-    age: new FormControl([18, 150]),
-    note: new FormControl(0),
+    note: new FormControl('Note'),
     sortBy: new FormControl('0'),
-    genre: new FormControl('Aucun'),
+    genre: new FormControl('Genre'),
   });
-
-  ageOptions: Options = {
-    floor: 18,
-    ceil: 150,
-    minRange: 4,
-    hideLimitLabels: true,
-  };
-
-  noteOptions: Options = {
-    floor: 0,
-    ceil: 9,
-    showSelectionBar: true,
-  };
-
-  localOptions: Options = {
-    floor: 1,
-    ceil: 4000,
-    showSelectionBar: true,
-  };
-
-  tagsOptions: Options = {
-    floor: 0,
-    ceil: 100,
-    showSelectionBar: true,
-  };
 
   ngOnInit(): void {
     if (!this.isSuggestion) {

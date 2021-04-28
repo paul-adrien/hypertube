@@ -1,7 +1,7 @@
 const torrentStream = require("torrent-stream");
 const FFmpeg = require("fluent-ffmpeg");
-const FFmpegPath = require('@ffmpeg-installer/ffmpeg').path;
-FFmpeg.setFfmpegPath(FFmpegPath)
+const FFmpegPath = require("@ffmpeg-installer/ffmpeg").path;
+FFmpeg.setFfmpegPath(FFmpegPath);
 const fs = require("fs");
 const path = require("path");
 const mainExtensions = [".mp4", "webm"];
@@ -15,191 +15,336 @@ const config = require("../config/stream");
 const db = require("../models");
 const Movies = db.movies;
 
-
 module.exports.saveTorrent = (data) => {
   return new Promise((resolve, reject) => {
-    Movies.findOne({ id: data.params.movieId, hash: data.params.hash }, (err, result) => {
-      if (err) reject({ res: data.res, en_error: 'An error occured with the database', fr_error: 'Un problème est survenu avec la base de donnée' })
-      else if (result) {
-        if (data.params.state) {
-          Movies.updateOne({
-            id: data.params.movieId,
-            hash: data.params.hash
-          }, {
-            $set: {
-              lastSeen: new Date(),
-              state: data.params.state
-            }
-          }, (err, result) => {
-            if (err) reject({ res: data.res, en_error: 'An error occured with the database', fr_error: 'Un problème est survenu avec la base de donnée' })
-            else resolve(data)
-          })
+    console.log("wesh la team debut");
+    Movies.findOne(
+      { id: data.params.movieId, hash: data.params.hash },
+      (err, result) => {
+        if (err)
+          reject({
+            res: data.res,
+            en_error: "An error occured with the database",
+            fr_error: "Un problème est survenu avec la base de donnée",
+          });
+        else if (result) {
+          if (data.params.state) {
+            Movies.updateOne(
+              {
+                id: data.params.movieId,
+                hash: data.params.hash,
+              },
+              {
+                $set: {
+                  lastSeen: new Date(),
+                  state: data.params.state,
+                },
+              },
+              (err, result) => {
+                if (err)
+                  reject({
+                    res: data.res,
+                    en_error: "An error occured with the database",
+                    fr_error: "Un problème est survenu avec la base de donnée",
+                  });
+                else resolve(data);
+              }
+            );
+          } else {
+            Movies.updateOne(
+              {
+                id: data.params.movieId,
+                hash: data.params.hash,
+              },
+              {
+                $set: {
+                  lastSeen: new Date(),
+                },
+              },
+              (err, result) => {
+                if (err)
+                  reject({
+                    res: data.res,
+                    en_error: "An error occured with the database",
+                    fr_error: "Un problème est survenu avec la base de donnée",
+                  });
+                else resolve(data);
+              }
+            );
+          }
         } else {
-          Movies.updateOne({
+          console.log("wesh la team");
+          const movies = new Movies({
             id: data.params.movieId,
-            hash: data.params.hash
-          }, {
-            $set: {
-              lastSeen: new Date()
-            }
-          }, (err, result) => {
-            if (err) reject({ res: data.res, en_error: 'An error occured with the database', fr_error: 'Un problème est survenu avec la base de donnée' })
-            else resolve(data)
-          })
+            userId: data.params.userId,
+            hash: data.params.hash,
+            lastSeen: new Date(),
+            fullPath: data.params.fileInfo.fullPath,
+            partialPath: data.params.fileInfo.partialPath,
+            folder: data.params.fileInfo.folder,
+            file: data.params.fileInfo.file,
+            state: data.params.state,
+            size: data.params.size,
+            quality: data.params.quality,
+          });
+          movies.save((err, result) => {
+            if (err)
+              reject({
+                res: data.res,
+                en_error: "An error occured with the database",
+                fr_error: "Un problème est survenu avec la base de donnée",
+              });
+            else resolve(data);
+          });
         }
-      } else {
-        const movies = new Movies({
-          id: data.params.movieId,
-          hash: data.params.hash,
-          lastSeen: new Date(),
-          fullPath: data.params.fileInfo.fullPath,
-          partialPath: data.params.fileInfo.partialPath,
-          folder: data.params.fileInfo.folder,
-          file: data.params.fileInfo.file,
-          state: data.params.state,
-          size: data.params.size,
-          quality: data.params.quality
-        })
-        movies.save((err, result) => {
-          if (err) reject({ res: data.res, en_error: 'An error occured with the database', fr_error: 'Un problème est survenu avec la base de donnée' })
-          else resolve(data)
-        })
       }
-    })
-  })
-}
+    );
+  });
+};
 
 module.exports.getInfos = (data) => {
   return new Promise((resolve, reject) => {
     Movies.findOne({ hash: data.params.hash }, (err, result) => {
-      if (err) reject({ res: data.res, en_error: 'An error occured with the database', fr_error: 'Un problème est survenu avec la base de donnée' })
-      else if (result) { data.params.info = result; resolve(data) }
-      else reject({ res: data.res, en_error: 'This hash doesn\'t match any torrent, sorry', fr_error: 'Ce magnet ne correspond à aucun torrent, désolé' })
-    })
-  })
-}
+      if (err)
+        reject({
+          res: data.res,
+          en_error: "An error occured with the database",
+          fr_error: "Un problème est survenu avec la base de donnée",
+        });
+      else if (result) {
+        data.params.info = result;
+        resolve(data);
+      } else
+        reject({
+          res: data.res,
+          en_error: "This hash doesn't match any torrent, sorry",
+          fr_error: "Ce magnet ne correspond à aucun torrent, désolé",
+        });
+    });
+  });
+};
 
 module.exports.convert = (data) => {
   return new Promise((resolve, reject) => {
-    if (data.params.quality === 'x264' || data.params.quality === 'XviD') data.params.quality = '480p'
-    if (data.params.quality.search('BD') >= 0) data.params.quality = '1080p'
-    if (data.params.quality === '240p' || data.params.quality === '360p' || data.params.quality === '480p' || data.params.quality === '720p' || data.params.quality === '1080p') {
-      options = [{ '240p': { size: '426x240', bitrate_video: '365k', bitrate_audio: '128k' } },
-      { '360p': { size: '640x360', bitrate_video: '730k', bitrate_audio: '196k' } },
-      { '480p': { size: '854x480', bitrate_video: '2000k', bitrate_audio: '196k' } },
-      { '720p': { size: '1280x720', bitrate_video: '3000k', bitrate_audio: '196k' } },
-      { '1080p': { size: '1920x1080', bitrate_video: '4500k', bitrate_audio: '196k' } }]
-      let settings = options.find(setting => { return setting[data.params.quality] })[data.params.quality.toString()]
-      let convert = FFmpeg(`http://localhost:8080/api/movie/stream/${data.params.hash}?token=${data.token}`)
-        .format('webm')
+    if (data.params.quality === "x264" || data.params.quality === "XviD")
+      data.params.quality = "480p";
+    if (data.params.quality.search("BD") >= 0) data.params.quality = "1080p";
+    if (
+      data.params.quality === "240p" ||
+      data.params.quality === "360p" ||
+      data.params.quality === "480p" ||
+      data.params.quality === "720p" ||
+      data.params.quality === "1080p"
+    ) {
+      options = [
+        {
+          "240p": {
+            size: "426x240",
+            bitrate_video: "365k",
+            bitrate_audio: "128k",
+          },
+        },
+        {
+          "360p": {
+            size: "640x360",
+            bitrate_video: "730k",
+            bitrate_audio: "196k",
+          },
+        },
+        {
+          "480p": {
+            size: "854x480",
+            bitrate_video: "2000k",
+            bitrate_audio: "196k",
+          },
+        },
+        {
+          "720p": {
+            size: "1280x720",
+            bitrate_video: "3000k",
+            bitrate_audio: "196k",
+          },
+        },
+        {
+          "1080p": {
+            size: "1920x1080",
+            bitrate_video: "4500k",
+            bitrate_audio: "196k",
+          },
+        },
+      ];
+      let settings = options.find((setting) => {
+        return setting[data.params.quality];
+      })[data.params.quality.toString()];
+      let convert = FFmpeg(
+        `http://localhost:8080/api/movie/stream/${data.params.hash}?token=${data.token}`
+      )
+        .format("webm")
         .size(settings.size)
-        .videoCodec('libvpx')
+        .videoCodec("libvpx")
         .videoBitrate(settings.bitrate_video)
-        .audioCodec('libopus')
+        .audioCodec("libopus")
         .audioBitrate(settings.bitrate_audio)
-        .outputOptions(['-quality realtime'])
+        .outputOptions(["-quality realtime"])
         .audioChannels(2)
-        .on('error', (err) => {
-          convert.kill()
-          if (err !== 'Output stream closed') reject({ err: data.res, en_error: err })
+        .on("error", (err) => {
+          convert.kill();
+          if (err !== "Output stream closed")
+            reject({ err: data.res, en_error: err });
         });
-      convert.pipe(data.res)
-      resolve(data)
-    } else reject({ res: data.res, en_error: 'This quality isn\'t available', fr_error: 'Cette qualité n\'est pas disponible' })
-  })
-}
+      convert.pipe(data.res);
+      resolve(data);
+    } else
+      reject({
+        res: data.res,
+        en_error: "This quality isn't available",
+        fr_error: "Cette qualité n'est pas disponible",
+      });
+  });
+};
 
 module.exports.stream = (data) => {
   return new Promise((resolve, reject) => {
-    if (data.params.info.state === 'over') {
-      let path = data.params.info.fullPath
+    if (data.params.info.state === "over") {
+      let path = data.params.info.fullPath;
       fs.stat(path, (err, stats) => {
-        if (err) reject({ res: data.res, error: 'Unavailable path' })
+        if (err) reject({ res: data.res, error: "Unavailable path" });
         else {
-          let fileSize = stats.size
+          let fileSize = stats.size;
           if (data.params.range) {
-            let parts = data.params.range.replace(/bytes=/, '').split('-')
-            let end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1
-            let start = parseInt(parts[0], 10) < end ? parseInt(parts[0], 10) : 0
-            let chunksize = (end - start) + 1
-            let file = fs.createReadStream(path, { start, end })
-            let headers = { 'Content-Range': `bytes ${start}-${end}/${fileSize}`, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize, 'Content-Type': 'video/webm' }
-            data.res.writeHead(206, headers)
-            file.pipe(data.res)
+            let parts = data.params.range.replace(/bytes=/, "").split("-");
+            let end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+            let start =
+              parseInt(parts[0], 10) < end ? parseInt(parts[0], 10) : 0;
+            let chunksize = end - start + 1;
+            let file = fs.createReadStream(path, { start, end });
+            let headers = {
+              "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+              "Accept-Ranges": "bytes",
+              "Content-Length": chunksize,
+              "Content-Type": "video/webm",
+            };
+            data.res.writeHead(206, headers);
+            file.pipe(data.res);
           } else {
-            let file = fs.createReadStream(path)
-            let headers = { 'Content-Length': fileSize, 'Content-Type': 'video/webm' }
-            data.res.writeHead(200, headers)
-            file.pipe(data.res)
+            let file = fs.createReadStream(path);
+            let headers = {
+              "Content-Length": fileSize,
+              "Content-Type": "video/webm",
+            };
+            data.res.writeHead(200, headers);
+            file.pipe(data.res);
           }
-          resolve(data)
+          resolve(data);
         }
-      })
+      });
     } else {
-      let path = torrent_engine.find(torrent => torrent.hash === data.params.hash).file
-      let fileSize = path.length
+      let path = torrent_engine.find(
+        (torrent) => torrent.hash === data.params.hash
+      ).file;
+      let fileSize = path.length;
       if (data.params.range) {
-        let parts = data.params.range.replace(/bytes=/, '').split('-')
-        let start = parseInt(parts[0], 10)
-        let end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1
-        let chunksize = (end - start) + 1
-        let file = path.createReadStream({ start, end })
-        let headers = { 'Content-Range': `bytes ${start}-${end}/${fileSize}`, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize, 'Content-Type': 'video/webm' }
-        data.res.writeHead(206, headers)
-        file.pipe(data.res)
+        let parts = data.params.range.replace(/bytes=/, "").split("-");
+        let start = parseInt(parts[0], 10);
+        let end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        let chunksize = end - start + 1;
+        let file = path.createReadStream({ start, end });
+        let headers = {
+          "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+          "Accept-Ranges": "bytes",
+          "Content-Length": chunksize,
+          "Content-Type": "video/webm",
+        };
+        data.res.writeHead(206, headers);
+        file.pipe(data.res);
       } else {
-        let file = path.createReadStream()
-        let headers = { 'Content-Length': fileSize, 'Content-Type': 'video/webm' }
-        data.res.writeHead(200, headers)
-        file.pipe(data.res)
+        let file = path.createReadStream();
+        let headers = {
+          "Content-Length": fileSize,
+          "Content-Type": "video/webm",
+        };
+        data.res.writeHead(200, headers);
+        file.pipe(data.res);
       }
-      resolve(data)
+      resolve(data);
     }
-  })
-}
-
+  });
+};
 
 module.exports.downloadTorrent = (data) => {
   return new Promise((resolve, reject) => {
-    console.log('test', data.params.hash, data.params.movieId);
+    console.log("test", data.params.hash, data.params.movieId);
     const path = `../movies/${data.params.movieId}`;
     const options = {
       path,
       tracker: true,
       trackers,
-      uploads: 10, verify: true
+      uploads: 10,
+      verify: true,
     };
-    let engine = torrentStream(`magnet:?xt=urn:btih:${data.params.hash}`, options)
-    let started = false
-    engine.on('ready', () => {
-      let index = engine.files.indexOf(engine.files.reduce((a, b) => (a.length > b.length ? a : b)))
+    let engine = torrentStream(
+      `magnet:?xt=urn:btih:${data.params.hash}`,
+      options
+    );
+    let started = false;
+    engine.on("ready", () => {
+      let index = engine.files.indexOf(
+        engine.files.reduce((a, b) => (a.length > b.length ? a : b))
+      );
       engine.files.forEach((file, ind) => {
-        if (ind === index) { file.select(); console.info(`Chosen file: ${file.name}`) }
-        else file.deselect()
-      })
-      data.params.file = engine.files[index]
-      data.params.fileInfo = { fullPath: `${engine.path}/${data.params.file.path}`, partialPath: `${engine.path}/${engine.torrent.name}`, folder: engine.torrent.name, file: data.params.file.name }
-      data.params.state = 'waiting'
-      torrent_engine.push({ hash: data.params.hash, file: data.params.file, engine: engine })
-      resolve(data)
-    })
-    engine.on('download', piece => {
+        if (ind === index) {
+          file.select();
+          console.info(`Chosen file: ${file.name}`);
+        } else file.deselect();
+      });
+      data.params.file = engine.files[index];
+      data.params.fileInfo = {
+        fullPath: `${engine.path}/${data.params.file.path}`,
+        partialPath: `${engine.path}/${engine.torrent.name}`,
+        folder: engine.torrent.name,
+        file: data.params.file.name,
+      };
+      data.params.state = "waiting";
+      torrent_engine.push({
+        hash: data.params.hash,
+        file: data.params.file,
+        engine: engine,
+      });
+      resolve(data);
+    });
+    engine.on("download", (piece) => {
       started = true;
       if (started) {
-        data.params.state = 'downloading'
+        data.params.state = "downloading";
         try {
-          this.saveTorrent(data)
-        } catch (err) { reject({ res: data.res, en_error: 'An error occured with the database', fr_error: 'Un problème est survenu avec la base de donnée' }) }
+          this.saveTorrent(data);
+        } catch (err) {
+          reject({
+            res: data.res,
+            en_error: "An error occured with the database",
+            fr_error: "Un problème est survenu avec la base de donnée",
+          });
+        }
       }
-    })
-    engine.on('idle', fn => {
-      data.params.state = 'over'
-      try {
-        this.saveTorrent(data); let ind = torrent_engine.findIndex(engine => { return engine.hash === data.params.torrent.hash }); torrent_engine.splice(ind, 1)
-      } catch (err) { reject({ res: data.res, en_error: 'An error occured with the database', fr_error: 'Un problème est survenu avec la base de donnée' }) }
     });
-  })
-}
+    engine.on("idle", (fn) => {
+      data.params.state = "over";
+      try {
+        this.saveTorrent(data);
+        let ind = torrent_engine.findIndex((engine) => {
+          return engine.hash === data.params.torrent.hash;
+        });
+        torrent_engine.splice(ind, 1);
+      } catch (err) {
+        reject({
+          res: data.res,
+          en_error: "An error occured with the database",
+          fr_error: "Un problème est survenu avec la base de donnée",
+        });
+      }
+    });
+  });
+};
 
 async function getSubsLink(imdb_id) {
   try {
@@ -259,24 +404,24 @@ async function DlSubs(link, lang, imdb_id) {
         );
         return parsedPath.ext == ".srt"
           ? entry
-            .pipe(srt2vtt())
-            .pipe(
-              fs.createWriteStream(
-                `../movies/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
+              .pipe(srt2vtt())
+              .pipe(
+                fs.createWriteStream(
+                  `../movies/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
+                )
               )
-            )
-            .on("error", (e) => {
-              throw new Error(e.message);
-            })
+              .on("error", (e) => {
+                throw new Error(e.message);
+              })
           : entry
-            .pipe(
-              fs.createWriteStream(
-                `../movies/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
+              .pipe(
+                fs.createWriteStream(
+                  `../movies/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
+                )
               )
-            )
-            .on("error", (e) => {
-              throw new Error(e.message);
-            });
+              .on("error", (e) => {
+                throw new Error(e.message);
+              });
       },
       {
         catch: (e) => console.log(`Streamz Error: ${e.message}`),
@@ -320,7 +465,7 @@ exports.getSubtitles = async (req, res) => {
   if ((links = await getSubsLink(imdb_id))) {
     subs = [];
     if (links.English) {
-      if (await DlSubs(links.English, "en", imdb_id) === true)
+      if ((await DlSubs(links.English, "en", imdb_id)) === true)
         subs.push({
           lang: "english",
           langShort: "en",
@@ -329,7 +474,7 @@ exports.getSubtitles = async (req, res) => {
         });
     }
     if (links.French) {
-      if (await DlSubs(links.French, "fr", imdb_id) === true)
+      if ((await DlSubs(links.French, "fr", imdb_id)) === true)
         subs.push({
           lang: "french",
           langShort: "fr",
@@ -363,7 +508,7 @@ exports.getSubtitleFile = async (req, res) => {
       }
     });
   } else {
-    console.log('error', filesExist)
+    console.log("error", filesExist);
     res.send(null);
   }
 };

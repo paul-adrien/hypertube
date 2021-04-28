@@ -1,0 +1,12 @@
+{
+  "userName": "Nom d'utilisateur",
+  "lastName": "Nom",
+  "firstName": "Prénom",
+  "Password": "Mot de passe",
+  "signUp": "Créer un compte",
+  "signIn": "Se connecter",
+  "signInWith": "Se connecter avec",
+  "alreadyHaveAccount": "J'ai déjà un compte",
+  "update": "Enregistrer",
+  "search": "Rechercher"
+}
