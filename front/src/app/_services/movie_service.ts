@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import axios from 'axios';
+import { AuthService } from './auth_service';
 export var searchCancelTokenFetch = { id: null, source: null };
 
 const AUTH_API = 'http://localhost:8080/api/';
@@ -15,7 +16,9 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class movieService {
-  constructor(private http: HttpClient, private route: Router) {}
+  constructor(private http: HttpClient,
+    private route: Router,
+    private authService: AuthService) { }
 
   // watchMovie(imdb_id: string, hash: string): Observable<any> {
   //     console.log(AUTH_API + `movie/watch/${imdb_id}?hash=${hash}`);
@@ -57,8 +60,9 @@ export class movieService {
   }
 
   download(hash, imdb_id, size, quality, userId: string) {
-    let uri = `http://localhost:8080/api/movie/download`;
-    return new Promise((fullfil, reject) => {
+    let token = this.authService.getToken();
+    let uri = AUTH_API + `movie/download?token=${token}`;
+    return new Promise((resolve, reject) => {
       axios
         .post(uri, {
           hash: hash,
@@ -68,7 +72,7 @@ export class movieService {
           userId: userId,
         })
         .then((result) => {
-          fullfil(result);
+          resolve(result);
         })
         .catch((err) => {
           console.error(err);
