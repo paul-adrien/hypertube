@@ -20,7 +20,7 @@ export class movieService {
     private http: HttpClient,
     private route: Router,
     private authService: AuthService
-  ) {}
+  ) { }
 
   // watchMovie(imdb_id: string, hash: string): Observable<any> {
   //     console.log(AUTH_API + `movie/watch/${imdb_id}?hash=${hash}`);
@@ -83,6 +83,34 @@ export class movieService {
           console.error(err);
           reject({ error: err });
         });
+    });
+  }
+
+  addToFav(movie: any, userId: string): Observable<any> {
+    return this.http.post(
+      AUTH_API + 'movie/addToFav',
+      {
+        movie: movie,
+        userId: userId
+      },
+      httpOptions
+    );
+  }
+
+  deleteFav(movie: any, userId: string): Observable<any> {
+    return this.http.post(
+      AUTH_API + 'movie/deleteFav',
+      {
+        movie: movie,
+        userId: userId
+      },
+      httpOptions
+    );
+  }
+
+  getFav(userId: string): Observable<any> {
+    return this.http.get(AUTH_API + `movie/getFav/${userId}`, {
+      ...httpOptions
     });
   }
 }

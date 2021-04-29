@@ -95,7 +95,7 @@ export class PlayerComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private movieService: movieService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.source =

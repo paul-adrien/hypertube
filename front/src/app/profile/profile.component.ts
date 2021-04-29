@@ -10,6 +10,7 @@ import { User } from 'libs/user';
 import { PopUpComponent } from '../pop-up/pop-up.component';
 import { AuthService } from '../_services/auth_service';
 import { ProfileService } from '../_services/profile_service';
+import { movieService } from '../_services/movie_service';
 
 function ValidatorUserNameLength(control: FormControl) {
   const test = /^(?=.{3,20}$)[a-zA-Z0-9]+(?:[-' ][a-zA-Z0-9]+)*$/;
@@ -144,18 +145,42 @@ function ValidatorEmail(control: FormControl) {
         </form>
       </div>
     </div>
+    <div class="list" *ngIf="moviesList">
+        <div
+          *ngFor="let movie of this.moviesList"
+          (click)="viewDetail(movie.imdb_code)"
+          class="movie-container"
+        >
+          <img src="{{ movie.poster }}" class="movie-img" />
+          <div class="bottom-container">
+            <div class="movie-title" [title]="movie.title">
+              {{ movie.title }} {{ movie.see == true ? '(Déjà vu)' : '' }}
+            </div>
+            <div class="movie-info">
+              <div>{{ movie.year }}</div>
+              <div *ngIf="movie.fav === false" (click)="this.sendToFav(movie)"><img src="./assets/icons8-plus.svg"></div>
+              <div *ngIf="movie.fav === true" (click)="this.deleteFav(movie)"><img src="./assets/iconfinder_icon-ios7-heart-outline_211754.svg"></div>
+              <div>
+                {{ movie.runtime }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
   `,
   styleUrls: ['./profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileComponent implements OnInit {
   public user: User;
+  public moviesList = [];
   constructor(
     private auth_service: AuthService,
     private profile_service: ProfileService,
     private dialog: MatDialog,
-    private cd: ChangeDetectorRef
-  ) {}
+    private cd: ChangeDetectorRef,
+    private movieService: movieService
+  ) { }
 
   public userForm = new FormGroup({
     userName: new FormControl('', ValidatorUserNameLength),
@@ -171,6 +196,16 @@ export class ProfileComponent implements OnInit {
     this.user = this.auth_service.getUser();
     this.userForm.patchValue(this.user);
     this.picture = this.user.picture;
+    this.movieService.getFav(this.user.id).subscribe(
+      (data) => {
+        console.log(data);
+        this.moviesList = data.movies;
+        this.cd.detectChanges();
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 
   public fileChangeEvent(event: any): void {

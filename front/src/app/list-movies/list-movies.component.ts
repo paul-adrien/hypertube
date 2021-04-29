@@ -38,6 +38,8 @@ import { AuthService } from '../_services/auth_service';
             </div>
             <div class="movie-info">
               <div>{{ movie.year }}</div>
+              <div *ngIf="movie.fav === false" (click)="this.sendToFav(movie)"><img src="./assets/icons8-plus.svg"></div>
+              <div *ngIf="movie.fav === true" (click)="this.deleteFav(movie)"><img src="./assets/iconfinder_icon-ios7-heart-outline_211754.svg"></div>
               <div>
                 {{ movie.runtime }}
               </div>
@@ -64,11 +66,33 @@ export class ListMoviesComponent implements OnInit {
     private route: Router,
     private movieService: movieService,
     private auth_service: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.user = this.auth_service.getUser();
     this.getMovieList(this.pageNum);
+  }
+
+  sendToFav(movie: any) {
+    this.movieService.addToFav(movie, this.user.id).subscribe(
+      (data) => {
+        console.log(data);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  deleteFav(movie: any) {
+    this.movieService.deleteFav(movie, this.user.id).subscribe(
+      (data) => {
+        console.log(data);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 
   onScrollDown() {

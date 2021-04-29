@@ -3,6 +3,8 @@ const rarbgApi = require("rarbg-api");
 const imdb = require("imdb-api");
 const YTS_LIST = "https://yts.megaproxy.info/api/v2/list_movies.json";
 const db = require("../models");
+const { fav } = require("../models");
+const Fav = db.fav;
 const Movies = db.movies;
 var searchCancelTokenFetch = { id: null, source: null };
 
@@ -96,10 +98,17 @@ async function getInfoMovies(movies) {
       Object.freeze(movies);
       await tmp.forEach(async (m) => {
         if (m && m.imdb_code) {
+          let favorite = false
+          await Fav.findOne({ $query: { imdb_code: m.imdb_code } })
+            .exec((err, result) => {
+              if (result) {
+                favorite = true;
+              } else
+                favorite = false;
+            });
           await imdb
             .get({ id: m.imdb_code }, { apiKey: "e8cb5cca" })
             .then(async (movie) => {
-              console.log(movie);
               tmp[
                 await movies.findIndex((j) => j.imdb_code === m.imdb_code)
               ] = {
@@ -111,6 +120,7 @@ async function getInfoMovies(movies) {
                 seeds: m.seeds,
                 runtime: movie.runtime,
                 see: m.see,
+                fav: favorite
               };
               if (i + 1 == len) resolve(tmp);
             })
@@ -317,4 +327,89 @@ exports.getDetailMovie = async (req, res) => {
     hashs: hashs,
     movieDetail: movieDetail,
   });
+};
+
+exports.addToFav = async (req, res) => {
+  const movie = req.body.movie;
+  const userId = req.body.userId;
+
+  Fav.findOne({ $query: { imdb_code: movie.imdb_code } })
+    .exec((err, result) => {
+      if (err) {
+        return res.json({
+          status: false,
+          message: err
+        });
+      } else if (result) {
+        console.log(result);
+        return res.json({
+          status: false,
+          message: 'this film is already fav'
+        });
+      } else {
+        const fav = new Fav({
+          imdb_code: movie.imdb_code,
+          title: movie.title,
+          year: movie.year,
+          rating: movie.rating,
+          poster: movie.poster,
+          seeds: movie.seeds,
+          runtime: movie.runtime,
+          see: movie.see,
+          userId: userId
+        })
+
+        fav.save((err, result) => {
+          if (err) {
+            return res.json({
+              status: false,
+              message: err
+            });
+          }
+          res.send({ message: "Movie was registered successfully to favorite!" });
+        })
+      }
+    })
+};
+
+exports.deleteFav = async (req, res) => {
+  const movie = req.body.movie;
+  const userId = req.body.userId;
+
+  Fav.deleteOne({ imdb_code: movie.imdb_code })
+    .exec((err, result) => {
+      if (err) {
+        return res.json({
+          status: false,
+          message: err
+        });
+      } else {
+        res.send({ message: "Movie was delete to favorite!" });
+      }
+    })
+};
+
+exports.getFav = async (req, res) => {
+  const userId = req.params.userId;
+
+  Fav.find({ $query: { userId: userId } })
+    .exec((err, results) => {
+      if (err) {
+        return res.json({
+          status: false,
+          message: err
+        });
+      } else if (results) {
+        console.log(results);
+        return res.json({
+          status: true,
+          movies: results
+        });
+      } else {
+        return res.json({
+          status: true,
+          movies: null
+        });
+      }
+    })
 };

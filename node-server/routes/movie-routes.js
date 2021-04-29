@@ -6,6 +6,9 @@ const movieController = require("../controllers/movie-controller");
 const utilsController = require('../controllers/utils')
 
 router.post('/api/movie/list', [authJwt.verifyToken], movieController.getListMovie);
+router.post('/api/movie/addToFav', [authJwt.verifyToken], movieController.addToFav);
+router.post('/api/movie/deleteFav', [authJwt.verifyToken], movieController.deleteFav);
+router.get('/api/movie/getFav/:userId', [authJwt.verifyToken], movieController.getFav);
 router.get('/api/movie/subtitles/:imdb_id', [authJwt.verifyToken], playerController.getSubtitles);
 router.get('/api/movie/subtitles/file/:imdb_id/:lang', [authJwt.verifyTokenAxios], playerController.getSubtitleFile);
 router.get('/api/movie/detail/:imdb_id', [authJwt.verifyToken], movieController.getDetailMovie);
