@@ -16,9 +16,11 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class movieService {
-  constructor(private http: HttpClient,
+  constructor(
+    private http: HttpClient,
     private route: Router,
-    private authService: AuthService) { }
+    private authService: AuthService
+  ) {}
 
   // watchMovie(imdb_id: string, hash: string): Observable<any> {
   //     console.log(AUTH_API + `movie/watch/${imdb_id}?hash=${hash}`);
@@ -56,7 +58,10 @@ export class movieService {
 
   getDetailMovie(imdb_id: string, userId: string): Observable<any> {
     let params = new HttpParams().set('userId', userId);
-    return this.http.get(AUTH_API + `movie/detail/${imdb_id}`);
+    return this.http.get(AUTH_API + `movie/detail/${imdb_id}`, {
+      ...httpOptions,
+      params,
+    });
   }
 
   download(hash, imdb_id, size, quality, userId: string) {

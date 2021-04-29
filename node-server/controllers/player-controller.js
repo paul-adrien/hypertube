@@ -17,7 +17,6 @@ const Movies = db.movies;
 
 module.exports.saveTorrent = (data) => {
   return new Promise((resolve, reject) => {
-    console.log("wesh la team debut");
     Movies.findOne(
       { id: data.params.movieId, hash: data.params.hash },
       (err, result) => {

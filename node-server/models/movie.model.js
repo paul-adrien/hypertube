@@ -1,20 +1,21 @@
 const mongoose = require("mongoose");
 
 const Movies = mongoose.model(
-    "Movies",
-    new mongoose.Schema({
-        id: String,
-        hash: String,
-        lastSeen: String,
-        fullPath: String,
-        partialPath: String,
-        folder: String,
-        file: String,
-        size: String,
-        quality: String,
-        state: String,
-        subtitles: String
-    })
+  "Movies",
+  new mongoose.Schema({
+    id: String,
+    userId: String,
+    hash: String,
+    lastSeen: String,
+    fullPath: String,
+    partialPath: String,
+    folder: String,
+    file: String,
+    size: String,
+    quality: String,
+    state: String,
+    subtitles: String,
+  })
 );
 
 module.exports = Movies;

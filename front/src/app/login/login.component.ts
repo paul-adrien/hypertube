@@ -233,7 +233,7 @@ function ValidatorPass(control: FormControl) {
       <div class="log-button" (click)="this.loginMode = !loginMode">
         {{
           this.loginMode
-            ? ('createAccount' | translate)
+            ? ('signUp' | translate)
             : ('alreadyHaveAccount' | translate)
         }}
       </div>

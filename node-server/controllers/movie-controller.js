@@ -300,7 +300,7 @@ async function getInfoMovie(imdb_code) {
 
 exports.getDetailMovie = async (req, res) => {
   const imdb_id = req.params.imdb_id;
-  const userId = req.params.userId;
+  const userId = req.query.userId;
   hashs = null;
   var hashs = await getHashRARBG(imdb_id, userId);
   if (hashs) {
