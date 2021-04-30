@@ -5,6 +5,9 @@ const dbConfig = require("./config/db");
 const db = require("./models");
 const passport = require("passport");
 
+const swaggerUi = require('swagger-ui-express');
+const openApiDocumentation = require('./openApiDocumentation');
+
 let torrent_engine = []
 
 global.torrent_engine = torrent_engine
@@ -45,6 +48,11 @@ db.mongoose
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to plaurent application." });
 });
+
+var movieController = require("./controllers/movie-controller");
+//setInterval(movieController.dellMovies, 50000);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 
 // routes
 require("./routes/auth-routes")(app);

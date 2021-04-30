@@ -69,7 +69,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
 
 export function httpTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);

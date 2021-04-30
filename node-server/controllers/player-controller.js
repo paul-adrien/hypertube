@@ -14,10 +14,11 @@ const srt2vtt = require("srt-to-vtt");
 const config = require("../config/stream");
 const db = require("../models");
 const Movies = db.movies;
+const dateFns = require('date-fns');
+
 
 module.exports.saveTorrent = (data) => {
   return new Promise((resolve, reject) => {
-    console.log('save torrent')
     Movies.findOne(
       { id: data.params.movieId, hash: data.params.hash },
       (err, result) => {
@@ -36,7 +37,8 @@ module.exports.saveTorrent = (data) => {
               },
               {
                 $set: {
-                  lastSeen: new Date(),
+                  lastSeen: dateFns.format(new Date(), 'MM/dd/yyyy'),
+                  lastSeenS: Date.now(),
                   state: data.params.state,
                 },
               },
@@ -58,7 +60,8 @@ module.exports.saveTorrent = (data) => {
               },
               {
                 $set: {
-                  lastSeen: new Date(),
+                  lastSeen: dateFns.format(new Date(), 'MM/dd/yyyy'),
+                  lastSeenS: Date.now(),
                 },
               },
               (err, result) => {
@@ -78,7 +81,8 @@ module.exports.saveTorrent = (data) => {
             id: data.params.movieId,
             userId: data.params.userId,
             hash: data.params.hash,
-            lastSeen: new Date(),
+            lastSeen: dateFns.format(new Date(), 'MM/dd/yyyy'),
+            lastSeenS: Date.now(),
             fullPath: data.params.fileInfo.fullPath,
             partialPath: data.params.fileInfo.partialPath,
             folder: data.params.fileInfo.folder,
@@ -249,6 +253,7 @@ module.exports.stream = (data) => {
         let end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
         let chunksize = end - start + 1;
         let file = path.createReadStream({ start, end });
+        console.log(chunksize);
         let headers = {
           "Content-Range": `bytes ${start}-${end}/${fileSize}`,
           "Accept-Ranges": "bytes",
@@ -259,6 +264,7 @@ module.exports.stream = (data) => {
         file.pipe(data.res);
       } else {
         let file = path.createReadStream();
+        console.log(fileSize)
         let headers = {
           "Content-Length": fileSize,
           "Content-Type": "video/webm",

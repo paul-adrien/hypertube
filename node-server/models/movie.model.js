@@ -7,6 +7,7 @@ const Movies = mongoose.model(
     userId: String,
     hash: String,
     lastSeen: String,
+    lastSeenS: Number,
     fullPath: String,
     partialPath: String,
     folder: String,

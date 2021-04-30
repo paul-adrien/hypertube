@@ -4,8 +4,11 @@ const imdb = require("imdb-api");
 const YTS_LIST = "https://yts.megaproxy.info/api/v2/list_movies.json";
 const db = require("../models");
 const { fav } = require("../models");
+const config = require("../config/stream");
 const Fav = db.fav;
 const Movies = db.movies;
+const dateFns = require('date-fns');
+const fs = require("fs");
 var searchCancelTokenFetch = { id: null, source: null };
 
 async function getYTSMovies(page, genre, sort, note, search, userId) {
@@ -405,6 +408,37 @@ exports.getFav = async (req, res) => {
           status: true,
           movies: results
         });
+      } else {
+        return res.json({
+          status: true,
+          movies: null
+        });
+      }
+    })
+};
+
+exports.dellMovies = async (req, res) => {
+  Movies.find()
+    .exec((err, results) => {
+      if (err) {
+        return res.json({
+          status: false,
+          message: err
+        });
+      } else if (results) {
+        results.map((movie) => {
+          let date = 1622791471961;// pour 1 mois en plus faire + 3000000000
+
+          diff = dateFns.formatDistanceStrict((movie.lastSeenS), (date), { unit: 'month' });
+          diff = diff.split(' ');
+          //console.log(diff[0]);
+          if (diff[0] >= 1) {
+            fs.rmdir(`../movies/${movie.id}`, { recursive: true }, (err) => {
+              console.log("Folder Deleted!" + err);
+            });
+          }
+          Movies.deleteOne({ imdb_code: movie.imdb_code, hash: movie.hash }).exec();
+        })
       } else {
         return res.json({
           status: true,
