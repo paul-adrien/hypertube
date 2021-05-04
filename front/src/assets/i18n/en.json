@@ -9,5 +9,6 @@
   "alreadyHaveAccount": "Have already an account",
   "createAccount": "Register an account",
   "update": "Update",
-  "search": "Search"
+  "search": "Search",
+  "noResult": "No result"
 }

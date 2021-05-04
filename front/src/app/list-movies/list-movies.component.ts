@@ -26,27 +26,53 @@ import { AuthService } from '../_services/auth_service';
         (sendParams)="this.getMovieListFilter($event)"
       ></app-filter-and-sort>
       <div class="list">
-        <div
-          *ngFor="let movie of this.moviesList"
-          (click)="viewDetail(movie.imdb_code)"
-          class="movie-container"
-        >
-          <img src="{{ movie.poster }}" class="movie-img" />
+        <div *ngFor="let movie of this.moviesList" class="movie-container">
+          <img
+            class="plus"
+            *ngIf="movie.fav === false"
+            (click)="this.sendToFav(movie)"
+            src="./assets/icons8-plus.svg"
+          />
+          <img
+            class="plus"
+            *ngIf="movie.fav === true"
+            (click)="this.deleteFav(movie)"
+            src="./assets/checkmark.svg"
+          />
+          <img
+            (click)="viewDetail(movie.imdb_code)"
+            [src]="movie.poster"
+            class="movie-img"
+          />
           <div class="bottom-container">
             <div class="movie-title" [title]="movie.title">
-              {{ movie.title }} {{ movie.see == true ? '(Déjà vu)' : '' }}
+              <span class="text">
+                {{ movie.title }}
+              </span>
+              <img
+                class="eye"
+                *ngIf="movie.see"
+                src="./assets/eye-green-2.svg"
+              />
             </div>
             <div class="movie-info">
-              <div>{{ movie.year }}</div>
-              <div *ngIf="movie.fav === false" (click)="this.sendToFav(movie)"><img src="./assets/icons8-plus.svg"></div>
-              <div *ngIf="movie.fav === true" (click)="this.deleteFav(movie)"><img src="./assets/iconfinder_icon-ios7-heart-outline_211754.svg"></div>
-              <div>
-                {{ movie.runtime }}
+              <span>{{ movie.year }}</span>
+              <div class="right-container">
+                <span class="right-info">
+                  {{ movie.runtime }}
+                </span>
+                <img src="./assets/star-yellow.svg" />
+                <span class="right-info">
+                  {{ movie.rating }}
+                </span>
               </div>
             </div>
           </div>
         </div>
         <mat-spinner class="spinner" *ngIf="this.loadingMovie"></mat-spinner>
+        <div *ngIf="this.moviesList?.length === 0 && !this.loadingMovie">
+          {{ 'noResult' | translate }}
+        </div>
       </div>
     </div>
   `,
@@ -66,7 +92,7 @@ export class ListMoviesComponent implements OnInit {
     private route: Router,
     private movieService: movieService,
     private auth_service: AuthService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.user = this.auth_service.getUser();
@@ -76,6 +102,10 @@ export class ListMoviesComponent implements OnInit {
   sendToFav(movie: any) {
     this.movieService.addToFav(movie, this.user.id).subscribe(
       (data) => {
+        this.moviesList[
+          this.moviesList.findIndex((res) => res.imdb_code === movie.imdb_code)
+        ].fav = true;
+        this.cd.detectChanges();
         console.log(data);
       },
       (err) => {
@@ -87,6 +117,11 @@ export class ListMoviesComponent implements OnInit {
   deleteFav(movie: any) {
     this.movieService.deleteFav(movie, this.user.id).subscribe(
       (data) => {
+        this.moviesList[
+          this.moviesList.findIndex((res) => res.imdb_code === movie.imdb_code)
+        ].fav = false;
+
+        this.cd.detectChanges();
         console.log(data);
       },
       (err) => {
@@ -103,26 +138,64 @@ export class ListMoviesComponent implements OnInit {
     this.getMovieList(this.pageNum);
   }
 
+  public isImage(src) {
+    var image = new Image();
+    let res = src;
+    image.src = src;
+    image.onerror = function () {
+      console.log("c'est de la merde");
+    };
+    // image.onload = function () {
+    //   console.log("c'est de la loading");
+    // };
+
+    if (image.width === 0 && image.height === 0) {
+      return './assets/eye-green.svg';
+    } else {
+      return src;
+    }
+    // const request = new XMLHttpRequest();
+    // request.onload = function () {
+    //   let status = request.status;
+    //   if (request.status == 200) {
+    //     res = src;
+    //     console.log('yes');
+    //   } else {
+    //     console.log('merde');
+    //     res = './assets/eye-green.svg';
+    //   }
+    // };
+    // request.open('HEAD', src, false);
+    // request.withCredentials = false;
+
+    // request.send();
+
+    return res;
+  }
+
   getMovieList(page: number) {
     if (!this.loadingMovie) {
       this.loadingMovie = true;
       this.cd.detectChanges();
-      console.log(
-        page,
-        this.paramsFilterSort?.genre,
-        'download_count',
-        this.paramsFilterSort?.note,
-        this.paramsFilterSort?.name
-      );
+      console.log({
+        userId: this.user.id,
+        page: page,
+        genre: this.paramsFilterSort?.genre,
+        sort: 'download_count',
+        note: this.paramsFilterSort?.note,
+        search: this.paramsFilterSort?.name,
+        order: this.paramsFilterSort?.orderBy,
+      });
       this.movieService
-        .getListMovies(
-          this.user.id,
-          page,
-          this.paramsFilterSort?.genre,
-          'download_count',
-          this.paramsFilterSort?.note,
-          this.paramsFilterSort?.name
-        )
+        .getListMovies({
+          userId: this.user.id,
+          page: page,
+          genre: this.paramsFilterSort?.genre,
+          sort: this.paramsFilterSort?.sortBy,
+          note: this.paramsFilterSort?.note,
+          search: this.paramsFilterSort?.name,
+          order: this.paramsFilterSort?.orderBy,
+        })
         .subscribe(
           (data) => {
             if (!this.moviesList || this.moviesList.length === 0)
@@ -130,6 +203,11 @@ export class ListMoviesComponent implements OnInit {
             else this.moviesList = this.moviesList.concat(data.movies);
             this.loadingMovie = false;
             console.log(data);
+            if (this.moviesList.length < 10) {
+              this.pageNum++;
+              this.getMovieList(this.pageNum);
+            }
+
             this.cd.detectChanges();
           },
           (err) => {

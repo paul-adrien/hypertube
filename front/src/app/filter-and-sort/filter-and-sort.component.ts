@@ -42,6 +42,19 @@ import { Observable } from 'rxjs';
             {{ option }}
           </option>
         </select>
+        <select class="select" formControlName="sortBy">
+          <option selected disabled hidden>Trier par</option>
+          <option *ngFor="let option of this.sortOptions">
+            {{ option }}
+          </option>
+        </select>
+
+        <select class="select" formControlName="orderBy">
+          <option selected disabled hidden>Ordre</option>
+          <option *ngFor="let option of this.orderOptions">
+            {{ option }}
+          </option>
+        </select>
       </div>
     </form>
   `,
@@ -85,12 +98,17 @@ export class FilterAndSortComponent implements OnInit {
     'Western',
   ];
 
-  public noteOptions = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  public noteOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+  public sortOptions = ['title', 'rating', 'year', 'download_count'];
+
+  public orderOptions = ['asc', 'desc'];
 
   sliderForm: FormGroup = new FormGroup({
     name: new FormControl(''),
     note: new FormControl('Note'),
-    sortBy: new FormControl('0'),
+    sortBy: new FormControl('Trier par'),
+    orderBy: new FormControl('Ordre'),
     genre: new FormControl('Genre'),
   });
 

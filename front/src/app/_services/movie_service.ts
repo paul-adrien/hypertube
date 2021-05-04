@@ -20,7 +20,7 @@ export class movieService {
     private http: HttpClient,
     private route: Router,
     private authService: AuthService
-  ) { }
+  ) {}
 
   // watchMovie(imdb_id: string, hash: string): Observable<any> {
   //     console.log(AUTH_API + `movie/watch/${imdb_id}?hash=${hash}`);
@@ -31,29 +31,35 @@ export class movieService {
     return this.http.get(AUTH_API + `movie/subtitles/${imdb_id}`);
   }
 
-  getListMovies(
-    userId: string,
-    page: number,
-    genre: string,
-    sort: string,
-    note?: number,
-    search?: string
-  ): Observable<any> {
-    if (genre === 'Tout' || genre === undefined || genre === 'Genre') {
-      genre = 'all';
+  getListMovies(params: {
+    userId: string;
+    page: number;
+    genre: string;
+    sort: string;
+    note?: number;
+    search?: string;
+    order?: string;
+  }): Observable<any> {
+    if (
+      params.genre === 'Tout' ||
+      params.genre === undefined ||
+      params.genre === 'Genre'
+    ) {
+      params.genre = 'all';
     }
-    return this.http.post(
-      AUTH_API + 'movie/list',
-      {
-        userId: userId,
-        page: page,
-        genre: genre,
-        note: note ? note : 0,
-        sort: sort,
-        search: search ? search : '',
-      },
-      httpOptions
-    );
+    if (!params.note || (params.note as any) === 'Note') {
+      params.note = 0;
+    }
+    if (!params.search) {
+      params.search = '';
+    }
+    if (!params.sort || params.sort === 'Trier par') {
+      params.sort = 'download_count';
+    }
+    if (!params.order || params.order === 'Ordre') {
+      params.order = '';
+    }
+    return this.http.post(AUTH_API + 'movie/list', params, httpOptions);
   }
 
   getDetailMovie(imdb_id: string, userId: string): Observable<any> {
@@ -91,7 +97,7 @@ export class movieService {
       AUTH_API + 'movie/addToFav',
       {
         movie: movie,
-        userId: userId
+        userId: userId,
       },
       httpOptions
     );
@@ -102,7 +108,7 @@ export class movieService {
       AUTH_API + 'movie/deleteFav',
       {
         movie: movie,
-        userId: userId
+        userId: userId,
       },
       httpOptions
     );
@@ -110,7 +116,7 @@ export class movieService {
 
   getFav(userId: string): Observable<any> {
     return this.http.get(AUTH_API + `movie/getFav/${userId}`, {
-      ...httpOptions
+      ...httpOptions,
     });
   }
 }

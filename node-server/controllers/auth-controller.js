@@ -9,9 +9,8 @@ exports.signup = (req, res) => {
   User.findOne({
     $and: [
       {
-        userName: "gguyot",
+        userName: req.body.userName,
       },
-
       { id: { $not: { $regex: /42_/ } } },
       { id: { $not: { $regex: /google_/ } } },
     ],
@@ -48,7 +47,7 @@ exports.signin = (req, res) => {
   User.findOne({
     $and: [
       {
-        userName: "gguyot",
+        userName: req.body.userName,
       },
 
       { id: { $not: { $regex: /42_/ } } },

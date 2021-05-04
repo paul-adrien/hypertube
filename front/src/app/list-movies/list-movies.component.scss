@@ -16,8 +16,10 @@
       flex-wrap: wrap;
       justify-content: space-around;
       max-width: 87rem;
+      padding-bottom: 3rem;
 
       .movie-container {
+        position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -26,10 +28,17 @@
         width: 11rem;
         background-color: #353535;
         border-radius: 4px;
-        cursor: pointer;
 
         .bottom-container {
           width: 100%;
+        }
+
+        .plus {
+          position: absolute;
+          top: 0.5rem;
+          right: 0.5rem;
+          z-index: 10;
+          cursor: pointer;
         }
 
         .movie-title {
@@ -37,9 +46,21 @@
           width: 100%;
           box-sizing: border-box;
           font-size: 0.9rem;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          .text {
+            width: 85%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            flex-grow: 1;
+          }
+          .eye {
+            object-fit: contain;
+            height: 1rem;
+          }
         }
 
         .movie-info {
@@ -52,6 +73,29 @@
           box-sizing: border-box;
           margin-bottom: 0.3rem;
           color: lightgrey;
+
+          img {
+            height: 100%;
+            object-fit: contain;
+            padding: 0 0.5rem;
+          }
+
+          .right-container {
+            display: flex;
+            height: 0.8rem;
+            align-items: center;
+          }
+
+          .right-info {
+            padding: 0 0.5rem;
+            border-right: 1px solid;
+
+            &:last-child {
+              padding: 0;
+              border: none;
+              color: #ffd700;
+            }
+          }
         }
       }
 
@@ -59,6 +103,8 @@
         width: 100%;
         object-fit: contain;
         border-radius: 4px;
+        z-index: 5;
+        cursor: pointer;
       }
     }
 

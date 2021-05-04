@@ -8,5 +8,6 @@
   "signInWith": "Se connecter avec",
   "alreadyHaveAccount": "J'ai déjà un compte",
   "update": "Enregistrer",
-  "search": "Rechercher"
+  "search": "Rechercher",
+  "noResult": "Aucun résultat"
 }
