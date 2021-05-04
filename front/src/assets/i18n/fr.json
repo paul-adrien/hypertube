@@ -9,5 +9,7 @@
   "alreadyHaveAccount": "J'ai déjà un compte",
   "update": "Enregistrer",
   "search": "Rechercher",
-  "noResult": "Aucun résultat"
+  "noResult": "Aucun résultat",
+  "watchList": "Film à regarder",
+  "noWatchList": "Vous n'avez aucun film dans votre liste à regarder"
 }

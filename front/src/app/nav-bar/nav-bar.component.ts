@@ -14,7 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'nav-bar',
   template: `
-    <img class="logo" src="./assets/logo.png" />
+    <img class="logo" [routerLink]="'home'" src="./assets/logo.png" />
     <div class="left-case">
       <div class="left-case" *ngIf="!this.onPageLogin">
         <a
@@ -41,7 +41,7 @@ import { TranslateService } from '@ngx-translate/core';
         #selectedLang
         (change)="switchLang(selectedLang.value)"
       >
-        <option selected disabled hidden>Langue</option>
+        <option selected disabled hidden>{{ translate.defaultLang }}</option>
         <option
           *ngFor="let language of translate.getLangs()"
           [value]="language"
@@ -107,10 +107,12 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
       this.selectItem(this.selectedId);
     }
     this.profilPicture = JSON.parse(localStorage.getItem('auth-user'))?.picture;
+    this.cd.detectChanges();
   }
 
   ngAfterViewInit() {
     this.profilPicture = JSON.parse(localStorage.getItem('auth-user'))?.picture;
+    this.cd.detectChanges();
   }
 
   ngAfterViewChecked() {
@@ -131,6 +133,12 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
       this.selectItem('home');
     } else if (this.router.url.includes('login')) {
       this.onPageLogin = true;
+    }
+
+    if (!this.profilPicture) {
+      this.profilPicture = JSON.parse(
+        localStorage.getItem('auth-user')
+      )?.picture;
     }
     this.cd.detectChanges();
   }

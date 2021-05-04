@@ -11,6 +11,7 @@ import { PopUpComponent } from '../pop-up/pop-up.component';
 import { AuthService } from '../_services/auth_service';
 import { ProfileService } from '../_services/profile_service';
 import { movieService } from '../_services/movie_service';
+import { Router } from '@angular/router';
 
 function ValidatorUserNameLength(control: FormControl) {
   const test = /^(?=.{3,20}$)[a-zA-Z0-9]+(?:[-' ][a-zA-Z0-9]+)*$/;
@@ -145,28 +146,52 @@ function ValidatorEmail(control: FormControl) {
         </form>
       </div>
     </div>
-    <div class="list" *ngIf="moviesList">
-        <div
-          *ngFor="let movie of this.moviesList"
-          (click)="viewDetail(movie.imdb_code)"
-          class="movie-container"
-        >
-          <img src="{{ movie.poster }}" class="movie-img" />
-          <div class="bottom-container">
-            <div class="movie-title" [title]="movie.title">
-              {{ movie.title }} {{ movie.see == true ? '(Déjà vu)' : '' }}
-            </div>
-            <div class="movie-info">
-              <div>{{ movie.year }}</div>
-              <div *ngIf="movie.fav === false" (click)="this.sendToFav(movie)"><img src="./assets/icons8-plus.svg"></div>
-              <div *ngIf="movie.fav === true" (click)="this.deleteFav(movie)"><img src="./assets/iconfinder_icon-ios7-heart-outline_211754.svg"></div>
-              <div>
-                {{ movie.runtime }}
+    <div class="bottom-container">
+      <div class="list-container">
+        <span class="title">{{ 'watchList' | translate }}</span>
+        <div class="watch-list-container">
+          <div *ngFor="let movie of this.moviesList" class="movie-container">
+            <img
+              src="{{ movie.poster }}"
+              (click)="viewDetail(movie.imdb_code)"
+              class="movie-img"
+            />
+            <img
+              class="plus"
+              (click)="this.deleteFav(movie)"
+              src="./assets/red-x.svg"
+            />
+            <div class="bottom-movie-container">
+              <div class="movie-title" [title]="movie.title">
+                <span class="text">
+                  {{ movie.title }}
+                </span>
+                <img
+                  class="eye"
+                  *ngIf="movie.see"
+                  src="./assets/eye-green-2.svg"
+                />
+              </div>
+              <div class="movie-info">
+                <span>{{ movie.year }}</span>
+                <div class="right-container">
+                  <span class="right-info">
+                    {{ movie.runtime }}
+                  </span>
+                  <img src="./assets/star-yellow.svg" />
+                  <span class="right-info">
+                    {{ movie.rating }}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
+          <div *ngIf="this.moviesList.length === 0" class="no-watch-list">
+            {{ 'noWatchList' | translate }}
+          </div>
         </div>
       </div>
+    </div>
   `,
   styleUrls: ['./profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -179,8 +204,9 @@ export class ProfileComponent implements OnInit {
     private profile_service: ProfileService,
     private dialog: MatDialog,
     private cd: ChangeDetectorRef,
-    private movieService: movieService
-  ) { }
+    private movieService: movieService,
+    private route: Router
+  ) {}
 
   public userForm = new FormGroup({
     userName: new FormControl('', ValidatorUserNameLength),
@@ -247,6 +273,28 @@ export class ProfileComponent implements OnInit {
     console.log(this.userForm.getRawValue());
     this.profile_service
       .updateProfile(this.user.id, this.userForm.getRawValue())
-      .subscribe();
+      .subscribe((data) => {
+        this.auth_service.saveUser(data);
+      });
+  }
+
+  viewDetail(imdb_code) {
+    this.route.navigate(['/detail-movie/' + imdb_code]);
+  }
+
+  deleteFav(movie: any) {
+    this.movieService.deleteFav(movie, this.user.id).subscribe(
+      (data) => {
+        this.moviesList = this.moviesList.filter(
+          (res) => res.imdb_code !== movie.imdb_code
+        );
+
+        this.cd.detectChanges();
+        console.log(data);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 }

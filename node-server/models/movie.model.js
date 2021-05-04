@@ -4,7 +4,6 @@ const Movies = mongoose.model(
   "Movies",
   new mongoose.Schema({
     id: String,
-    userId: String,
     hash: String,
     lastSeen: String,
     lastSeenS: Number,

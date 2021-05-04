@@ -3,7 +3,7 @@ const rarbgApi = require("rarbg-api");
 const imdb = require("imdb-api");
 const YTS_LIST = "https://yts.megaproxy.info/api/v2/list_movies.json";
 const db = require("../models");
-const { fav } = require("../models");
+const { fav, user } = require("../models");
 const config = require("../config/stream");
 const Fav = db.fav;
 const Movies = db.movies;
@@ -36,10 +36,7 @@ async function getYTSMovies(userId, paramsYts) {
     movies = await Promise.all(
       data.data.data.movies.map(async (m) => {
         if (m && m.imdb_code && m.torrents) {
-          see = await Movies.findOne(
-            { id: m.imdb_code, userId: userId },
-            "state"
-          ).exec();
+          see = await Movies.findOne({ id: m.imdb_code }, "state").exec();
           return {
             imdb_code: m.imdb_code,
             title: null,
@@ -74,7 +71,7 @@ async function getRarbgMovies(page, genre, sort, userId) {
       results.map(async (m) => {
         if (m && m.episode_info && m.episode_info.imdb) {
           see = await Movies.findOne(
-            { id: m.episode_info.imdb, userId: userId },
+            { id: m.episode_info.imdb },
             "state"
           ).exec();
           return {
@@ -93,7 +90,7 @@ async function getRarbgMovies(page, genre, sort, userId) {
   return movies;
 }
 
-async function getInfoMovies(movies) {
+async function getInfoMovies(userId, movies) {
   return new Promise(async (resolve, reject) => {
     i = 0;
     if (movies?.length > 0) {
@@ -103,13 +100,13 @@ async function getInfoMovies(movies) {
           movies.map(async (m) => {
             if (m && m.imdb_code) {
               let favorite = false;
-              await Fav.findOne({ $query: { imdb_code: m.imdb_code } }).exec(
-                (err, result) => {
-                  if (result) {
-                    favorite = true;
-                  } else favorite = false;
-                }
-              );
+              await Fav.findOne({
+                $query: { imdb_code: m.imdb_code, userId: userId },
+              }).exec((err, result) => {
+                if (result) {
+                  favorite = true;
+                } else favorite = false;
+              });
               return await imdb
                 .get({ id: m.imdb_code }, { apiKey: "e8cb5cca" })
                 .then((movie) => {
@@ -166,7 +163,7 @@ exports.getListMovie = async (req, res) => {
               JSON.stringify(obj.imdb_code) === JSON.stringify(object.imdb_code)
           )
       );
-      movies = await getInfoMovies(YTSmovies);
+      movies = await getInfoMovies(userId, YTSmovies);
     }
     if (RARBGmovies !== undefined) {
       RARBGmovies = RARBGmovies.filter(
@@ -177,7 +174,7 @@ exports.getListMovie = async (req, res) => {
               JSON.stringify(obj.imdb_code) === JSON.stringify(object.imdb_code)
           )
       );
-      RARBGmovies_filtred = await getInfoMovies(RARBGmovies);
+      RARBGmovies_filtred = await getInfoMovies(userId, RARBGmovies);
       movies = movies.concat(RARBGmovies_filtred);
     }
     res.json({
@@ -185,7 +182,7 @@ exports.getListMovie = async (req, res) => {
       movies: movies.filter((movie) => movie && movie.title && movie.poster),
     });
   } else {
-    movies_filtred = await getInfoMovies(YTSmovies);
+    movies_filtred = await getInfoMovies(YTSmovies, userId);
     console.log("pppppp");
     res.json({
       status: true,
@@ -340,7 +337,7 @@ exports.addToFav = async (req, res) => {
   const movie = req.body.movie;
   const userId = req.body.userId;
 
-  Fav.findOne({ $query: { imdb_code: movie.imdb_code } }).exec(
+  Fav.findOne({ $query: { imdb_code: movie.imdb_code, userId: userId } }).exec(
     (err, result) => {
       if (err) {
         return res.json({
@@ -386,16 +383,18 @@ exports.deleteFav = async (req, res) => {
   const movie = req.body.movie;
   const userId = req.body.userId;
 
-  Fav.deleteOne({ imdb_code: movie.imdb_code }).exec((err, result) => {
-    if (err) {
-      return res.json({
-        status: false,
-        message: err,
-      });
-    } else {
-      res.send({ message: "Movie was delete to favorite!" });
+  Fav.deleteOne({ imdb_code: movie.imdb_code, userId: userId }).exec(
+    (err, result) => {
+      if (err) {
+        return res.json({
+          status: false,
+          message: err,
+        });
+      } else {
+        res.send({ message: "Movie was delete to favorite!" });
+      }
     }
-  });
+  );
 };
 
 exports.getFav = async (req, res) => {

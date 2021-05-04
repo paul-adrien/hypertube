@@ -10,6 +10,7 @@ const User = mongoose.model(
     password: String,
     id: String,
     picture: String,
+    moviesWatched: Array,
   })
 );
 

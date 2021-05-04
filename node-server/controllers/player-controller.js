@@ -14,14 +14,14 @@ const srt2vtt = require("srt-to-vtt");
 const config = require("../config/stream");
 const db = require("../models");
 const Movies = db.movies;
-const dateFns = require('date-fns');
-
+const dateFns = require("date-fns");
+const User = require("../models/users.model");
 
 module.exports.saveTorrent = (data) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     Movies.findOne(
       { id: data.params.movieId, hash: data.params.hash },
-      (err, result) => {
+      async (err, result) => {
         if (err)
           reject({
             res: data.res,
@@ -37,7 +37,7 @@ module.exports.saveTorrent = (data) => {
               },
               {
                 $set: {
-                  lastSeen: dateFns.format(new Date(), 'MM/dd/yyyy'),
+                  lastSeen: dateFns.format(new Date(), "MM/dd/yyyy"),
                   lastSeenS: Date.now(),
                   state: data.params.state,
                 },
@@ -60,7 +60,7 @@ module.exports.saveTorrent = (data) => {
               },
               {
                 $set: {
-                  lastSeen: dateFns.format(new Date(), 'MM/dd/yyyy'),
+                  lastSeen: dateFns.format(new Date(), "MM/dd/yyyy"),
                   lastSeenS: Date.now(),
                 },
               },
@@ -77,11 +77,14 @@ module.exports.saveTorrent = (data) => {
           }
         } else {
           console.log("wesh la team");
+          await User.updateOne(
+            { id: data.params.userId },
+            { $addToSet: { moviesWatched: data.params.movieId } }
+          ).exec();
           const movies = new Movies({
             id: data.params.movieId,
-            userId: data.params.userId,
             hash: data.params.hash,
-            lastSeen: dateFns.format(new Date(), 'MM/dd/yyyy'),
+            lastSeen: dateFns.format(new Date(), "MM/dd/yyyy"),
             lastSeenS: Date.now(),
             fullPath: data.params.fileInfo.fullPath,
             partialPath: data.params.fileInfo.partialPath,
@@ -264,7 +267,7 @@ module.exports.stream = (data) => {
         file.pipe(data.res);
       } else {
         let file = path.createReadStream();
-        console.log(fileSize)
+        console.log(fileSize);
         let headers = {
           "Content-Length": fileSize,
           "Content-Type": "video/webm",
@@ -411,24 +414,24 @@ async function DlSubs(link, lang, imdb_id) {
         );
         return parsedPath.ext == ".srt"
           ? entry
-            .pipe(srt2vtt())
-            .pipe(
-              fs.createWriteStream(
-                `../movies/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
+              .pipe(srt2vtt())
+              .pipe(
+                fs.createWriteStream(
+                  `../movies/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
+                )
               )
-            )
-            .on("error", (e) => {
-              throw new Error(e.message);
-            })
+              .on("error", (e) => {
+                throw new Error(e.message);
+              })
           : entry
-            .pipe(
-              fs.createWriteStream(
-                `../movies/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
+              .pipe(
+                fs.createWriteStream(
+                  `../movies/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
+                )
               )
-            )
-            .on("error", (e) => {
-              throw new Error(e.message);
-            });
+              .on("error", (e) => {
+                throw new Error(e.message);
+              });
       },
       {
         catch: (e) => console.log(`Streamz Error: ${e.message}`),

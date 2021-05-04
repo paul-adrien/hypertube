@@ -10,5 +10,7 @@
   "createAccount": "Register an account",
   "update": "Update",
   "search": "Search",
-  "noResult": "No result"
+  "noResult": "No result",
+  "watchList": "Watch list",
+  "noWatchList": "You don’t have any movies on your watchlist"
 }

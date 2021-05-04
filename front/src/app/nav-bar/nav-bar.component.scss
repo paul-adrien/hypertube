@@ -15,6 +15,10 @@
     height: 2.2rem;
     object-fit: contain;
     margin-left: 1rem;
+
+    @media screen and (max-width: 600px) {
+      height: 1.6rem;
+    }
   }
 
   .case {
