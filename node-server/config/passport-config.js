@@ -2,6 +2,7 @@ const { keys } = require("./auth.js");
 const { checkUserExist, getUser } = require("../models/lib-user.model");
 const FortyTwoStrategy = require("passport-42").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const GitHubStrategy = require("passport-github2").Strategy;
 const User = require("../models/users.model");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
@@ -82,6 +83,44 @@ passport.use(
             });
           }
           return done(null, `google_${profile.id}`);
+        });
+      } else return done(null, false);
+    }
+  )
+);
+
+passport.use(
+  new GitHubStrategy(
+    {
+      clientID: keys.github.clientID,
+      clientSecret: keys.github.clientSecret,
+      callbackURL: `http://localhost:8080/api/authenticate/github/callback`,
+      scope: ["user:email"],
+    },
+    async function (accessToken, refreshToken, profile, done) {
+      console.log("strategy git", profile);
+      console.log(await checkUserExist(`git_${profile.id}`));
+      const user = await getUser({ id: `git_${profile.id}` });
+      if (user && user !== null) return done(null, user.id);
+      if (
+        profile &&
+        profile._json &&
+        !(await checkUserExist(`git_${profile.id}`))
+      ) {
+        const user = new User({
+          id: `git_${profile.id}`,
+          userName: profile._json.login,
+          picture: profile._json.avatar_url.replace("?v=4", ""),
+          email: profile.emails[0].value,
+        });
+        user.save((err, user) => {
+          if (err) {
+            return res.json({
+              status: false,
+              message: err,
+            });
+          }
+          return done(null, `git_${profile.id}`);
         });
       } else return done(null, false);
     }

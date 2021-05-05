@@ -4,37 +4,53 @@ const User = db.user;
 checkDuplicateUsernameOrEmail = (req, res, next) => {
   // Username
   User.findOne({
-    username: req.body.userName
+    $and: [
+      {
+        userName: req.body.userName,
+      },
+
+      { id: { $not: { $regex: /42_/ } } },
+      { id: { $not: { $regex: /google_/ } } },
+      { id: { $not: { $regex: /git_/ } } },
+    ],
   }).exec((err, user) => {
     if (err) {
       return res.json({
         status: false,
-        message: err
+        message: err,
       });
     }
 
     if (user) {
       return res.json({
         status: false,
-        message: "Failed! Username is already in use!"
+        message: "Failed! Username is already in use!",
       });
     }
 
     // Email
     User.findOne({
-      email: req.body.email
+      $and: [
+        {
+          email: req.body.email,
+        },
+
+        { id: { $not: { $regex: /42_/ } } },
+        { id: { $not: { $regex: /google_/ } } },
+        { id: { $not: { $regex: /git_/ } } },
+      ],
     }).exec((err, user) => {
       if (err) {
         return res.json({
           status: false,
-          message: err
+          message: err,
         });
       }
 
       if (user) {
         return res.json({
           status: false,
-          message: "Failed! Email is already in use!"
+          message: "Failed! Email is already in use!",
         });
       }
 
@@ -44,7 +60,7 @@ checkDuplicateUsernameOrEmail = (req, res, next) => {
 };
 
 const verifySignUp = {
-  checkDuplicateUsernameOrEmail
+  checkDuplicateUsernameOrEmail,
 };
 
 module.exports = verifySignUp;

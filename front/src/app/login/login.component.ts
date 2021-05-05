@@ -249,8 +249,8 @@ function ValidatorPass(control: FormControl) {
         <div class="primary-button google" (click)="this.OauthGoogle()">
           {{ 'signInWith' | translate }} Google
         </div>
-        <div class="primary-button google">
-          {{ 'signInWith' | translate }} Jsp
+        <div class="primary-button github" (click)="this.OauthGithub()">
+          {{ 'signInWith' | translate }} Github
         </div>
       </div>
     </div>
@@ -350,5 +350,9 @@ export class LoginComponent implements OnInit {
 
   public OauthGoogle() {
     location.href = 'http://localhost:8080/api/authenticate/google';
+  }
+
+  public OauthGithub() {
+    location.href = 'http://localhost:8080/api/authenticate/github';
   }
 }

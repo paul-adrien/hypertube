@@ -76,4 +76,36 @@ module.exports = function (app) {
       }
     )(req, res, next);
   });
+
+  app.get(
+    "/api/authenticate/github",
+    passport.authenticate("github", { scope: ["user:email"] })
+  );
+  app.get("/api/authenticate/github/callback", (req, res, next) => {
+    passport.authenticate(
+      "github",
+      {
+        failureRedirect: "http://localhost:8081/login",
+      },
+      async (err, userId) => {
+        // Successful authentication, redirect home.
+        const userDb = await getUser({ id: userId });
+        console.log("callback", userDb);
+
+        const token = jwt.sign({ id: userDb._id }, config.secret, {
+          expiresIn: 86400, // 24 hours
+        });
+
+        return res.redirect(
+          "http://localhost:8081/login?data=" +
+            encodeURI(
+              JSON.stringify({
+                user: userDb,
+                token: token,
+              })
+            )
+        );
+      }
+    )(req, res, next);
+  });
 };

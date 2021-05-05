@@ -13,6 +13,7 @@ exports.signup = (req, res) => {
       },
       { id: { $not: { $regex: /42_/ } } },
       { id: { $not: { $regex: /google_/ } } },
+      { id: { $not: { $regex: /git_/ } } },
     ],
   }).exec((err, user) => {
     if (user) {
@@ -52,6 +53,7 @@ exports.signin = (req, res) => {
 
       { id: { $not: { $regex: /42_/ } } },
       { id: { $not: { $regex: /google_/ } } },
+      { id: { $not: { $regex: /git_/ } } },
     ],
   }).exec((err, user) => {
     if (err) {

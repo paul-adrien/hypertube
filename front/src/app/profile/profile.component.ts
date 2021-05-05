@@ -60,7 +60,9 @@ function ValidatorEmail(control: FormControl) {
           />
         </label>
         <div class="username">{{ user.userName }}</div>
-        <div class="name">({{ user.firstName + ' ' + user.lastName }})</div>
+        <div class="name" *ngIf="user.firstName && user.lastName">
+          ({{ user.firstName + ' ' + user.lastName }})
+        </div>
         <div class="name">{{ user.email }}</div>
       </div>
       <div class="info-container">

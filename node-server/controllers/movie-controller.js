@@ -50,7 +50,6 @@ async function getYTSMovies(userId, paramsYts) {
         }
       })
     );
-    movies.forEach((m) => console.log(m?.year));
   }
   return movies;
 }
@@ -116,8 +115,8 @@ async function getInfoMovies(userId, movies) {
                   return {
                     imdb_code: m.imdb_code,
                     title: movie.title,
-                    year: m.year,
-                    rating: m.rating,
+                    year: m.year ? m.year : movie.year,
+                    rating: m.rating ? m.rating : movie.rating,
                     poster: movie.poster,
                     seeds: m.seeds,
                     runtime: movie.runtime,
@@ -174,6 +173,7 @@ exports.getListMovie = async (req, res) => {
               JSON.stringify(obj.imdb_code) === JSON.stringify(object.imdb_code)
           )
       );
+      console.log("RARBG movies");
       RARBGmovies_filtred = await getInfoMovies(userId, RARBGmovies);
       movies = movies.concat(RARBGmovies_filtred);
     }
@@ -182,7 +182,7 @@ exports.getListMovie = async (req, res) => {
       movies: movies.filter((movie) => movie && movie.title && movie.poster),
     });
   } else {
-    movies_filtred = await getInfoMovies(YTSmovies, userId);
+    movies_filtred = await getInfoMovies(userId, YTSmovies);
     console.log("pppppp");
     res.json({
       status: true,
