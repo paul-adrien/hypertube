@@ -2,8 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { Comment } from 'libs/comments';
-
-const AUTH_API = 'http://localhost:8080/api/';
+import { environment } from 'src/environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({ "Content-Type": "application/json" }),
@@ -17,7 +16,7 @@ export class commentsService {
 
   addComment(comment: any, imdb_id: string, username: string): Observable<any> {
     return this.http.post(
-      AUTH_API + 'addComment',
+      environment.AUTH_API + `comment/${imdb_id}`,
       {
         comment: comment.comment,
         imdb_id: imdb_id,
@@ -28,6 +27,6 @@ export class commentsService {
   }
 
   getComments(imdb_id: string): Observable<any> {
-    return this.http.get(AUTH_API + `getComments/${imdb_id}`);
+    return this.http.get(environment.AUTH_API + `comment/${imdb_id}`);
   }
 }

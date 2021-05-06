@@ -284,7 +284,7 @@ export class LoginComponent implements OnInit {
     private route: Router,
     private router: ActivatedRoute,
     private cd: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.router.queryParams.subscribe((params) => {
@@ -345,14 +345,14 @@ export class LoginComponent implements OnInit {
   }
 
   public Oauth42() {
-    location.href = 'http://localhost:8080/api/authenticate/42';
+    location.href = 'http://localhost:8080/user/authenticate/42';
   }
 
   public OauthGoogle() {
-    location.href = 'http://localhost:8080/api/authenticate/google';
+    location.href = 'http://localhost:8080/user/authenticate/google';
   }
 
   public OauthGithub() {
-    location.href = 'http://localhost:8080/api/authenticate/github';
+    location.href = 'http://localhost:8080/user/authenticate/github';
   }
 }

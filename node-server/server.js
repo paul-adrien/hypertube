@@ -52,7 +52,7 @@ app.get("/", (req, res) => {
 var movieController = require("./controllers/movie-controller");
 //setInterval(movieController.dellMovies, 50000);
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
+app.use('/explorer', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 
 // routes
 require("./routes/auth-routes")(app);

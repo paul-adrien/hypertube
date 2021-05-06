@@ -1,5 +1,5 @@
 module.exports = {
-    openapi: '3.0.1',
+    openapi: '3.0.3',
     info: {
         version: '1',
         title: 'Hypertube API',
@@ -26,62 +26,298 @@ module.exports = {
         }
     ],
     paths: {
-        '/users': {
+        '/token': {
             get: {
                 tags: ['CRUD operations'],
-                description: 'Get users',
-                operationId: 'getUsers',
+                description: 'Check token',
                 parameters: [
                     {
-                        name: 'x-company-id',
+                        name: 'x-access-token',
                         in: 'header',
-                        schema: {
-                            $ref: '#/components/schemas/companyId'
-                        },
                         required: true,
-                        description: 'Company id where the users work'
-                    },
-                    {
-                        name: 'page',
-                        in: 'query',
-                        schema: {
-                            type: 'integer',
-                            default: 1
-                        },
-                        required: false
-                    },
-                    {
-                        name: 'orderBy',
-                        in: 'query',
-                        schema: {
-                            type: 'string',
-                            enum: ['asc', 'desc'],
-                            default: 'asc'
-                        },
-                        required: false
                     }
                 ],
                 responses: {
-                    '200': {
-                        description: 'Users were obtained',
+                    'true': {
+                        description: 'Users exist and send',
                         content: {
                             'application/json': {
-                                schema: {
-                                    $ref: '#/components/schemas/Users'
+                                example: {
+                                    message: "user was log",
                                 }
                             }
                         }
                     },
-                    '400': {
+                    'false': {
                         description: 'Missing parameters',
                         content: {
                             'application/json': {
-                                schema: {
-                                    $ref: '#/components/schemas/Error'
-                                },
                                 example: {
-                                    message: 'companyId is missing',
-                                    internal_code: 'missing_parameters'
+                                    message: "No token || unauthorized || user doesn't exist ",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/user/:id': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'Get user information',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                    {
+                        name: 'user_id',
+                        in: 'params',
+                        schema: {
+                            type: 'string',
+                        },
+                        required: true
+                    }
+                ],
+                responses: {
+                    'true': {
+                        description: 'Users exist and send',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/User'
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized || user doesn't exist ",
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            put: {
+                tags: ['CRUD operations'],
+                description: 'Update user',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                    {
+                        name: 'user_id',
+                        in: 'params',
+                        schema: {
+                            type: 'string',
+                        },
+                        required: true
+                    }
+                ],
+                requestBody: {
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/User'
+                            }
+                        }
+                    },
+                    required: true
+                },
+                responses: {
+                    'true': {
+                        description: 'User update',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/User'
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized || user update error",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/user/register': {
+            post: {
+                tags: ['CRUD operations'],
+                description: 'Create user',
+                parameters: [],
+                requestBody: {
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/userRegsiter',
+                            }
+                        }
+                    },
+                    required: true
+                },
+                responses: {
+                    'true': {
+                        description: 'User was registered',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/User'
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized || Failed! Username is already in use! || Failed! Email is already in use! ",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/user/authenticate': {
+            post: {
+                tags: ['CRUD operations'],
+                description: 'login',
+                parameters: [],
+                requestBody: {
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/userAuthenticate',
+                            }
+                        }
+                    },
+                    required: true
+                },
+                responses: {
+                    'true': {
+                        description: 'User was registered',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/User',
+                                    message: "sdfdsf"
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized || Invalid Password! || User Not found.",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/user/authenticate/42': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'login with 42 omniauth',
+                parameters: [],
+                responses: {
+                }
+            }
+        },
+        '/user/authenticate/google': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'login with google omniauth',
+                parameters: [],
+                responses: {
+                }
+            }
+        },
+        '/user/authenticate/github': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'login with github omniauth',
+                parameters: [],
+                responses: {
+                }
+            }
+        },
+        '/user/authenticate/42/callback': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'callback login with 42 omniauth',
+                parameters: [],
+                responses: {
+                }
+            }
+        },
+        '/user/authenticate/google/callback': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'callback login with google omniauth',
+                parameters: [],
+                responses: {
+                }
+            }
+        },
+        '/user/authenticate/github/callback': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'callback login with github omniauth',
+                parameters: [],
+                responses: {
+                }
+            }
+        },
+        '/comment/:imdb_id': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'get comment',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                ],
+                requestBody: {
+                },
+                responses: {
+                    'true': {
+                        description: 'User was registered',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/Comments',
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized",
                                 }
                             }
                         }
@@ -90,105 +326,739 @@ module.exports = {
             },
             post: {
                 tags: ['CRUD operations'],
-                description: 'Create users',
-                operationId: 'createUsers',
-                parameters: [],
+                description: 'send comment',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                ],
                 requestBody: {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Users'
+                                $ref: '#/components/schemas/Comments',
                             }
                         }
                     },
                     required: true
                 },
                 responses: {
-                    '200': {
-                        description: 'New users were created'
-                    },
-                    '400': {
-                        description: 'Invalid parameters',
+                    'true': {
+                        description: 'User was registered',
                         content: {
                             'application/json': {
-                                schema: {
-                                    $ref: '#/components/schemas/Error'
-                                },
                                 example: {
-                                    message: 'User identificationNumbers 10, 20 already exist',
-                                    internal_code: 'invalid_parameters'
+                                    message: " Comment was registered successfully!",
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized",
                                 }
                             }
                         }
                     }
                 }
             }
-        }
+        },
+        '/movie/list': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'get movie list',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                    {
+                        name: 'userId',
+                        in: 'query',
+                        schema: {
+                            type: 'string',
+                        },
+                        required: true
+                    },
+                    {
+                        name: 'genre',
+                        in: 'query',
+                        schema: {
+                            type: 'string',
+                        },
+                        required: true
+                    },
+                    {
+                        name: 'note',
+                        in: 'query',
+                        schema: {
+                            type: 'string',
+                        },
+                        required: true
+                    },
+                    {
+                        name: 'search',
+                        in: 'query',
+                        schema: {
+                            type: 'string',
+                        },
+                        required: true
+                    },
+                    {
+                        name: 'sort',
+                        in: 'query',
+                        schema: {
+                            type: 'string',
+                        },
+                        required: true
+                    },
+                    {
+                        name: 'order',
+                        in: 'query',
+                        schema: {
+                            type: 'string',
+                        },
+                        required: true
+                    }
+                ],
+                responses: {
+                    'true': {
+                        description: 'list of movies',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/Movies',
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/movie/:imdb_id/favorite': {
+            post: {
+                tags: ['CRUD operations'],
+                description: 'get movie list',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                ],
+                requestBody: {
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/Movies',
+                            }
+                        }
+                    },
+                    required: true
+                },
+                responses: {
+                    'true': {
+                        description: 'save favorite',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "Movie was registered successfully to favorite!",
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/movie/:imdb_id/favorite/:user_id': {
+            delete: {
+                tags: ['CRUD operations'],
+                description: 'delete favorite',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                ],
+                responses: {
+                    'true': {
+                        description: 'delete favorite',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "Movie was delete to favorite!",
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/movie/favorite/:user_id': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'get favorite list',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                ],
+                responses: {
+                    'true': {
+                        description: 'list of favorite',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/Movies',
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/movie/:imdb_id/subtitles': {
+            post: {
+                tags: ['CRUD operations'],
+                description: 'download subtitles',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                ],
+                responses: {
+                    'true': {
+                        description: '',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/Subtitles',
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized || no subs available",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/movie/:imdb_id/subtitles/file/:lang': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'get subtitles',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                ],
+                responses: {
+                    'true': {
+                        description: 'list of favorite',
+                        content: {
+                            'application/json': {
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized || no subs available",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/movie/:imdb_id/detail': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'get movie detail',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                ],
+                responses: {
+                    'true': {
+                        description: 'list of favorite',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/Detail'
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized || no subs available",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/movie/download': {
+            post: {
+                tags: ['CRUD operations'],
+                description: 'download a movie',
+                parameters: [
+                    {
+                        name: 'token',
+                        in: 'body',
+                        required: true,
+                    },
+                ],
+                requestBody: {
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/DownloadBody',
+                            }
+                        }
+                    },
+                    required: true
+                },
+                responses: {
+                    'true': {
+                        description: 'list of favorite',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "a faire",
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized || no subs available",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/movie/convert/:hash/:quality': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'get movie detail',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                ],
+                responses: {
+                    'true': {
+                        description: 'list of favorite',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/Detail'
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized || no subs available",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/movie/stream/:hash': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'get movie detail',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                ],
+                responses: {
+                    'true': {
+                        description: 'list of favorite',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/Detail'
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized || no subs available",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
     },
     components: {
         schemas: {
-            identificationNumber: {
-                type: 'integer',
-                description: 'User identification number',
-                example: 1234
-            },
-            username: {
+            userName: {
                 type: 'string',
-                example: 'raparicio'
+                example: 'paul'
             },
-            userType: {
+            email: {
                 type: 'string',
+                example: 'paul@gmail.com'
             },
-            companyId: {
-                type: 'integer',
-                description: 'Company id where the user works',
-                example: 15
+            lastName: {
+                type: 'string',
+                example: 'laurent'
             },
-            User: {
+            firstName: {
+                type: 'string',
+                example: 'paul'
+            },
+            password: {
+                type: 'string',
+                example: 'gkjHK56f-hGK'
+            },
+            comment: {
+                type: 'string',
+                example: 'Nice !'
+            },
+            date: {
+                type: 'string'
+            },
+            imdb_id: {
+                type: 'string'
+            },
+            id: {
+                type: 'string'
+            },
+            picture: {
+                type: 'string'
+            },
+            moviesWatched: {
+                type: 'array',
+                items: {
+                    type: 'string'
+                }
+            },
+            DownloadBody: {
                 type: 'object',
                 properties: {
-                    identificationNumber: {
-                        $ref: '#/components/schemas/identificationNumber'
+                    hash: {
+                        type: 'string'
                     },
-                    username: {
-                        $ref: '#/components/schemas/username'
+                    movieId: {
+                        type: 'string'
                     },
-                    userType: {
-                        $ref: '#/components/schemas/userType'
+                    size: {
+                        type: 'number'
                     },
-                    companyId: {
-                        $ref: '#/components/schemas/companyId'
+                    quality: {
+                        type: 'string'
+                    },
+                    userId: {
+                        type: 'number'
                     }
                 }
             },
-            Users: {
+            hashs: {
                 type: 'object',
                 properties: {
-                    users: {
-                        type: 'array',
-                        items: {
-                            $ref: '#/components/schemas/User'
+                    hash: {
+                        type: 'string'
+                    },
+                    imdb_code: {
+                        type: 'string'
+                    },
+                    peers: {
+                        type: 'number'
+                    },
+                    quality: {
+                        type: 'string'
+                    },
+                    seeds: {
+                        type: 'number'
+                    },
+                    size: {
+                        type: 'number'
+                    },
+                    source: {
+                        type: 'string'
+                    },
+                    state: {
+                        type: 'boolean'
+                    }
+                }
+            },
+            Detail: {
+                allOf: {
+                    $ref: '#/components/schemas/hashs',
+                    type: 'object',
+                    properties: {
+                        actors: {
+                            type: 'string'
+                        },
+                        author: {
+                            type: 'string'
+                        },
+                        boxoffice: {
+                            type: 'string'
+                        },
+                        director: {
+                            type: 'string'
+                        },
+                        genre: {
+                            type: 'string'
+                        },
+                        imdb_code: {
+                            type: 'string'
+                        },
+                        metascore: {
+                            type: 'string'
+                        },
+                        poster: {
+                            type: 'string'
+                        },
+                        production: {
+                            type: 'string'
+                        },
+                        rating: {
+                            type: 'number'
+                        },
+                        resume: {
+                            type: 'string'
+                        },
+                        runtime: {
+                            type: 'string'
+                        },
+                        title: {
+                            type: 'string'
+                        },
+                        year: {
+                            type: 'number'
                         }
                     }
                 }
             },
-            Error: {
+            Subtitles: {
                 type: 'object',
                 properties: {
-                    message: {
+                    lang: {
                         type: 'string'
                     },
-                    internal_code: {
+                    langShort: {
+                        type: 'string'
+                    },
+                    path: {
+                        type: 'string'
+                    },
+                    fileName: {
                         type: 'string'
                     }
                 }
-            }
+            },
+            Movies: {
+                type: 'object',
+                properties: {
+                    fav: {
+                        type: 'boolean'
+                    },
+                    imdb_code: {
+                        type: 'string'
+                    },
+                    poster: {
+                        type: 'string'
+                    },
+                    rating: {
+                        type: 'number',
+                    },
+                    runtime: {
+                        type: 'string',
+                    },
+                    see: {
+                        type: 'boolean',
+                    },
+                    seeds: {
+                        type: 'number',
+                    },
+                    title: {
+                        type: 'string',
+                    },
+                    year: {
+                        type: 'number',
+                    }
+                }
+            },
+            Comments: {
+                type: 'object',
+                properties: {
+                    username: {
+                        $ref: '#/components/schemas/userName'
+                    },
+                    comment: {
+                        $ref: '#/components/schemas/comment'
+                    },
+                    imdb_id: {
+                        $ref: '#/components/schemas/imdb_id'
+                    },
+                    date: {
+                        $ref: '#/components/schemas/date'
+                    }
+                }
+            },
+            userRegsiter: {
+                type: 'object',
+                properties: {
+                    userName: {
+                        $ref: '#/components/schemas/userName'
+                    },
+                    email: {
+                        $ref: '#/components/schemas/email'
+                    },
+                    lastName: {
+                        $ref: '#/components/schemas/lastName'
+                    },
+                    firstName: {
+                        $ref: '#/components/schemas/firstName'
+                    },
+                    password: {
+                        $ref: '#/components/schemas/password'
+                    }
+                }
+            },
+            userAuthenticate: {
+                type: 'object',
+                properties: {
+                    userName: {
+                        $ref: '#/components/schemas/userName'
+                    },
+                    password: {
+                        $ref: '#/components/schemas/password'
+                    }
+                }
+            },
+            User: {
+                type: 'object',
+                properties: {
+                    userName: {
+                        $ref: '#/components/schemas/userName'
+                    },
+                    email: {
+                        $ref: '#/components/schemas/email'
+                    },
+                    lastName: {
+                        $ref: '#/components/schemas/lastName'
+                    },
+                    firstName: {
+                        $ref: '#/components/schemas/firstName'
+                    },
+                    password: {
+                        $ref: '#/components/schemas/password'
+                    },
+                    id: {
+                        $ref: '#/components/schemas/id'
+                    },
+                    picture: {
+                        $ref: '#/components/schemas/picture'
+                    },
+                    moviesWatched: {
+                        $ref: '#/components/schemas/moviesWatched'
+                    }
+                }
+            },
         },
         securitySchemes: {
             ApiKeyAuth: {
                 type: 'apiKey',
                 in: 'header',
-                name: 'x-api-key'
+                name: 'x-access-token'
             }
         }
     }

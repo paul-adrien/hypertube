@@ -50,9 +50,9 @@ import { movieService } from '../_services/movie_service';
           kind="subtitles"
           label="English"
           [src]="
-            'http://localhost:8080/api/movie/subtitles/file/' +
+            'http://localhost:8080/movie/' +
             imdb_code +
-            '/en?token=' +
+            '/subtitles/file/en?token=' +
             token
           "
           srclang="en"
@@ -62,9 +62,9 @@ import { movieService } from '../_services/movie_service';
           kind="subtitles"
           label="Français"
           [src]="
-            'http://localhost:8080/api/movie/subtitles/file/' +
+            'http://localhost:8080/movie/' +
             imdb_code +
-            '/fr?token=' +
+            '/subtitles/file/fr?token=' +
             token
           "
           srclang="fr"
@@ -107,7 +107,7 @@ export class PlayerComponent implements OnInit {
 
   ngOnInit(): void {
     this.source =
-      'http://localhost:8080/api' +
+      'http://localhost:8080' +
       `/movie/convert/${this.hash}/${this.quality}?token=${this.token}`;
     console.log(this.source);
     this.getSubtitles();
@@ -119,7 +119,7 @@ export class PlayerComponent implements OnInit {
       this.currentTime = this.api.currentTime;
       console.log(this.currentTime);
       this.source =
-        'http://localhost:8080/api' +
+        'http://localhost:8080' +
         `/movie/convert/${this.hash}/${quality}?token=${this.token}`;
       this.qualityChange = quality;
       console.log(this.source);

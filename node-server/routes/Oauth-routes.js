@@ -14,7 +14,7 @@ module.exports = function (app) {
     next();
   });
 
-  app.get("/api/authenticate/42", passport.authenticate("42"));
+  app.get("/user/authenticate/42", passport.authenticate("42"));
   app.get("/api/authenticate/42/callback", (req, res, next) => {
     passport.authenticate(
       "42",
@@ -34,19 +34,19 @@ module.exports = function (app) {
 
         return res.redirect(
           "http://localhost:8081/login?data=" +
-            encodeURI(
-              JSON.stringify({
-                user: userDb,
-                token: token,
-              })
-            )
+          encodeURI(
+            JSON.stringify({
+              user: userDb,
+              token: token,
+            })
+          )
         );
       }
     )(req, res, next);
   });
 
   app.get(
-    "/api/authenticate/google",
+    "/user/authenticate/google",
     passport.authenticate("google", { scope: ["profile", "email"] })
   );
   app.get("/api/authenticate/google/callback", (req, res, next) => {
@@ -66,19 +66,19 @@ module.exports = function (app) {
 
         return res.redirect(
           "http://localhost:8081/login?data=" +
-            encodeURI(
-              JSON.stringify({
-                user: userDb,
-                token: token,
-              })
-            )
+          encodeURI(
+            JSON.stringify({
+              user: userDb,
+              token: token,
+            })
+          )
         );
       }
     )(req, res, next);
   });
 
   app.get(
-    "/api/authenticate/github",
+    "/user/authenticate/github",
     passport.authenticate("github", { scope: ["user:email"] })
   );
   app.get("/api/authenticate/github/callback", (req, res, next) => {
@@ -98,12 +98,12 @@ module.exports = function (app) {
 
         return res.redirect(
           "http://localhost:8081/login?data=" +
-            encodeURI(
-              JSON.stringify({
-                user: userDb,
-                token: token,
-              })
-            )
+          encodeURI(
+            JSON.stringify({
+              user: userDb,
+              token: token,
+            })
+          )
         );
       }
     )(req, res, next);

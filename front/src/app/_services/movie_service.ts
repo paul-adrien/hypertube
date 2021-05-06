@@ -4,9 +4,8 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import axios from 'axios';
 import { AuthService } from './auth_service';
+import { environment } from 'src/environments/environment';
 export var searchCancelTokenFetch = { id: null, source: null };
-
-const AUTH_API = 'http://localhost:8080/api/';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -20,7 +19,7 @@ export class movieService {
     private http: HttpClient,
     private route: Router,
     private authService: AuthService
-  ) {}
+  ) { }
 
   // watchMovie(imdb_id: string, hash: string): Observable<any> {
   //     console.log(AUTH_API + `movie/watch/${imdb_id}?hash=${hash}`);
@@ -28,7 +27,7 @@ export class movieService {
   // }
 
   getSubtitles(imdb_id: string): Observable<any> {
-    return this.http.get(AUTH_API + `movie/subtitles/${imdb_id}`);
+    return this.http.post(environment.AUTH_API + `movie/${imdb_id}/subtitles`, {}, httpOptions);
   }
 
   getListMovies(params: {
@@ -59,12 +58,20 @@ export class movieService {
     if (!params.order || params.order === 'Ordre') {
       params.order = '';
     }
-    return this.http.post(AUTH_API + 'movie/list', params, httpOptions);
+    console.log(params)
+    return this.http.get(environment.AUTH_API + `movie/list?page=${params.page}
+      &userId=${params.userId}
+      &genre=${params.genre}
+      &note=${params.note}
+      &search=${params.search}
+      &sort=${params.sort}
+      &order=${params.order}`
+      , httpOptions);
   }
 
   getDetailMovie(imdb_id: string, userId: string): Observable<any> {
     let params = new HttpParams().set('userId', userId);
-    return this.http.get(AUTH_API + `movie/detail/${imdb_id}`, {
+    return this.http.get(environment.AUTH_API + `movie/${imdb_id}/detail`, {
       ...httpOptions,
       params,
     });
@@ -72,7 +79,7 @@ export class movieService {
 
   download(hash, imdb_id, size, quality, userId: string) {
     let token = this.authService.getToken();
-    let uri = AUTH_API + `movie/download?token=${token}`;
+    let uri = environment.AUTH_API + `movie/download?token=${token}`;
     return new Promise((resolve, reject) => {
       axios
         .post(uri, {
@@ -94,7 +101,7 @@ export class movieService {
 
   addToFav(movie: any, userId: string): Observable<any> {
     return this.http.post(
-      AUTH_API + 'movie/addToFav',
+      environment.AUTH_API + `movie/${movie.imdb_id}/favorite`,
       {
         movie: movie,
         userId: userId,
@@ -104,18 +111,14 @@ export class movieService {
   }
 
   deleteFav(movie: any, userId: string): Observable<any> {
-    return this.http.post(
-      AUTH_API + 'movie/deleteFav',
-      {
-        movie: movie,
-        userId: userId,
-      },
+    return this.http.delete(
+      environment.AUTH_API + `movie/${movie.imdb_code}/favorite/${userId}`,
       httpOptions
     );
   }
 
   getFav(userId: string): Observable<any> {
-    return this.http.get(AUTH_API + `movie/getFav/${userId}`, {
+    return this.http.get(environment.AUTH_API + `movie/favorite/${userId}`, {
       ...httpOptions,
     });
   }

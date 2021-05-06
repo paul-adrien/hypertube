@@ -4,8 +4,7 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { mapUserBackToUserFront, User } from 'libs/user';
 import { map, tap } from 'rxjs/operators';
-
-const AUTH_API = 'http://localhost:8080/api/';
+import { environment } from 'src/environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -20,7 +19,7 @@ export class AuthService {
   login(user: Partial<User>): Observable<any> {
     return this.http
       .post(
-        AUTH_API + 'authenticate',
+        environment.AUTH_API + 'user/authenticate',
         {
           userName: user.userName,
           password: user.password,
@@ -35,7 +34,7 @@ export class AuthService {
   }
 
   loginOauth(strategy: string): Observable<any> {
-    return this.http.get(AUTH_API + `authenticate/${strategy}`, httpOptions);
+    return this.http.get(environment.AUTH_API + `user/authenticate/${strategy}`, httpOptions);
   }
 
   logOut() {
@@ -45,7 +44,7 @@ export class AuthService {
 
   register(user: Partial<User>): Observable<any> {
     return this.http.post(
-      AUTH_API + 'register',
+      environment.AUTH_API + 'user/register',
       {
         userName: user.userName,
         email: user.email,
@@ -81,6 +80,6 @@ export class AuthService {
   }
 
   checkIfUserCo(): Observable<any> {
-    return this.http.get(AUTH_API + 'test/user', { responseType: 'text' });
+    return this.http.get(environment.AUTH_API + 'token', { responseType: 'text' });
   }
 }

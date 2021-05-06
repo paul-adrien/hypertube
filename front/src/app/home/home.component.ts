@@ -26,16 +26,20 @@ export class HomeComponent implements OnInit {
     private router: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.authService.checkIfUserCo().subscribe(
       (data) => {
+        console.log(data)
         if (JSON.parse(data)['status'] === true) this.islog = true;
         else console.log(data.message);
         this.cd.detectChanges();
       },
-      (err) => {}
+      (err) => {
+
+        console.log(err)
+      }
     );
   }
 

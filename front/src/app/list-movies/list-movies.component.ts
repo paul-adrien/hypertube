@@ -9,7 +9,6 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { List } from 'libs/movie';
 import { movieService } from '../_services/movie_service';
-import { YTSService } from '../_services/yts_service';
 import { AuthService } from '../_services/auth_service';
 
 @Component({
@@ -87,12 +86,11 @@ export class ListMoviesComponent implements OnInit {
   public user: User;
 
   constructor(
-    private YTSServices: YTSService,
     private cd: ChangeDetectorRef,
     private route: Router,
     private movieService: movieService,
     private auth_service: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.user = this.auth_service.getUser();
