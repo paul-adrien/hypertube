@@ -198,7 +198,7 @@ exports.getListMovie = async (req, res) => {
   }
 };
 
-async function getHashYTS(imdb_code, userId) {
+async function getHashYTS(imdb_code) {
   const source = axios.CancelToken.source();
   searchCancelTokenFetch.source = source;
   const data = await axios.get(YTS_LIST, {
@@ -213,7 +213,7 @@ async function getHashYTS(imdb_code, userId) {
     movies = await Promise.all(
       data.data.data.movies[0].torrents.map(async (torrent) => {
         state = await Movies.findOne(
-          { id: imdb_code, hash: torrent.hash, userId: userId },
+          { id: imdb_code, hash: torrent.hash },
           "state"
         ).exec();
         if (
@@ -241,7 +241,7 @@ async function getHashYTS(imdb_code, userId) {
   } else return null;
 }
 
-async function getHashRARBG(imdb_code, userId) {
+async function getHashRARBG(imdb_code) {
   movies = [];
   await rarbgApi
     .search(imdb_code, null, "imdb")
@@ -261,7 +261,7 @@ async function getHashRARBG(imdb_code, userId) {
           let magnet = torrent.download.split(":");
           let hash = magnet[3].split("&dn=");
           let state = await Movies.findOne(
-            { id: imdb_code, hash: hash[0], userId: userId },
+            { id: imdb_code, hash: hash[0] },
             "state"
           ).exec();
           if (qualityId !== -1 && title[qualityId] !== undefined)
@@ -320,11 +320,11 @@ exports.getDetailMovie = async (req, res) => {
   const imdb_id = req.params.imdb_id;
   const userId = req.query.userId;
   hashs = null;
-  var hashs = await getHashRARBG(imdb_id, userId);
+  var hashs = await getHashRARBG(imdb_id);
   if (hashs) {
-    hashs = hashs.concat(await getHashYTS(imdb_id, userId));
+    hashs = hashs.concat(await getHashYTS(imdb_id));
   } else {
-    hashs = await getHashYTS(imdb_id, userId);
+    hashs = await getHashYTS(imdb_id);
   }
   hashs.sort(function (a, b) {
     return b.seeds - a.seeds;
@@ -339,7 +339,7 @@ exports.getDetailMovie = async (req, res) => {
 
 exports.addToFav = async (req, res) => {
   const movie = req.body.movie;
-  const userId = req.params.user_id;
+  const userId = req.body.userId;
 
   Fav.findOne({ $query: { imdb_code: movie.imdb_code, userId: userId } }).exec(
     (err, result) => {

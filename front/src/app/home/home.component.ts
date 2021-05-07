@@ -1,3 +1,4 @@
+import { MatDialog } from '@angular/material/dialog';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,6 +9,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { User } from 'libs/user';
 import { AuthService } from '../_services/auth_service';
 import { movieService } from '../_services/movie_service';
+import { PopUpComponent } from '../pop-up/pop-up.component';
 @Component({
   selector: 'app-home',
   template: `
@@ -16,13 +18,13 @@ import { movieService } from '../_services/movie_service';
       <div *ngFor="let movie of this.moviesList" class="movie-container">
         <img
           class="plus"
-          *ngIf="movie.fav === false && this.isLog"
+          *ngIf="movie.fav === false && this.islog"
           (click)="this.sendToFav(movie)"
           src="./assets/icons8-plus.svg"
         />
         <img
           class="plus"
-          *ngIf="movie.fav === true && this.isLog"
+          *ngIf="movie.fav === true && this.islog"
           (click)="this.deleteFav(movie)"
           src="./assets/checkmark.svg"
         />
@@ -74,7 +76,8 @@ export class HomeComponent implements OnInit {
     private router: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private authService: AuthService,
-    private movieService: movieService
+    private movieService: movieService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -116,6 +119,55 @@ export class HomeComponent implements OnInit {
             console.log(err);
           }
         );
+    }
+  }
+
+  sendToFav(movie: any) {
+    this.movieService.addToFav(movie, this.user.id).subscribe(
+      (data) => {
+        this.moviesList[
+          this.moviesList.findIndex((res) => res.imdb_code === movie.imdb_code)
+        ].fav = true;
+        this.cd.detectChanges();
+        console.log(data);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  deleteFav(movie: any) {
+    this.movieService.deleteFav(movie, this.user.id).subscribe(
+      (data) => {
+        this.moviesList[
+          this.moviesList.findIndex((res) => res.imdb_code === movie.imdb_code)
+        ].fav = false;
+
+        this.cd.detectChanges();
+        console.log(data);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  viewDetail(imdb_code) {
+    if (this.islog) {
+      this.route.navigate(['/detail-movie/' + imdb_code]);
+    } else {
+      let dialogRef = this.dialog.open(PopUpComponent, {
+        data: {
+          title: 'Un instant !',
+          message: 'Vous devez vous créer un compte ou vous connecter.',
+        },
+      });
+      dialogRef.afterClosed().subscribe((res) => {
+        if (res) {
+          this.login();
+        }
+      });
     }
   }
 

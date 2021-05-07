@@ -108,7 +108,7 @@ export class movieService {
 
   addToFav(movie: any, userId: string): Observable<any> {
     return this.http.post(
-      environment.AUTH_API + `movie/${movie.imdb_id}/favorite`,
+      environment.AUTH_API + `movie/${movie.imdb_code}/favorite`,
       {
         movie: movie,
         userId: userId,

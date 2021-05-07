@@ -146,6 +146,18 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
   }
 
   ngAfterViewChecked() {
+    this.authService.checkIfUserCo().subscribe(
+      (data) => {
+        console.log(data);
+        if (JSON.parse(data)['status'] === true) {
+          this.islog = true;
+        } else console.log(data.message);
+        this.cd.detectChanges();
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
     if (
       this.router.url.includes('profile') &&
       !this.router.url.includes('profile-')
