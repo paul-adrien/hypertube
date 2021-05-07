@@ -39,11 +39,6 @@ export class AppComponent implements AfterContentInit {
       !this.route.url.includes('profile-')
     ) {
       this.idNavBar = 'profile';
-    } else if (
-      this.route.url.includes('messaging') ||
-      this.route.url.includes('discussion/')
-    ) {
-      this.idNavBar = 'message';
     } else if (this.route.url.includes('home')) {
       this.idNavBar = 'home';
     }

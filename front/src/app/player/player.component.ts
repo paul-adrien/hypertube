@@ -30,7 +30,6 @@ import { movieService } from '../_services/movie_service';
         <vg-fullscreen></vg-fullscreen>
       </vg-controls>
 
-
       <video
         [vgMedia]="media"
         #media
@@ -38,13 +37,37 @@ import { movieService } from '../_services/movie_service';
         preload="auto"
         crossorigin
       >
-        <source *ngIf="qualityChange === 'current' " [src]="this.source" type="video/webm">
-        <source *ngIf="qualityChange === '240p' " [src]="this.source" type="video/webm">
-        <source *ngIf="qualityChange === '360p' " [src]="this.source" type="video/webm">
-        <source *ngIf="qualityChange === '480p' " [src]="this.source" type="video/webm">
-        <source *ngIf="qualityChange === '720p' " [src]="this.source" type="video/webm">
-        <source *ngIf="qualityChange === '1080p' " [src]="this.source" type="video/webm">
-        <source [src]="this.source" type="video/webm">
+        <source
+          *ngIf="qualityChange === 'current'"
+          [src]="this.source"
+          type="video/webm"
+        />
+        <source
+          *ngIf="qualityChange === '240p'"
+          [src]="this.source"
+          type="video/webm"
+        />
+        <source
+          *ngIf="qualityChange === '360p'"
+          [src]="this.source"
+          type="video/webm"
+        />
+        <source
+          *ngIf="qualityChange === '480p'"
+          [src]="this.source"
+          type="video/webm"
+        />
+        <source
+          *ngIf="qualityChange === '720p'"
+          [src]="this.source"
+          type="video/webm"
+        />
+        <source
+          *ngIf="qualityChange === '1080p'"
+          [src]="this.source"
+          type="video/webm"
+        />
+        <source [src]="this.source" type="video/webm" />
         <track
           *ngIf="subtitles && subtitles[0]"
           kind="subtitles"
@@ -72,13 +95,55 @@ import { movieService } from '../_services/movie_service';
       </video>
     </vg-player>
 
-    <div *ngIf="loadPlayer">
-      <button (click)="this.changeQuality('240p')">240p</button>
-      <button *ngIf="quality === '360p' || quality === '480p' || quality === 'x264' || quality === 'XviD' || quality === '720p' || quality === '1080p' || quality === 'BDRip'" (click)="this.changeQuality('360p')">360p</button>
-      <button *ngIf="quality === '480p' || quality === 'x264' || quality === 'XviD' || quality === '720p' || quality === '1080p' || quality === 'BDRip'" (click)="this.changeQuality('480p')">480p</button>
-      <button *ngIf="quality === '720p' || quality === '1080p' || quality === 'BDRip'" (click)="this.changeQuality('720p')">720p</button>
-      <button *ngIf="quality === '1080p' || quality === 'BDRip'" (click)="this.changeQuality('1080p')">1080p</button>
-      <br><button (click)="this.changeTime(false)">- 30s</button><button (click)="this.changeTime(true)">+ 30s</button>
+    <div class="option" *ngIf="loadPlayer">
+      <div class="buttons">
+        <button (click)="this.changeTime(false)">- 30s</button
+        ><button (click)="this.changeTime(true)">+ 30s</button>
+      </div>
+      <select>
+        <option (click)="this.changeQuality('240p')">240p</option>
+        <option
+          *ngIf="
+            quality === '360p' ||
+            quality === '480p' ||
+            quality === 'x264' ||
+            quality === 'XviD' ||
+            quality === '720p' ||
+            quality === '1080p' ||
+            quality === 'BDRip'
+          "
+          (click)="this.changeQuality('360p')"
+        >
+          360p
+        </option>
+        <option
+          *ngIf="
+            quality === '480p' ||
+            quality === 'x264' ||
+            quality === 'XviD' ||
+            quality === '720p' ||
+            quality === '1080p' ||
+            quality === 'BDRip'
+          "
+          (click)="this.changeQuality('480p')"
+        >
+          480p
+        </option>
+        <option
+          *ngIf="
+            quality === '720p' || quality === '1080p' || quality === 'BDRip'
+          "
+          (click)="this.changeQuality('720p')"
+        >
+          720p
+        </option>
+        <option
+          *ngIf="quality === '1080p' || quality === 'BDRip'"
+          (click)="this.changeQuality('1080p')"
+        >
+          1080p
+        </option>
+      </select>
     </div>
   `,
   styleUrls: ['./player.component.scss'],
@@ -103,7 +168,7 @@ export class PlayerComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private movieService: movieService,
     private authService: AuthService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.source =
@@ -128,12 +193,9 @@ export class PlayerComponent implements OnInit {
   }
 
   changeTime(value: boolean) {
-    if (value === true)
-      this.api.currentTime += 30;
-    else if (this.api.currentTime > 30)
-      this.api.currentTime -= 30;
-    else
-      this.api.currentTime = 0;
+    if (value === true) this.api.currentTime += 30;
+    else if (this.api.currentTime > 30) this.api.currentTime -= 30;
+    else this.api.currentTime = 0;
   }
 
   getSubtitles() {
@@ -155,11 +217,10 @@ export class PlayerComponent implements OnInit {
     this.api.getDefaultMedia().subscriptions.loadStart.subscribe(() => {
       this.api.currentTime = this.currentTime;
       this.api.play();
-    })
+    });
     this.api.getDefaultMedia().subscriptions.progress.subscribe((progress) => {
       console.log(progress);
-      if (this.api.canPlay)
-        this.movieReady = true;
+      if (this.api.canPlay) this.movieReady = true;
       if (!progress.srcElement) return;
     });
   }

@@ -9,12 +9,8 @@ import { ProfileService } from '../_services/profile_service';
 
 function ValidatorLength(control: FormControl) {
   const test = /^(?=.{3,20}$)[a-zA-Z]+(?:[-' ][a-zA-Z]+)*$/;
-  if (control.value?.length < 1) {
-    return { error: '1 caractères minimum' };
-  } else if (control.value?.length > 400) {
+  if (control.value?.length > 400) {
     return { error: '400 caractères maximum' };
-  } else if (!test.test(String(control.value).toLowerCase())) {
-    return { error: 'Mauvais format' };
   }
   return {};
 }
@@ -37,9 +33,9 @@ function ValidatorLength(control: FormControl) {
       </div>
     </div>
     <div *ngIf="!loadPlayer && !isChooseT" class="torrents-container">
-      <div
-        *ngFor="let torrent of this.hashs; let index = index">
-        <div *ngIf='torrent !== null && torrent.source !== null'
+      <div *ngFor="let torrent of this.hashs; let index = index">
+        <div
+          *ngIf="torrent !== null && torrent.source !== null"
           (click)="choiceOfTorrent(index)"
           class="torrent-button"
         >
@@ -57,10 +53,19 @@ function ValidatorLength(control: FormControl) {
       [imdb_code]="detailMovie.imdb_code"
     ></app-player>
 
-    <div class="comment" *ngIf="comments !== null">
-      <div *ngFor="let comment of comments">
-        <p>{{ comment[this.user.id] }} le {{ comment['date'] }}:</p>
-        <p>{{ comment['comment'] }}<button (click)="getProfile(comment['username'])">Voir le profile</button></p>
+    <div class="title-comment">Commentaire</div>
+    <div class="comment-container" *ngIf="comments !== null">
+      <div *ngFor="let comment of comments" class="comment">
+        <img
+          class="picture-comment"
+          [src]="this.getProfileInfo(comment.userId)?.picture"
+        />
+        <div class="text-container">
+          <div>
+            {{ this.getProfileInfo(comment.userId)?.userName || 'username' }}
+          </div>
+          <div class="text-comment">{{ comment.comment }}</div>
+        </div>
       </div>
     </div>
     <form
@@ -71,66 +76,68 @@ function ValidatorLength(control: FormControl) {
       #f="ngForm"
       novalidate
     >
-      <input
-        type="text"
-        formControlName="comment"
-        id="comment"
-        required
-        [class.error-input]="this.commentForm.get('comment').errors?.error"
-        placeholder="Nom d'utilisateur"
-      />
+      <div class="input-flex">
+        <input
+          type="text"
+          formControlName="comment"
+          id="comment"
+          class="input-container"
+          required
+          [class.error-input]="this.commentForm.get('comment').errors?.error"
+          placeholder="Écrire un commentaire"
+        />
+        <img
+          class="send"
+          src="./assets/send.svg"
+          (click)="f.form.valid && addComment()"
+        />
+      </div>
       <div class="error" *ngIf="this.commentForm.get('comment').errors?.error">
         {{ this.commentForm.get('comment').errors.error }}
       </div>
-      <button>envoyer</button>
     </form>
-
+    <div class="title-comment">Titre similaire</div>
     <div class="list">
-        <div *ngFor="let movie of this.suggestionList" class="movie-container">
-          <div *ngIf="detailMovie.imdb_code !== movie.imdb_code">
-            <img
-              class="plus"
-              *ngIf="movie.fav === false"
-              (click)="this.sendToFav(movie)"
-              src="./assets/icons8-plus.svg"
-            />
-            <img
-              class="plus"
-              *ngIf="movie.fav === true"
-              (click)="this.deleteFav(movie)"
-              src="./assets/checkmark.svg"
-            />
-            <img
-              (click)="viewDetail(movie.imdb_code)"
-              [src]="movie.poster"
-              class="movie-img"
-            />
-            <div class="bottom-container">
-              <div class="movie-title" [title]="movie.title">
-                <span class="text">
-                  {{ movie.title }}
-                </span>
-                <img
-                  class="eye"
-                  *ngIf="movie.see"
-                  src="./assets/eye-green-2.svg"
-                />
-              </div>
-              <div class="movie-info">
-                <span>{{ movie.year }}</span>
-                <div class="right-container">
-                  <span class="right-info">
-                    {{ movie.runtime }}
-                  </span>
-                  <img src="./assets/star-yellow.svg" />
-                  <span class="right-info">
-                    {{ movie.rating }}
-                  </span>
-                </div>
-              </div>
+      <div *ngFor="let movie of this.suggestionList" class="movie-container">
+        <img
+          class="plus"
+          *ngIf="movie.fav === false"
+          (click)="this.sendToFav(movie)"
+          src="./assets/icons8-plus.svg"
+        />
+        <img
+          class="plus"
+          *ngIf="movie.fav === true"
+          (click)="this.deleteFav(movie)"
+          src="./assets/checkmark.svg"
+        />
+        <img
+          (click)="viewDetail(movie.imdb_code)"
+          [src]="movie.poster"
+          class="movie-img"
+        />
+        <div class="bottom-container">
+          <div class="movie-title" [title]="movie.title">
+            <span class="text">
+              {{ movie.title }}
+            </span>
+            <img class="eye" *ngIf="movie.see" src="./assets/eye-green-2.svg" />
+          </div>
+          <div class="movie-info">
+            <span>{{ movie.year }}</span>
+            <div class="right-container">
+              <span class="right-info">
+                {{ movie.runtime }}
+              </span>
+              <img src="./assets/star-yellow.svg" />
+              <span class="right-info">
+                {{ movie.rating }}
+              </span>
             </div>
           </div>
         </div>
+      </div>
+    </div>
   `,
   styleUrls: ['./detail-movie.component.scss'],
 })
@@ -147,6 +154,7 @@ export class DetailMovieComponent implements OnInit {
   public detailMovie = null;
   public isChooseT = false;
   public suggestionList = null;
+  public usersComment: User[] = [];
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -155,7 +163,7 @@ export class DetailMovieComponent implements OnInit {
     private commentsService: commentsService,
     private movieService: movieService,
     private profileService: ProfileService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.imdb_code = this.route.snapshot.params['imdb_code'];
@@ -175,7 +183,9 @@ export class DetailMovieComponent implements OnInit {
     this.movieService.getDetailMovie(this.imdb_code, this.user.id).subscribe(
       (data) => {
         this.detailMovie = data.movieDetail;
-        this.hashs = data.hashs;
+        this.hashs = data.hashs.filter(
+          (torrent) => torrent !== null && torrent.source !== null
+        );
         console.log(data);
         this.getComments();
         this.getSuggestionMovieList();
@@ -191,7 +201,9 @@ export class DetailMovieComponent implements OnInit {
     this.movieService.addToFav(movie, this.user.id).subscribe(
       (data) => {
         this.suggestionList[
-          this.suggestionList.findIndex((res) => res.imdb_code === movie.imdb_code)
+          this.suggestionList.findIndex(
+            (res) => res.imdb_code === movie.imdb_code
+          )
         ].fav = true;
         this.cd.detectChanges();
         console.log(data);
@@ -206,23 +218,13 @@ export class DetailMovieComponent implements OnInit {
     this.movieService.deleteFav(movie, this.user.id).subscribe(
       (data) => {
         this.suggestionList[
-          this.suggestionList.findIndex((res) => res.imdb_code === movie.imdb_code)
+          this.suggestionList.findIndex(
+            (res) => res.imdb_code === movie.imdb_code
+          )
         ].fav = false;
 
         this.cd.detectChanges();
         console.log(data);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
-
-
-  async getProfile(userId: string) {
-    this.profileService.getProfile(userId).subscribe(
-      (data) => {
-        console.log(data)
       },
       (err) => {
         console.log(err);
@@ -254,6 +256,14 @@ export class DetailMovieComponent implements OnInit {
       (data) => {
         if (data.status) {
           this.comments = data.comments;
+          this.comments.forEach((comment) => {
+            this.profileService.getProfile(comment.userId).subscribe((res) => {
+              if (!this.usersComment.find((user) => res.id === user.id)) {
+                this.usersComment.push(res);
+              }
+            });
+          });
+          console.log(this.usersComment);
         } else this.comments = null;
         console.log(data);
         this.cd.detectChanges();
@@ -265,21 +275,23 @@ export class DetailMovieComponent implements OnInit {
   }
 
   addComment() {
-    const form: Partial<Comment> = this.commentForm.getRawValue();
-    console.log(form, this.detailMovie.imdb_code, this.user.id);
-    this.commentsService
-      .addComment(form, this.detailMovie.imdb_code, this.user.id)
-      .subscribe(
-        (data) => {
-          if (data.status) console.log(data.message);
-          else console.log(data.message);
-        },
-        (err) => {
-          console.log('non');
-        }
-      );
-    this.getComments();
-    this.cd.detectChanges();
+    const form = this.commentForm.getRawValue();
+    if (form.comment.length > 0) {
+      console.log(form, this.detailMovie.imdb_code, this.user.id);
+      this.commentsService
+        .addComment(form, this.detailMovie.imdb_code, this.user.id)
+        .subscribe(
+          (data) => {
+            this.commentForm.get('comment').setValue('');
+            console.log(data.message);
+          },
+          (err) => {
+            console.log('non');
+          }
+        );
+      this.getComments();
+      this.cd.detectChanges();
+    }
   }
 
   getSuggestionMovieList() {
@@ -298,12 +310,18 @@ export class DetailMovieComponent implements OnInit {
       .subscribe(
         (data) => {
           console.log(data.movies);
-          this.suggestionList = data.movies;
+          this.suggestionList = data.movies.filter(
+            (movie) => this.detailMovie.imdb_code !== movie.imdb_code
+          );
           this.cd.detectChanges();
         },
         (err) => {
           console.log(err);
         }
       );
+  }
+
+  getProfileInfo(userId: string) {
+    return this.usersComment.find((user) => user.id === userId);
   }
 }

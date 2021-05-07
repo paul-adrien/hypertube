@@ -84,6 +84,7 @@ export class ListMoviesComponent implements OnInit {
   public loadingMovie = false;
   public paramsFilterSort: any;
   public user: User;
+  public n = 0;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -198,13 +199,21 @@ export class ListMoviesComponent implements OnInit {
           (data) => {
             if (!this.moviesList || this.moviesList.length === 0)
               this.moviesList = data.movies;
-            else this.moviesList = this.moviesList.concat(data.movies);
+            else if (data?.movies !== undefined)
+              this.moviesList = this.moviesList.concat(data.movies);
             this.loadingMovie = false;
             console.log(data);
-            if (this.moviesList.length < 10 && data.length > 0) {
+            if (
+              (this.moviesList?.length < 10 ||
+                data?.movies?.length === 0 ||
+                data?.movies === undefined) &&
+              this.n < 3
+            ) {
+              this.n++;
               this.pageNum++;
               this.getMovieList(this.pageNum);
             }
+            this.n = 0;
 
             this.cd.detectChanges();
           },

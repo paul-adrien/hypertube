@@ -90,12 +90,17 @@ async function getRarbgMovies(page, genre, sort, userId) {
 async function getInfoMovies(userId, movies) {
   return new Promise(async (resolve, reject) => {
     i = 0;
+    console.log("wesh", movies);
     if (movies?.length > 0) {
+      console.log("wesh à l'interieur");
+
       //console.log(movies);
       resolve(
         await Promise.all(
           movies.map(async (m) => {
             if (m && m.imdb_code) {
+              console.log("wesh à l'interieur 2");
+
               let favorite = false;
               await Fav.findOne({
                 $query: { imdb_code: m.imdb_code, userId: userId },
@@ -104,9 +109,13 @@ async function getInfoMovies(userId, movies) {
                   favorite = true;
                 } else favorite = false;
               });
+              console.log("wesh à l'interieur 3");
+
               return await imdb
                 .get({ id: m.imdb_code }, { apiKey: "e8cb5cca" })
                 .then((movie) => {
+                  console.log("wesh à l'interieur movie");
+                  console.log(movie);
                   if (movie?.ratings.length === 0) {
                     return undefined;
                   }
@@ -125,6 +134,7 @@ async function getInfoMovies(userId, movies) {
                   //if (i + 1 == len) resolve(tmp);
                 })
                 .catch((err) => {
+                  console.log(err);
                   return undefined;
                 });
             }
@@ -186,8 +196,15 @@ exports.getListMovie = async (req, res) => {
       movies: movies.filter((movie) => movie && movie.title && movie.poster),
     });
   } else {
+    console.log(YTSmovies);
+    if (YTSmovies?.length === 0 || !YTSmovies) {
+      res.json({
+        status: true,
+        movies: undefined,
+      });
+    }
     movies_filtred = await getInfoMovies(userId, YTSmovies);
-    console.log("pppppp");
+    console.log(movies_filtred);
     res.json({
       status: true,
       movies: movies_filtred.filter(

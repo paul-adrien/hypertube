@@ -14,7 +14,7 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient, private route: Router) { }
+  constructor(private http: HttpClient, private route: Router) {}
 
   login(user: Partial<User>): Observable<any> {
     return this.http
@@ -34,7 +34,10 @@ export class AuthService {
   }
 
   loginOauth(strategy: string): Observable<any> {
-    return this.http.get(environment.AUTH_API + `user/authenticate/${strategy}`, httpOptions);
+    return this.http.get(
+      environment.AUTH_API + `user/authenticate/${strategy}`,
+      httpOptions
+    );
   }
 
   logOut() {
@@ -76,10 +79,12 @@ export class AuthService {
       return JSON.parse(user);
     }
 
-    return {};
+    return undefined;
   }
 
   checkIfUserCo(): Observable<any> {
-    return this.http.get(environment.AUTH_API + 'token', { responseType: 'text' });
+    return this.http.get(environment.AUTH_API + 'token', {
+      responseType: 'text',
+    });
   }
 }

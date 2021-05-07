@@ -5,8 +5,8 @@ const Comment = mongoose.model(
   new mongoose.Schema({
     comment: String,
     imdb_id: String,
-    username: String,
-    date: String
+    userId: String,
+    date: String,
   })
 );
 
