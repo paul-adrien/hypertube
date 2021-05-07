@@ -19,7 +19,7 @@ export class movieService {
     private http: HttpClient,
     private route: Router,
     private authService: AuthService
-  ) { }
+  ) {}
 
   // watchMovie(imdb_id: string, hash: string): Observable<any> {
   //     console.log(AUTH_API + `movie/watch/${imdb_id}?hash=${hash}`);
@@ -27,14 +27,18 @@ export class movieService {
   // }
 
   getSubtitles(imdb_id: string): Observable<any> {
-    return this.http.post(environment.AUTH_API + `movie/${imdb_id}/subtitles`, {}, httpOptions);
+    return this.http.post(
+      environment.AUTH_API + `movie/${imdb_id}/subtitles`,
+      {},
+      httpOptions
+    );
   }
 
   getListMovies(params: {
     userId: string;
     page: number;
-    genre: string;
-    sort: string;
+    genre?: string;
+    sort?: string;
     note?: number;
     search?: string;
     order?: string;
@@ -58,15 +62,18 @@ export class movieService {
     if (!params.order || params.order === 'Ordre') {
       params.order = '';
     }
-    console.log(params)
-    return this.http.get(environment.AUTH_API + `movie/list?page=${params.page}
+    console.log(params);
+    return this.http.get(
+      environment.AUTH_API +
+        `movie/list?page=${params.page}
       &userId=${params.userId}
       &genre=${params.genre}
       &note=${params.note}
       &search=${params.search}
       &sort=${params.sort}
-      &order=${params.order}`
-      , httpOptions);
+      &order=${params.order}`,
+      httpOptions
+    );
   }
 
   getDetailMovie(imdb_id: string, userId: string): Observable<any> {

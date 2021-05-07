@@ -15,14 +15,22 @@
     max-width: 17rem;
     display: flex;
     align-items: center;
+
+    @media screen and (max-width: 440px) {
+      justify-content: space-between;
+    }
     .select {
       margin: 1rem 0;
-      width: 5rem;
+      width: 5.4rem;
       height: 2rem;
       border-radius: 4px;
       background-color: var(--background-color-primary);
       border-color: #4e4e4e;
       margin-right: 1rem;
+
+      @media screen and (max-width: 440px) {
+        margin-right: 0;
+      }
     }
 
     &.sort {

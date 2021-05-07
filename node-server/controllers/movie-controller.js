@@ -9,9 +9,10 @@ const Fav = db.fav;
 const Movies = db.movies;
 const dateFns = require("date-fns");
 const fs = require("fs");
+const { checkUserSeeMovie } = require("../models/lib-user.model");
 var searchCancelTokenFetch = { id: null, source: null };
 
-async function getYTSMovies(userId, paramsYts) {
+async function getYTSMovies(paramsYts, userId) {
   const source = axios.CancelToken.source();
   searchCancelTokenFetch.source = source;
   const data = await axios.get(YTS_LIST, {
@@ -36,7 +37,7 @@ async function getYTSMovies(userId, paramsYts) {
     movies = await Promise.all(
       data.data.data.movies.map(async (m) => {
         if (m && m.imdb_code && m.torrents) {
-          see = await Movies.findOne({ id: m.imdb_code }, "state").exec();
+          see = await checkUserSeeMovie(userId, m.imdb_code);
           return {
             imdb_code: m.imdb_code,
             title: null,
@@ -69,10 +70,7 @@ async function getRarbgMovies(page, genre, sort, userId) {
     movies = await Promise.all(
       results.map(async (m) => {
         if (m && m.episode_info && m.episode_info.imdb) {
-          see = await Movies.findOne(
-            { id: m.episode_info.imdb },
-            "state"
-          ).exec();
+          see = await checkUserSeeMovie(userId, m.imdb_code);
           return {
             imdb_code: m.episode_info.imdb,
             title: null,
@@ -147,7 +145,7 @@ exports.getListMovie = async (req, res) => {
   const order = req.query.order.trim();
   const paramsYts = { page, genre, sort, note, search, order };
   console.log(paramsYts);
-  YTSmovies = await getYTSMovies(userId, paramsYts);
+  YTSmovies = await getYTSMovies(paramsYts, userId);
   movies = [];
   if (
     page === 1 &&
@@ -348,13 +346,13 @@ exports.addToFav = async (req, res) => {
       if (err) {
         return res.json({
           status: false,
-          message: err
+          message: err,
         });
       } else if (result) {
         console.log(result);
         return res.json({
           status: false,
-          message: 'this film is already fav'
+          message: "this film is already fav",
         });
       } else {
         const fav = new Fav({
@@ -366,27 +364,30 @@ exports.addToFav = async (req, res) => {
           seeds: movie.seeds,
           runtime: movie.runtime,
           see: movie.see,
-          userId: userId
-        })
+          userId: userId,
+        });
 
         fav.save((err, result) => {
           if (err) {
             return res.json({
               status: false,
-              message: err
+              message: err,
             });
           }
-          res.send({ message: "Movie was registered successfully to favorite!" });
-        })
+          res.send({
+            message: "Movie was registered successfully to favorite!",
+          });
+        });
       }
-    })
+    }
+  );
 };
 
 exports.deleteFav = async (req, res) => {
   const imdb_code = req.params.imdb_id;
   const userId = req.params.user_id;
 
-  console.log(imdb_code, userId)
+  console.log(imdb_code, userId);
   Fav.deleteOne({ imdb_code: imdb_code, userId: userId }).exec(
     (err, result) => {
       if (err) {
@@ -404,55 +405,62 @@ exports.deleteFav = async (req, res) => {
 exports.getFav = async (req, res) => {
   const userId = req.params.user_id;
 
-  Fav.find({ $query: { userId: userId } })
-    .exec((err, results) => {
-      if (err) {
-        return res.json({
-          status: false,
-          message: err
-        });
-      } else if (results) {
-        console.log(results);
-        return res.json({
-          status: true,
-          movies: results
-        });
-      } else {
-        return res.json({
-          status: true,
-          movies: null
-        });
-      }
-    })
+  Fav.find({ $query: { userId: userId } }).exec((err, results) => {
+    if (err) {
+      return res.json({
+        status: false,
+        message: err,
+      });
+    } else if (results) {
+      console.log(results);
+      return res.json({
+        status: true,
+        movies: results,
+      });
+    } else {
+      return res.json({
+        status: true,
+        movies: null,
+      });
+    }
+  });
 };
 
 exports.dellMovies = async (req, res) => {
-  Movies.find()
-    .exec((err, results) => {
-      if (err) {
-        return res.json({
-          status: false,
-          message: err
-        });
-      } else if (results) {
-        results.map((movie) => {
-          let date = Date.now();// pour 1 mois en plus faire + 3000000000
+  Movies.find().exec((err, results) => {
+    if (err) {
+      return res.json({
+        status: false,
+        message: err,
+      });
+    } else if (results) {
+      results.map((movie) => {
+        let date = Date.now(); // pour 1 mois en plus faire + 3000000000
 
-          diff = dateFns.formatDistanceStrict((movie.lastSeenS), (date), { unit: 'month' });
-          diff = diff.split(' ');
-          //console.log(diff[0]);
-          if (diff[0] >= 1) {
-            fs.rmdir(`../movies/${movie.id}/${movie.folder}`, { recursive: true }, (err) => {
-              console.log("Folder Deleted!" + err);
-            });
-          }
-          Movies.deleteOne({ imdb_code: movie.imdb_code, hash: movie.hash }).exec();
-        })
-      } else {
-        return res.json({
-          status: true,
-          movies: null
+        diff = dateFns.formatDistanceStrict(movie.lastSeenS, date, {
+          unit: "month",
         });
-      }
-    })
+        diff = diff.split(" ");
+        //console.log(diff[0]);
+        if (diff[0] >= 1) {
+          fs.rmdir(
+            `../movies/${movie.id}/${movie.folder}`,
+            { recursive: true },
+            (err) => {
+              console.log("Folder Deleted!" + err);
+            }
+          );
+        }
+        Movies.deleteOne({
+          imdb_code: movie.imdb_code,
+          hash: movie.hash,
+        }).exec();
+      });
+    } else {
+      return res.json({
+        status: true,
+        movies: null,
+      });
+    }
+  });
 };

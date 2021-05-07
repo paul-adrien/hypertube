@@ -9,6 +9,24 @@
   .left-case {
     display: flex;
     height: 100%;
+    align-items: center;
+  }
+
+  .login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid grey;
+    color: grey;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-family: "Roboto-medium";
+    font-size: 0.9rem;
+    margin-right: 0.8rem;
+    background: transparent;
+    box-sizing: border-box;
+    height: 2rem;
   }
 
   .logo {

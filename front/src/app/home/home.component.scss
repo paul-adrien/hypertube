@@ -1,0 +1,120 @@
+:host {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  .title-home {
+    font-size: 1.8rem;
+    font-family: Roboto-bold;
+    text-align: center;
+    margin: 1rem 0;
+    color: var(--secondary-color);
+  }
+
+  .list {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    max-width: 87rem;
+    padding-bottom: 3rem;
+
+    .movie-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.4rem;
+      width: 11rem;
+      background-color: #353535;
+      border-radius: 4px;
+
+      .bottom-container {
+        width: 100%;
+      }
+
+      .plus {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        z-index: 10;
+        cursor: pointer;
+      }
+
+      .movie-title {
+        padding: 0.3rem;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .text {
+          width: 85%;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          flex-grow: 1;
+        }
+        .eye {
+          object-fit: contain;
+          height: 1rem;
+        }
+      }
+
+      .movie-info {
+        font-family: Roboto-light;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        padding: 0 0.3rem;
+        box-sizing: border-box;
+        margin-bottom: 0.3rem;
+        color: lightgrey;
+
+        img {
+          height: 100%;
+          object-fit: contain;
+          padding: 0 0.5rem;
+        }
+
+        .right-container {
+          display: flex;
+          height: 0.8rem;
+          align-items: center;
+        }
+
+        .right-info {
+          padding: 0 0.5rem;
+          border-right: 1px solid;
+
+          &:last-child {
+            padding: 0;
+            border: none;
+            color: #ffd700;
+          }
+        }
+      }
+    }
+
+    .movie-img {
+      width: 100%;
+      object-fit: contain;
+      border-radius: 4px;
+      z-index: 5;
+      cursor: pointer;
+    }
+  }
+
+  .spinner {
+    height: 10rem !important;
+    width: 100% !important;
+    left: 50%;
+    transform: translateX(-50px);
+    margin-top: 8rem;
+  }
+}

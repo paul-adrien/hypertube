@@ -23,4 +23,12 @@ const updateUser = async function (userId, user) {
   return res;
 };
 
-module.exports = { checkUserExist, getUser, updateUser };
+const checkUserSeeMovie = async function (userId, imdb_code) {
+  const see = await User.findOne(
+    { id: userId, moviesWatched: imdb_code },
+    "state"
+  ).exec();
+  return !!see;
+};
+
+module.exports = { checkUserExist, getUser, updateUser, checkUserSeeMovie };

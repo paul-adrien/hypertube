@@ -90,7 +90,7 @@ export class ListMoviesComponent implements OnInit {
     private route: Router,
     private movieService: movieService,
     private auth_service: AuthService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.user = this.auth_service.getUser();
@@ -201,7 +201,7 @@ export class ListMoviesComponent implements OnInit {
             else this.moviesList = this.moviesList.concat(data.movies);
             this.loadingMovie = false;
             console.log(data);
-            if (this.moviesList.length < 10) {
+            if (this.moviesList.length < 10 && data.length > 0) {
               this.pageNum++;
               this.getMovieList(this.pageNum);
             }

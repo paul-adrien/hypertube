@@ -16,7 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
   template: `
     <img class="logo" [routerLink]="'home'" src="./assets/logo.png" />
     <div class="left-case">
-      <div class="left-case" *ngIf="!this.onPageLogin">
+      <div class="left-case" *ngIf="this.islog">
         <a
           class="case"
           *ngFor="let item of this.items"
@@ -36,8 +36,29 @@ import { TranslateService } from '@ngx-translate/core';
           />
         </a>
       </div>
-      <select
+      <a
+        *ngIf="!this.islog"
         class="case"
+        [routerLink]="'home'"
+        routerLinkActive="active"
+        (click)="this.selectItem('home')"
+      >
+        <img
+          [src]="items[1].selected ? items[1].src.check : items[1].src.default"
+      /></a>
+      <div
+        *ngIf="!this.islog"
+        class="login"
+        [routerLink]="'login'"
+        routerLinkActive="active"
+      >
+        Log in
+      </div>
+      <div class="case" *ngIf="this.islog">
+        <img (click)="this.logOut()" src="./assets/log-out.svg" />
+      </div>
+      <select
+        class="login"
         #selectedLang
         (change)="switchLang(selectedLang.value)"
       >
@@ -50,9 +71,6 @@ import { TranslateService } from '@ngx-translate/core';
           {{ language }}
         </option>
       </select>
-      <div class="case" *ngIf="!this.onPageLogin">
-        <img (click)="this.logOut()" src="./assets/log-out.svg" />
-      </div>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -91,7 +109,7 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     },
   ];
 
-  public onPageLogin = false;
+  public islog = false;
 
   public profilPicture = '';
 
@@ -103,6 +121,18 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.authService.checkIfUserCo().subscribe(
+      (data) => {
+        console.log(data);
+        if (JSON.parse(data)['status'] === true) {
+          this.islog = true;
+        } else console.log(data.message);
+        this.cd.detectChanges();
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
     if (this.selectedId) {
       this.selectItem(this.selectedId);
     }
@@ -120,19 +150,17 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
       this.router.url.includes('profile') &&
       !this.router.url.includes('profile-')
     ) {
-      this.onPageLogin = false;
       this.selectItem('profile');
     } else if (
       this.router.url.includes('list-Movies') ||
       this.router.url.includes('detail-movie')
     ) {
-      this.onPageLogin = false;
       this.selectItem('list-Movies');
     } else if (this.router.url.includes('home')) {
-      this.onPageLogin = false;
       this.selectItem('home');
     } else if (this.router.url.includes('login')) {
-      this.onPageLogin = true;
+      this.selectItem('');
+      this.islog = false;
     }
 
     if (!this.profilPicture) {
