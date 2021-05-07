@@ -326,9 +326,10 @@ exports.getDetailMovie = async (req, res) => {
   } else {
     hashs = await getHashYTS(imdb_id);
   }
-  hashs.sort(function (a, b) {
-    return b.seeds - a.seeds;
-  });
+  if (hashs && hashs.seeds)
+    hashs.sort(function (a, b) {
+      return b.seeds - a.seeds;
+    });
   movieDetail = await getInfoMovie(imdb_id);
   res.json({
     status: true,
@@ -441,20 +442,20 @@ exports.dellMovies = async (req, res) => {
           unit: "month",
         });
         diff = diff.split(" ");
-        //console.log(diff[0]);
+        console.log(diff[0]);
         if (diff[0] >= 1) {
           fs.rmdir(
-            `../movies/${movie.id}/${movie.folder}`,
+            config.movie_folder + `/${movie.id}/${movie.folder}`,
             { recursive: true },
             (err) => {
               console.log("Folder Deleted!" + err);
             }
           );
+          Movies.deleteOne({
+            imdb_code: movie.imdb_code,
+            hash: movie.hash,
+          }).exec();
         }
-        Movies.deleteOne({
-          imdb_code: movie.imdb_code,
-          hash: movie.hash,
-        }).exec();
       });
     } else {
       return res.json({

@@ -50,7 +50,7 @@ app.get("/", (req, res) => {
 });
 
 var movieController = require("./controllers/movie-controller");
-//setInterval(movieController.dellMovies, 50000);
+//setInterval(movieController.dellMovies, 5000);
 
 app.use('/explorer', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 

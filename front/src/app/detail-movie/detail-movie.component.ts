@@ -235,14 +235,16 @@ export class DetailMovieComponent implements OnInit {
     this.cd.detectChanges();
     this.index = index;
     console.log(index);
-    let result = await this.movieService.download(
-      this.hashs[index].hash,
-      this.detailMovie.imdb_code,
-      this.hashs[index].size,
-      this.hashs[index].quality,
-      this.user.id
-    );
-    console.log(result);
+    if (this.hashs[index].state !== 'over') {
+      let result = await this.movieService.download(
+        this.hashs[index].hash,
+        this.detailMovie.imdb_code,
+        this.hashs[index].size,
+        this.hashs[index].quality,
+        this.user.id
+      );
+      console.log(result);
+    }
     this.loadPlayer = true;
     this.cd.detectChanges();
   }

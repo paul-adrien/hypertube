@@ -675,7 +675,7 @@ module.exports = {
                 parameters: [
                     {
                         name: 'token',
-                        in: 'body',
+                        in: 'query',
                         required: true,
                     },
                 ],
@@ -690,12 +690,12 @@ module.exports = {
                     required: true
                 },
                 responses: {
-                    'true': {
+                    '200': {
                         description: 'list of favorite',
                         content: {
                             'application/json': {
-                                example: {
-                                    message: "a faire",
+                                schema: {
+                                    $ref: '#/components/schemas/DownloadRes',
                                 }
                             }
                         }
@@ -716,21 +716,21 @@ module.exports = {
         '/movie/convert/:hash/:quality': {
             get: {
                 tags: ['CRUD operations'],
-                description: 'get movie detail',
+                description: 'convert and stream torrent',
                 parameters: [
                     {
                         name: 'x-access-token',
-                        in: 'header',
+                        in: 'query',
                         required: true,
                     },
                 ],
                 responses: {
                     'true': {
-                        description: 'list of favorite',
+                        description: '',
                         content: {
                             'application/json': {
                                 schema: {
-                                    $ref: '#/components/schemas/Detail'
+                                    $ref: '#/components/schemas/Convert'
                                 }
                             }
                         }
@@ -740,7 +740,7 @@ module.exports = {
                         content: {
                             'application/json': {
                                 example: {
-                                    message: "No token || unauthorized || no subs available",
+                                    message: "No token || unauthorized ",
                                 }
                             }
                         }
@@ -755,7 +755,7 @@ module.exports = {
                 parameters: [
                     {
                         name: 'x-access-token',
-                        in: 'header',
+                        in: 'query',
                         required: true,
                     },
                 ],
@@ -764,9 +764,6 @@ module.exports = {
                         description: 'list of favorite',
                         content: {
                             'application/json': {
-                                schema: {
-                                    $ref: '#/components/schemas/Detail'
-                                }
                             }
                         }
                     },
@@ -775,7 +772,7 @@ module.exports = {
                         content: {
                             'application/json': {
                                 example: {
-                                    message: "No token || unauthorized || no subs available",
+                                    message: "No token || unauthorized",
                                 }
                             }
                         }
@@ -828,6 +825,37 @@ module.exports = {
                     type: 'string'
                 }
             },
+            Convert: {
+                type: 'object',
+                properties: {
+                    res: {
+                        type: 'object'
+                    },
+                    params: {
+                        type: 'object'
+                    },
+                    token: {
+                        type: 'string'
+                    }
+                }
+            },
+            DownloadRes: {
+                type: 'object',
+                properties: {
+                    config: {
+                        type: 'object'
+                    },
+                    data: {
+                        type: 'object'
+                    },
+                    headers: {
+                        type: 'object'
+                    },
+                    request: {
+                        type: 'object'
+                    }
+                }
+            },
             DownloadBody: {
                 type: 'object',
                 properties: {
@@ -848,7 +876,7 @@ module.exports = {
                     }
                 }
             },
-            hashs: {
+            Hashs: {
                 type: 'object',
                 properties: {
                     hash: {
@@ -877,52 +905,70 @@ module.exports = {
                     }
                 }
             },
+            MovieDetail: {
+                type: 'object',
+                properties: {
+                    actors: {
+                        type: 'string'
+                    },
+                    author: {
+                        type: 'string'
+                    },
+                    boxoffice: {
+                        type: 'string'
+                    },
+                    director: {
+                        type: 'string'
+                    },
+                    genre: {
+                        type: 'string'
+                    },
+                    imdb_code: {
+                        type: 'string'
+                    },
+                    metascore: {
+                        type: 'string'
+                    },
+                    poster: {
+                        type: 'string'
+                    },
+                    production: {
+                        type: 'string'
+                    },
+                    rating: {
+                        type: 'number'
+                    },
+                    resume: {
+                        type: 'string'
+                    },
+                    runtime: {
+                        type: 'string'
+                    },
+                    title: {
+                        type: 'string'
+                    },
+                    year: {
+                        type: 'number'
+                    }
+                }
+            },
             Detail: {
-                allOf: {
-                    $ref: '#/components/schemas/hashs',
-                    type: 'object',
-                    properties: {
-                        actors: {
-                            type: 'string'
-                        },
-                        author: {
-                            type: 'string'
-                        },
-                        boxoffice: {
-                            type: 'string'
-                        },
-                        director: {
-                            type: 'string'
-                        },
-                        genre: {
-                            type: 'string'
-                        },
-                        imdb_code: {
-                            type: 'string'
-                        },
-                        metascore: {
-                            type: 'string'
-                        },
-                        poster: {
-                            type: 'string'
-                        },
-                        production: {
-                            type: 'string'
-                        },
-                        rating: {
-                            type: 'number'
-                        },
-                        resume: {
-                            type: 'string'
-                        },
-                        runtime: {
-                            type: 'string'
-                        },
-                        title: {
-                            type: 'string'
-                        },
-                        year: {
-                            type: 'number'
+                type: 'object',
+                properties: {
+                    hashs: {
+                        type: 'object',
+                        properties: {
+                            schema: {
+                                $ref: '#/components/schemas/Hashs'
+                            }
+                        }
+                    },
+                    movieDetail: {
+                        type: 'object',
+                        properties: {
+                            schema: {
+                                $ref: '#/components/schemas/MovieDetail'
+                            }
                         }
                     }
                 }

@@ -19,7 +19,7 @@ export class movieService {
     private http: HttpClient,
     private route: Router,
     private authService: AuthService
-  ) {}
+  ) { }
 
   // watchMovie(imdb_id: string, hash: string): Observable<any> {
   //     console.log(AUTH_API + `movie/watch/${imdb_id}?hash=${hash}`);
@@ -65,7 +65,7 @@ export class movieService {
     console.log(params);
     return this.http.get(
       environment.AUTH_API +
-        `movie/list?page=${params.page}
+      `movie/list?page=${params.page}
       &userId=${params.userId}
       &genre=${params.genre}
       &note=${params.note}
@@ -97,6 +97,7 @@ export class movieService {
           userId: userId,
         })
         .then((result) => {
+          console.log(result);
           resolve(result);
         })
         .catch((err) => {

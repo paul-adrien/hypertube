@@ -232,6 +232,7 @@ module.exports.stream = (data) => {
               "Content-Type": "video/webm",
             };
             data.res.writeHead(206, headers);
+            console.log(data)
             file.pipe(data.res);
           } else {
             let file = fs.createReadStream(path);
@@ -240,6 +241,7 @@ module.exports.stream = (data) => {
               "Content-Type": "video/webm",
             };
             data.res.writeHead(200, headers);
+            console.log(data)
             file.pipe(data.res);
           }
           resolve(data);
