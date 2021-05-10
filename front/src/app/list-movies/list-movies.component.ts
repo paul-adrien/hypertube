@@ -42,6 +42,7 @@ import { AuthService } from '../_services/auth_service';
             (click)="viewDetail(movie.imdb_code)"
             [src]="movie.poster"
             class="movie-img"
+            alt="./assets/slash.svg"
           />
           <div class="bottom-container">
             <div class="movie-title" [title]="movie.title">
@@ -204,7 +205,7 @@ export class ListMoviesComponent implements OnInit {
             this.loadingMovie = false;
             console.log(data);
             if (
-              (this.moviesList?.length < 10 ||
+              (this.moviesList?.length < 15 ||
                 data?.movies?.length === 0 ||
                 data?.movies === undefined) &&
               this.n < 3

@@ -18,126 +18,137 @@ function ValidatorLength(control: FormControl) {
 @Component({
   selector: 'app-detail-movie',
   template: `
-    <div *ngIf="detailMovie" class="top-container">
-      <img [src]="detailMovie.poster" class="poster" />
-      <div class="info-container">
-        <div class="title">{{ detailMovie.title }}</div>
-        <div>
-          <span class="info-movie">{{ detailMovie.runtime }}</span>
-          <span class="info-movie">{{ detailMovie.genre }}</span>
-          <span class="info-movie">{{ detailMovie.year }}</span>
-        </div>
-
-        <div class="sub-title">Description</div>
-        <div>{{ detailMovie.resume }}</div>
-      </div>
-    </div>
-    <div *ngIf="!loadPlayer && !isChooseT" class="torrents-container">
-      <div *ngFor="let torrent of this.hashs; let index = index">
-        <div
-          *ngIf="torrent !== null && torrent.source !== null"
-          (click)="choiceOfTorrent(index)"
-          class="torrent-button"
-        >
-          {{ torrent.source }} {{ torrent.quality }} seeds:
-          {{ torrent.seeds }} peers: {{ torrent.peers }}
-          {{ torrent.state ? 'state: ' + torrent.state : '' }}
-        </div>
-      </div>
-    </div>
-    <app-player
-      *ngIf="loadPlayer"
-      style="width: 100%; height: calc(100vw / 2)"
-      [hash]="hashs[this.index].hash"
-      [quality]="hashs[this.index].quality"
-      [imdb_code]="detailMovie.imdb_code"
-    ></app-player>
-
-    <div class="title-comment">Commentaire</div>
-    <div class="comment-container" *ngIf="comments !== null">
-      <div *ngFor="let comment of comments" class="comment">
-        <img
-          class="picture-comment"
-          [src]="this.getProfileInfo(comment.userId)?.picture"
-        />
-        <div class="text-container">
+    <div *ngIf="this.detailMovie">
+      <div class="top-container">
+        <img [src]="detailMovie.poster" class="poster" />
+        <div class="info-container">
+          <div class="title">{{ detailMovie.title }}</div>
           <div>
-            {{ this.getProfileInfo(comment.userId)?.userName || 'username' }}
+            <span class="info-movie">{{ detailMovie.runtime }}</span>
+            <span class="info-movie">{{ detailMovie.genre }}</span>
+            <span class="info-movie">{{ detailMovie.year }}</span>
           </div>
-          <div class="text-comment">{{ comment.comment }}</div>
+
+          <div class="sub-title">Description</div>
+          <div>{{ detailMovie.resume }}</div>
         </div>
       </div>
-    </div>
-    <form
-      [formGroup]="this.commentForm"
-      class="form-container"
-      name="form"
-      (ngSubmit)="addComment()"
-      #f="ngForm"
-      novalidate
-    >
-      <div class="input-flex">
-        <input
-          type="text"
-          formControlName="comment"
-          id="comment"
-          class="input-container"
-          required
-          [class.error-input]="this.commentForm.get('comment').errors?.error"
-          placeholder="Écrire un commentaire"
-        />
-        <img
-          class="send"
-          src="./assets/send.svg"
-          (click)="f.form.valid && addComment()"
-        />
-      </div>
-      <div class="error" *ngIf="this.commentForm.get('comment').errors?.error">
-        {{ this.commentForm.get('comment').errors.error }}
-      </div>
-    </form>
-    <div class="title-comment">Titre similaire</div>
-    <div class="list">
-      <div *ngFor="let movie of this.suggestionList" class="movie-container">
-        <img
-          class="plus"
-          *ngIf="movie.fav === false"
-          (click)="this.sendToFav(movie)"
-          src="./assets/icons8-plus.svg"
-        />
-        <img
-          class="plus"
-          *ngIf="movie.fav === true"
-          (click)="this.deleteFav(movie)"
-          src="./assets/checkmark.svg"
-        />
-        <img
-          (click)="viewDetail(movie.imdb_code)"
-          [src]="movie.poster"
-          class="movie-img"
-        />
-        <div class="bottom-container">
-          <div class="movie-title" [title]="movie.title">
-            <span class="text">
-              {{ movie.title }}
-            </span>
-            <img class="eye" *ngIf="movie.see" src="./assets/eye-green-2.svg" />
+      <div *ngIf="!loadPlayer && !isChooseT" class="torrents-container">
+        <div *ngFor="let torrent of this.hashs; let index = index">
+          <div
+            *ngIf="torrent !== null && torrent.source !== null"
+            (click)="choiceOfTorrent(index)"
+            class="torrent-button"
+          >
+            {{ torrent.source }} {{ torrent.quality }} seeds:
+            {{ torrent.seeds }} peers: {{ torrent.peers }}
+            {{ torrent.state ? 'state: ' + torrent.state : '' }}
           </div>
-          <div class="movie-info">
-            <span>{{ movie.year }}</span>
-            <div class="right-container">
-              <span class="right-info">
-                {{ movie.runtime }}
+        </div>
+      </div>
+      <app-player
+        *ngIf="loadPlayer"
+        style="width: 100%; height: calc(100vw / 2)"
+        [hash]="hashs[this.index].hash"
+        [quality]="hashs[this.index].quality"
+        [imdb_code]="detailMovie.imdb_code"
+      ></app-player>
+
+      <div class="title-comment">Commentaire</div>
+      <div class="comment-container" *ngIf="comments !== null">
+        <div *ngFor="let comment of comments" class="comment">
+          <img
+            class="picture-comment"
+            [src]="this.getProfileInfo(comment.userId)?.picture"
+          />
+          <div class="text-container">
+            <div>
+              {{ this.getProfileInfo(comment.userId)?.userName || 'username' }}
+            </div>
+            <div class="text-comment">{{ comment.comment }}</div>
+          </div>
+        </div>
+      </div>
+      <form
+        [formGroup]="this.commentForm"
+        class="form-container"
+        name="form"
+        (ngSubmit)="addComment()"
+        #f="ngForm"
+        novalidate
+      >
+        <div class="input-flex">
+          <input
+            type="text"
+            formControlName="comment"
+            id="comment"
+            class="input-container"
+            required
+            [class.error-input]="this.commentForm.get('comment').errors?.error"
+            placeholder="Écrire un commentaire"
+          />
+          <img
+            class="send"
+            src="./assets/send.svg"
+            (click)="f.form.valid && addComment()"
+          />
+        </div>
+        <div
+          class="error"
+          *ngIf="this.commentForm.get('comment').errors?.error"
+        >
+          {{ this.commentForm.get('comment').errors.error }}
+        </div>
+      </form>
+      <div class="title-comment">Titre similaire</div>
+      <div *ngIf="this.suggestionList" class="list">
+        <div *ngFor="let movie of this.suggestionList" class="movie-container">
+          <img
+            class="plus"
+            *ngIf="movie.fav === false"
+            (click)="this.sendToFav(movie)"
+            src="./assets/icons8-plus.svg"
+          />
+          <img
+            class="plus"
+            *ngIf="movie.fav === true"
+            (click)="this.deleteFav(movie)"
+            src="./assets/checkmark.svg"
+          />
+          <img
+            (click)="viewDetail(movie.imdb_code)"
+            [src]="movie.poster"
+            class="movie-img"
+          />
+          <div class="bottom-container">
+            <div class="movie-title" [title]="movie.title">
+              <span class="text">
+                {{ movie.title }}
               </span>
-              <img src="./assets/star-yellow.svg" />
-              <span class="right-info">
-                {{ movie.rating }}
-              </span>
+              <img
+                class="eye"
+                *ngIf="movie.see"
+                src="./assets/eye-green-2.svg"
+              />
+            </div>
+            <div class="movie-info">
+              <span>{{ movie.year }}</span>
+              <div class="right-container">
+                <span class="right-info">
+                  {{ movie.runtime }}
+                </span>
+                <img src="./assets/star-yellow.svg" />
+                <span class="right-info">
+                  {{ movie.rating }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <mat-spinner class="spinner" *ngIf="!this.suggestionList"></mat-spinner>
     </div>
+    <mat-spinner class="spinner" *ngIf="!this.detailMovie"></mat-spinner>
   `,
   styleUrls: ['./detail-movie.component.scss'],
 })
@@ -322,6 +333,9 @@ export class DetailMovieComponent implements OnInit {
   }
 
   getProfileInfo(userId: string) {
+    if (this.user.id === userId) {
+      return this.user;
+    }
     return this.usersComment.find((user) => user.id === userId);
   }
 }

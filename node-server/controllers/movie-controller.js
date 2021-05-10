@@ -15,18 +15,20 @@ var searchCancelTokenFetch = { id: null, source: null };
 async function getYTSMovies(paramsYts, userId) {
   const source = axios.CancelToken.source();
   searchCancelTokenFetch.source = source;
-  const data = await axios.get(YTS_LIST, {
-    params: {
-      page: paramsYts?.page,
-      genre: paramsYts?.genre,
-      sort_by: paramsYts?.sort,
-      minimum_rating: paramsYts?.note,
-      query_term: paramsYts?.search,
-      order_by: paramsYts?.order,
-    },
-    withCredentials: false,
-    cancelToken: searchCancelTokenFetch.source.token,
-  });
+  const data = await axios
+    .get(YTS_LIST, {
+      params: {
+        page: paramsYts?.page,
+        genre: paramsYts?.genre,
+        sort_by: paramsYts?.sort,
+        minimum_rating: paramsYts?.note,
+        query_term: paramsYts?.search,
+        order_by: paramsYts?.order,
+      },
+      withCredentials: false,
+      cancelToken: searchCancelTokenFetch.source.token,
+    })
+    .catch((err) => undefined);
   movies = [];
   if (
     data &&
@@ -52,6 +54,7 @@ async function getYTSMovies(paramsYts, userId) {
       })
     );
   }
+  console.log("yts", movies);
   return movies;
 }
 
@@ -92,15 +95,11 @@ async function getInfoMovies(userId, movies) {
     i = 0;
     console.log("wesh", movies);
     if (movies?.length > 0) {
-      console.log("wesh à l'interieur");
-
       //console.log(movies);
       resolve(
         await Promise.all(
           movies.map(async (m) => {
             if (m && m.imdb_code) {
-              console.log("wesh à l'interieur 2");
-
               let favorite = false;
               await Fav.findOne({
                 $query: { imdb_code: m.imdb_code, userId: userId },
@@ -109,34 +108,34 @@ async function getInfoMovies(userId, movies) {
                   favorite = true;
                 } else favorite = false;
               });
-              console.log("wesh à l'interieur 3");
 
-              return await imdb
-                .get({ id: m.imdb_code }, { apiKey: "e8cb5cca" })
-                .then((movie) => {
-                  console.log("wesh à l'interieur movie");
-                  console.log(movie);
-                  if (movie?.ratings.length === 0) {
-                    return undefined;
-                  }
-                  return {
-                    imdb_code: m.imdb_code,
-                    title: movie.title,
-                    year: m.year ? m.year : movie.year,
-                    rating: m.rating ? m.rating : movie.rating,
-                    poster: movie.poster,
-                    seeds: m.seeds,
-                    runtime: movie.runtime,
-                    see: m.see,
-                    fav: favorite,
-                  };
-                  //console.log(await movie?.rating);
-                  //if (i + 1 == len) resolve(tmp);
-                })
-                .catch((err) => {
-                  console.log(err);
-                  return undefined;
-                });
+              const movie = await axios
+                .get(
+                  `https://api.themoviedb.org/3/movie/${m.imdb_code}?api_key=5b9a9289b9a6931460aa319b2b3a6d33`
+                )
+                .catch((err) => undefined);
+              console.log(movie);
+
+              if (movie?.data.vote_average === 0 || !movie) {
+                return undefined;
+              }
+              return {
+                imdb_code: m.imdb_code,
+                title: movie.data.title,
+                year: m.year
+                  ? m.year
+                  : dateFns.getYear(new Date(movie.data.year)),
+                rating: m.rating ? m.rating : movie.data.vote_average,
+                poster:
+                  movie.data.poster_path !== null
+                    ? "https://image.tmdb.org/t/p/original" +
+                      movie.data.poster_path
+                    : undefined,
+                seeds: m.seeds,
+                runtime: movie.data.runtime + " min",
+                see: m.see,
+                fav: favorite,
+              };
             }
           })
         )
@@ -200,18 +199,18 @@ exports.getListMovie = async (req, res) => {
     if (YTSmovies?.length === 0 || !YTSmovies) {
       res.json({
         status: true,
-        movies: undefined,
+      });
+    } else {
+      movies_filtred = await getInfoMovies(userId, YTSmovies);
+      console.log(movies_filtred);
+      res.json({
+        status: true,
+        movies: movies_filtred.filter(
+          (movie) =>
+            movie && movie.title && movie.poster && movie.poster !== "N/A"
+        ),
       });
     }
-    movies_filtred = await getInfoMovies(userId, YTSmovies);
-    console.log(movies_filtred);
-    res.json({
-      status: true,
-      movies: movies_filtred.filter(
-        (movie) =>
-          movie && movie.title && movie.poster && movie.poster !== "N/A"
-      ),
-    });
   }
 };
 

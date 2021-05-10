@@ -167,6 +167,7 @@
       border-radius: 4px;
       z-index: 5;
       cursor: pointer;
+      min-height: 16rem;
     }
   }
 
@@ -247,6 +248,14 @@
     .error {
       color: red;
     }
+  }
+
+  .spinner {
+    height: 10rem !important;
+    width: 100% !important;
+    left: 50%;
+    transform: translateX(-50px);
+    margin-top: 8rem;
   }
 }
 
