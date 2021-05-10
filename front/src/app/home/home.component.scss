@@ -3,6 +3,9 @@
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 
   .title-home {
     font-size: 1.8rem;
@@ -28,7 +31,7 @@
       justify-content: space-between;
       margin-bottom: 1.4rem;
       width: 11rem;
-      background-color: #353535;
+      background-color: #333333;
       border-radius: 4px;
 
       .bottom-container {

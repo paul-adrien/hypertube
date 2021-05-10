@@ -34,10 +34,10 @@ html {
   background: var(--background-color-grey) !important;
   overflow: hidden;
 
-  --primary-color: #424242;
+  --primary-color: #1a1a1a;
   --secondary-color: #46a35e;
   --color-text: white;
-  --background-color-grey: #424242;
+  --background-color-grey: #1a1a1a;
   --background-color-primary: black;
 
   &::-webkit-scrollbar {
@@ -50,7 +50,6 @@ html {
 
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
-  filter: brightness(0.9) contrast(1.1);
 }
 
 .dark,
@@ -58,17 +57,9 @@ html {
   color: var(--color-text);
 }
 
-.light {
-  --primary-color: #424242;
-  --secondary-color: #46a35e;
-  --color-text: black;
-  --background-color-grey: #eaeaea;
-  --background-color-primary: white;
-}
-
 .dark {
   --color-text: white;
-  --background-color-grey: #424242;
+  --background-color-grey: #1a1a1a;
   --background-color-primary: black;
 }
 
