@@ -60,9 +60,13 @@ function ValidatorLength(control: FormControl) {
           <img
             class="picture-comment"
             [src]="this.getProfileInfo(comment.userId)?.picture"
+            (click)="this.viewProfile(comment.userId)"
           />
           <div class="text-container">
-            <div>
+            <div
+              style="cursor: pointer"
+              (click)="this.viewProfile(comment.userId)"
+            >
               {{ this.getProfileInfo(comment.userId)?.userName || 'username' }}
             </div>
             <div class="text-comment">{{ comment.comment }}</div>
@@ -170,6 +174,8 @@ export class DetailMovieComponent implements OnInit {
   constructor(
     private cd: ChangeDetectorRef,
     public route: ActivatedRoute,
+    public router: Router,
+
     private auth_service: AuthService,
     private commentsService: commentsService,
     private movieService: movieService,
@@ -294,6 +300,7 @@ export class DetailMovieComponent implements OnInit {
         .subscribe(
           (data) => {
             this.commentForm.get('comment').setValue('');
+            this.getComments();
             console.log(data.message);
           },
           (err) => {
@@ -337,5 +344,13 @@ export class DetailMovieComponent implements OnInit {
       return this.user;
     }
     return this.usersComment.find((user) => user.id === userId);
+  }
+
+  public viewProfile(userId: string) {
+    if (this.user.id === userId) {
+      this.router.navigate([`/profile`]);
+    } else {
+      this.router.navigate([`/profile/${userId}`]);
+    }
   }
 }

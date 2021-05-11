@@ -19,7 +19,7 @@ export class movieService {
     private http: HttpClient,
     private route: Router,
     private authService: AuthService
-  ) { }
+  ) {}
 
   // watchMovie(imdb_id: string, hash: string): Observable<any> {
   //     console.log(AUTH_API + `movie/watch/${imdb_id}?hash=${hash}`);
@@ -65,7 +65,7 @@ export class movieService {
     console.log(params);
     return this.http.get(
       environment.AUTH_API +
-      `movie/list?page=${params.page}
+        `movie/list?page=${params.page}
       &userId=${params.userId}
       &genre=${params.genre}
       &note=${params.note}
@@ -127,6 +127,12 @@ export class movieService {
 
   getFav(userId: string): Observable<any> {
     return this.http.get(environment.AUTH_API + `movie/favorite/${userId}`, {
+      ...httpOptions,
+    });
+  }
+
+  getWatch(userId: string): Observable<any> {
+    return this.http.get(environment.AUTH_API + `movie/watched/${userId}`, {
       ...httpOptions,
     });
   }

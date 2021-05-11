@@ -6,19 +6,25 @@ import { ForgotPassSendComponent } from './forgot-pass-send/forgot-pass-send.com
 import { HomeComponent } from './home/home.component';
 import { ListMoviesComponent } from './list-movies/list-movies.component';
 import { LoginComponent } from './login/login.component';
+import { OtherProfileComponent } from './other-profile/other-profile.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from './_services/auth-guard';
 import { ProfileGuard } from './_services/profile-guard';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [ProfileGuard] },
-  { path: "forgotPass/:id", component: ForgotPassChangeComponent },
-  { path: "forgotPass", component: ForgotPassSendComponent },
+  { path: 'forgotPass/:id', component: ForgotPassChangeComponent },
+  { path: 'forgotPass', component: ForgotPassSendComponent },
   {
     path: 'home',
     component: HomeComponent,
   },
   { path: 'profile', canActivate: [AuthGuard], component: ProfileComponent },
+  {
+    path: 'profile/:id',
+    canActivate: [AuthGuard],
+    component: OtherProfileComponent,
+  },
   {
     path: 'list-Movies',
     canActivate: [AuthGuard],
@@ -41,4 +47,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -14,5 +14,6 @@
   "watchList": "Watch list",
   "noWatchList": "You don’t have any movies on your watchlist",
   "info": "Information",
-  "hotMovies": "Hot movies"
+  "hotMovies": "Hot movies",
+  "watchMovies": "Movies watched"
 }

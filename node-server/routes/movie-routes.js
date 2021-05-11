@@ -23,6 +23,12 @@ router.get(
   movieController.getFav
 );
 
+router.get(
+  "/movie/watched/:user_id",
+  [authJwt.verifyToken],
+  movieController.getWatched
+);
+
 router.post(
   "/movie/:imdb_id/subtitles",
   [authJwt.verifyToken],

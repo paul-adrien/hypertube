@@ -156,7 +156,7 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
 
     if (
       this.router.url.includes('profile') &&
-      !this.router.url.includes('profile-')
+      !this.router.url.includes('profile/')
     ) {
       this.selectItem('profile');
     } else if (

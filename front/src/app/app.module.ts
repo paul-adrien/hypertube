@@ -29,6 +29,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ForgotPassSendComponent } from './forgot-pass-send/forgot-pass-send.component';
 import { ForgotPassChangeComponent } from './forgot-pass-change/forgot-pass-change.component';
+import { OtherProfileComponent } from './other-profile/other-profile.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { ForgotPassChangeComponent } from './forgot-pass-change/forgot-pass-chan
     FilterAndSortComponent,
     ForgotPassSendComponent,
     ForgotPassChangeComponent,
+    OtherProfileComponent,
   ],
   imports: [
     HttpClientModule,
@@ -73,7 +75,7 @@ import { ForgotPassChangeComponent } from './forgot-pass-change/forgot-pass-chan
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
 
 export function httpTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);

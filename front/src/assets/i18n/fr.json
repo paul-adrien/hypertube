@@ -13,5 +13,7 @@
   "watchList": "Film à regarder",
   "noWatchList": "Vous n'avez aucun film dans votre liste à regarder",
   "info": "Informations",
-  "hotMovies": "Les films du moment"
+  "hotMovies": "Les films du moment",
+  "watchMovies": "Films vus"
+
 }

@@ -9,7 +9,7 @@ const Fav = db.fav;
 const Movies = db.movies;
 const dateFns = require("date-fns");
 const fs = require("fs");
-const { checkUserSeeMovie } = require("../models/lib-user.model");
+const { checkUserSeeMovie, getUser } = require("../models/lib-user.model");
 var searchCancelTokenFetch = { id: null, source: null };
 
 async function getYTSMovies(paramsYts, userId) {
@@ -124,7 +124,7 @@ async function getInfoMovies(userId, movies) {
                 title: movie.data.title,
                 year: m.year
                   ? m.year
-                  : dateFns.getYear(new Date(movie.data.year)),
+                  : dateFns.getYear(new Date(movie.data.release_date)),
                 rating: m.rating ? m.rating : movie.data.vote_average,
                 poster:
                   movie.data.poster_path !== null
@@ -301,34 +301,34 @@ async function getHashRARBG(imdb_code) {
 }
 
 async function getInfoMovie(imdb_code) {
+  console.log(imdb_code);
   return new Promise(async (resolve, reject) => {
-    resolve(
-      await imdb
-        .get({ id: imdb_code }, { apiKey: "e8cb5cca" })
-        .then(async (movie) => {
-          return {
-            imdb_code: imdb_code,
-            title: movie.title,
-            year: movie.year,
-            rating: movie.rating,
-            poster: movie.poster,
-            genre: movie.genres,
-            director: movie.director,
-            author: movie.writer,
-            actors: movie.actors,
-            resume: movie.plot,
-            award: movie.award,
-            metascore: movie.metascore,
-            boxoffice: movie.boxoffice,
-            production: movie.production,
-            runtime: movie.runtime,
-          };
-        })
-        .catch((err) => {
-          //console.log(err);
-          return null;
-        })
-    );
+    console.log(imdb_code);
+    const movie = await axios
+      .get(
+        `https://api.themoviedb.org/3/movie/${imdb_code}?api_key=5b9a9289b9a6931460aa319b2b3a6d33`
+      )
+      .catch((err) => undefined);
+    console.log(movie);
+
+    if (movie?.data.vote_average === 0 || !movie) {
+      resolve(undefined);
+    }
+
+    resolve({
+      imdb_code: imdb_code,
+      title: movie.data.title,
+      year: dateFns.getYear(new Date(movie.data.release_date)),
+      rating: movie.data.vote_average,
+      poster:
+        movie.data.poster_path !== null
+          ? "https://image.tmdb.org/t/p/original" + movie.data.poster_path
+          : undefined,
+      runtime: movie.data.runtime + " min",
+      genre: movie.data.genres.map((genre) => genre.name).join(", "),
+      resume: movie.data.overview,
+      rating: movie.data.vote_average,
+    });
   });
 }
 
@@ -417,6 +417,28 @@ exports.deleteFav = async (req, res) => {
       }
     }
   );
+};
+
+exports.getWatched = async (req, res) => {
+  const userId = req.params.user_id;
+
+  const user = await getUser({ id: userId });
+  if (user) {
+    console.log(user);
+    const results = await Promise.all(
+      user.moviesWatched.map(async (movieId) => getInfoMovie(movieId))
+    );
+    console.log(results);
+    return res.json({
+      status: true,
+      movies: results,
+    });
+  } else {
+    return res.json({
+      status: true,
+      movies: null,
+    });
+  }
 };
 
 exports.getFav = async (req, res) => {

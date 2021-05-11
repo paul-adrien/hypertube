@@ -451,6 +451,41 @@ module.exports = {
                 }
             }
         },
+        '/movie/watched/:user_id': {
+            get: {
+                tags: ['CRUD operations'],
+                description: 'get list of films watched',
+                parameters: [
+                    {
+                        name: 'x-access-token',
+                        in: 'header',
+                        required: true,
+                    },
+                ],
+                responses: {
+                    'true': {
+                        description: 'list of films watched',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/Movies',
+                                }
+                            }
+                        }
+                    },
+                    'false': {
+                        description: 'Missing parameters',
+                        content: {
+                            'application/json': {
+                                example: {
+                                    message: "No token || unauthorized",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         '/movie/:imdb_id/favorite': {
             post: {
                 tags: ['CRUD operations'],

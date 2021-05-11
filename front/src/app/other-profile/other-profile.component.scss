@@ -73,34 +73,26 @@
     .form-container {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: space-evenly;
       width: 100%;
       flex-grow: 1;
 
       .block {
         display: flex;
         align-items: baseline;
-        margin: 0.5rem 0;
-        flex-wrap: wrap;
+        margin: 0.5rem;
 
         .text {
-          width: 10rem;
-          margin-bottom: 6px;
+          width: 9rem;
+          min-width: 9rem;
         }
 
         .input-container {
           display: flex;
           flex-direction: column;
           flex-grow: 1;
-        }
-
-        .input {
-          height: 2rem;
-          box-sizing: border-box;
-          padding: 6px 12px;
-          border: 1px solid grey;
-          border-radius: 4px;
-          flex-grow: 1;
+          color: lightgray;
+          word-break: break-all;
         }
       }
     }
