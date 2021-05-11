@@ -27,6 +27,8 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { ForgotPassSendComponent } from './forgot-pass-send/forgot-pass-send.component';
+import { ForgotPassChangeComponent } from './forgot-pass-change/forgot-pass-change.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
     PlayerComponent,
     PopUpComponent,
     FilterAndSortComponent,
+    ForgotPassSendComponent,
+    ForgotPassChangeComponent,
   ],
   imports: [
     HttpClientModule,

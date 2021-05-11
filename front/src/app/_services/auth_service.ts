@@ -87,4 +87,26 @@ export class AuthService {
       responseType: 'text',
     });
   }
+
+  forgotPass_s(user): Observable<any> {
+    return this.http.post(
+      environment.AUTH_API + "user/forgotPass",
+      {
+        email: user.email,
+      },
+      httpOptions
+    );
+  }
+
+  forgotPass_c(user, id): Observable<any> {
+    return this.http.put(
+      environment.AUTH_API + "user/changePass",
+      {
+        email: user.email,
+        password: user.password,
+        id: id
+      },
+      httpOptions
+    );
+  }
 }

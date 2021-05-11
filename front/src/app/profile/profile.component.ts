@@ -66,7 +66,7 @@ function ValidatorEmail(control: FormControl) {
         <div class="name">{{ user.email }}</div>
       </div>
       <div class="info-container">
-        <div class="title">Informations</div>
+        <div class="title">{{ 'info' | translate }}</div>
         <form
           class="form-container"
           [formGroup]="this.userForm"
@@ -75,7 +75,7 @@ function ValidatorEmail(control: FormControl) {
           novalidate
         >
           <div class="block">
-            <div class="text">Nom d'utilisateur</div>
+            <div class="text">{{ 'userName' | translate }}</div>
             <div class="input-container">
               <input
                 class="input"
@@ -92,7 +92,7 @@ function ValidatorEmail(control: FormControl) {
             </div>
           </div>
           <div class="block">
-            <div class="text">Prénom</div>
+            <div class="text">{{ 'firstName' | translate }}</div>
             <div class="input-container">
               <input
                 class="input"
@@ -109,7 +109,7 @@ function ValidatorEmail(control: FormControl) {
             </div>
           </div>
           <div class="block">
-            <div class="text">Nom</div>
+            <div class="text">{{ 'lastName' | translate }}</div>
             <div class="input-container">
               <input
                 class="input"
@@ -208,7 +208,7 @@ export class ProfileComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private movieService: movieService,
     private route: Router
-  ) {}
+  ) { }
 
   public userForm = new FormGroup({
     userName: new FormControl('', ValidatorUserNameLength),

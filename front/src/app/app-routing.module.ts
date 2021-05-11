@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DetailMovieComponent } from './detail-movie/detail-movie.component';
+import { ForgotPassChangeComponent } from './forgot-pass-change/forgot-pass-change.component';
+import { ForgotPassSendComponent } from './forgot-pass-send/forgot-pass-send.component';
 import { HomeComponent } from './home/home.component';
 import { ListMoviesComponent } from './list-movies/list-movies.component';
 import { LoginComponent } from './login/login.component';
@@ -10,6 +12,8 @@ import { ProfileGuard } from './_services/profile-guard';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [ProfileGuard] },
+  { path: "forgotPass/:id", component: ForgotPassChangeComponent },
+  { path: "forgotPass", component: ForgotPassSendComponent },
   {
     path: 'home',
     component: HomeComponent,
@@ -37,4 +41,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

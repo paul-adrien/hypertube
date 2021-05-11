@@ -10,6 +10,8 @@ module.exports = function (app) {
     next();
   });
 
+  app.post("/user/forgotPass", controller.forgotPass_send);
+  app.put("/user/changePass", controller.forgotPass_change);
   app.get("/token", [authJwt.verifyToken], controller.userBoard);
   app.get("/user/:id", [authJwt.verifyToken], controller.getProfile);
   app.put("/user/:id", [authJwt.verifyToken], controller.userUpdate);

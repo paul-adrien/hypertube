@@ -68,7 +68,7 @@ function ValidatorPass(control: FormControl) {
             formControlName="userName"
             id="userName"
             required
-            placeholder="Nom d'utilisateur"
+            placeholder="{{'userName' | translate}}"
             [class.error-input]="
               this.registerForm.get('userName').errors?.error &&
               this.isSuccessful === false
@@ -88,7 +88,7 @@ function ValidatorPass(control: FormControl) {
             type="text"
             formControlName="lastName"
             required
-            placeholder="Nom"
+            placeholder="{{'lastName' | translate}}"
             [class.error-input]="
               this.registerForm.get('lastName').errors?.error &&
               this.isSuccessful === false
@@ -114,7 +114,7 @@ function ValidatorPass(control: FormControl) {
             type="text"
             formControlName="firstName"
             required
-            placeholder="Prénom"
+            placeholder="{{'firstName' | translate}}"
             [class.error-input]="
               this.registerForm.get('firstName').errors?.error &&
               this.isSuccessful === false
@@ -155,7 +155,7 @@ function ValidatorPass(control: FormControl) {
             type="password"
             formControlName="password"
             required
-            placeholder="Mot de passe"
+            placeholder="{{'Password' | translate}}"
             [class.error-input]="
               this.registerForm.get('password').errors?.error &&
               this.isSuccessful === false
@@ -196,7 +196,7 @@ function ValidatorPass(control: FormControl) {
               this.registerForm.get('userName').errors?.error &&
               this.isSuccessful === false
             "
-            placeholder="Nom d'utilisateur"
+            placeholder="{{'userName' | translate}}"
           />
           <div
             class="error"
@@ -211,7 +211,7 @@ function ValidatorPass(control: FormControl) {
             type="password"
             formControlName="password"
             required
-            placeholder="Mot de passe"
+            placeholder="{{'Password' | translate}}"
             [class.error-input]="
               this.registerForm.get('password').errors?.error &&
               this.isSuccessful === false

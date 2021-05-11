@@ -11,5 +11,7 @@
   "search": "Rechercher",
   "noResult": "Aucun résultat",
   "watchList": "Film à regarder",
-  "noWatchList": "Vous n'avez aucun film dans votre liste à regarder"
+  "noWatchList": "Vous n'avez aucun film dans votre liste à regarder",
+  "info": "Informations",
+  "hotMovies": "Les films du moment"
 }

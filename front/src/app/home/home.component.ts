@@ -13,7 +13,7 @@ import { PopUpComponent } from '../pop-up/pop-up.component';
 @Component({
   selector: 'app-home',
   template: `
-    <div class="title-home">Les films du moment</div>
+    <div class="title-home">{{ 'hotMovies' | translate }}</div>
     <div class="list">
       <div *ngFor="let movie of this.moviesList" class="movie-container">
         <img
@@ -78,7 +78,7 @@ export class HomeComponent implements OnInit {
     private authService: AuthService,
     private movieService: movieService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.authService.checkIfUserCo().subscribe(

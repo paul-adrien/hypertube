@@ -11,6 +11,7 @@ const User = mongoose.model(
     id: String,
     picture: String,
     moviesWatched: Array,
+    rand: Number,
   })
 );
 
