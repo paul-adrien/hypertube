@@ -6,6 +6,8 @@ import { AuthService } from '../_services/auth_service';
 import { commentsService } from '../_services/comments_service';
 import { movieService } from '../_services/movie_service';
 import { ProfileService } from '../_services/profile_service';
+import { TranslateService } from '@ngx-translate/core';
+import { map } from 'rxjs/operators';
 
 function ValidatorLength(control: FormControl) {
   const test = /^(?=.{3,20}$)[a-zA-Z]+(?:[-' ][a-zA-Z]+)*$/;
@@ -25,7 +27,9 @@ function ValidatorLength(control: FormControl) {
           <div class="title">{{ detailMovie.title }}</div>
           <div>
             <span class="info-movie">{{ detailMovie.runtime }}</span>
-            <span class="info-movie">{{ detailMovie.genre }}</span>
+            <span class="info-movie">{{
+              this.genderTranslate(detailMovie.genre) | async
+            }}</span>
             <span class="info-movie">{{ detailMovie.year }}</span>
           </div>
 
@@ -179,7 +183,8 @@ export class DetailMovieComponent implements OnInit {
     private auth_service: AuthService,
     private commentsService: commentsService,
     private movieService: movieService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    public translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -205,7 +210,7 @@ export class DetailMovieComponent implements OnInit {
         );
         console.log(data);
         this.getComments();
-        this.getSuggestionMovieList();
+        this.getSuggestionMovieList(1);
         this.cd.detectChanges();
       },
       (err) => {
@@ -312,13 +317,13 @@ export class DetailMovieComponent implements OnInit {
     }
   }
 
-  getSuggestionMovieList() {
+  getSuggestionMovieList(page: number) {
     let genre = this.detailMovie.genre.split(',');
     console.log(genre);
     this.movieService
       .getListMovies({
         userId: this.user.id,
-        page: 1,
+        page: page,
         genre: genre[0],
         sort: 'download_count',
         note: null,
@@ -328,9 +333,13 @@ export class DetailMovieComponent implements OnInit {
       .subscribe(
         (data) => {
           console.log(data.movies);
-          this.suggestionList = data.movies.filter(
-            (movie) => this.detailMovie.imdb_code !== movie.imdb_code
-          );
+          if (!data?.movies) {
+            this.getSuggestionMovieList(page + 1);
+          } else {
+            this.suggestionList = data.movies.filter(
+              (movie) => this.detailMovie.imdb_code !== movie.imdb_code
+            );
+          }
           this.cd.detectChanges();
         },
         (err) => {
@@ -352,5 +361,11 @@ export class DetailMovieComponent implements OnInit {
     } else {
       this.router.navigate([`/profile/${userId}`]);
     }
+  }
+
+  public genderTranslate(genders: string) {
+    return this.translate
+      .get(genders.split(', '))
+      .pipe(map((genders) => Object.values(genders).join(', ')));
   }
 }

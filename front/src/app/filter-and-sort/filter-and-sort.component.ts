@@ -31,28 +31,36 @@ import { Observable } from 'rxjs';
       </div>
       <div class="custom-slider sort">
         <select class="select" formControlName="genre">
-          <option selected disabled hidden>Genre</option>
+          <option value="gender" selected disabled hidden>
+            {{ 'gender' | translate }}
+          </option>
           <option *ngFor="let option of this.genreOptions">
-            {{ option }}
+            {{ option | translate }}
           </option>
         </select>
         <select class="select" formControlName="note">
-          <option selected disabled hidden>Note</option>
+          <option value="score" selected disabled hidden>
+            {{ 'score' | translate }}
+          </option>
           <option *ngFor="let option of this.noteOptions">
             {{ option }}
           </option>
         </select>
         <select class="select" formControlName="sortBy">
-          <option selected disabled hidden>Trier par</option>
+          <option value="sortBy" selected disabled hidden>
+            {{ 'sortBy' | translate }}
+          </option>
           <option *ngFor="let option of this.sortOptions">
-            {{ option }}
+            {{ option | translate }}
           </option>
         </select>
 
         <select class="select" formControlName="orderBy">
-          <option selected disabled hidden>Ordre</option>
+          <option value="orderBy" selected disabled hidden>
+            {{ 'orderBy' | translate }}
+          </option>
           <option *ngFor="let option of this.orderOptions">
-            {{ option }}
+            {{ option | translate }}
           </option>
         </select>
       </div>
@@ -71,7 +79,7 @@ export class FilterAndSortComponent implements OnInit {
   usersMatch = [];
 
   genreOptions = [
-    'Tout',
+    'all',
     'Action',
     'Adventure',
     'Animation',
@@ -106,10 +114,10 @@ export class FilterAndSortComponent implements OnInit {
 
   sliderForm: FormGroup = new FormGroup({
     name: new FormControl(''),
-    note: new FormControl('Note'),
-    sortBy: new FormControl('Trier par'),
-    orderBy: new FormControl('Ordre'),
-    genre: new FormControl('Genre'),
+    note: new FormControl('score'),
+    sortBy: new FormControl('sortBy'),
+    orderBy: new FormControl('orderBy'),
+    genre: new FormControl('gender'),
   });
 
   ngOnInit(): void {
