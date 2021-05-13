@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import axios from 'axios';
 import { AuthService } from './auth_service';
 import { environment } from 'src/environments/environment';
+import { TranslateService } from '@ngx-translate/core';
 export var searchCancelTokenFetch = { id: null, source: null };
 
 const httpOptions = {
@@ -18,7 +19,8 @@ export class movieService {
   constructor(
     private http: HttpClient,
     private route: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    public translate: TranslateService
   ) {}
 
   // watchMovie(imdb_id: string, hash: string): Observable<any> {
@@ -44,25 +46,27 @@ export class movieService {
     order?: string;
   }): Observable<any> {
     if (
-      params.genre === 'Tout' ||
+      params.genre === 'all' ||
       params.genre === undefined ||
-      params.genre === 'Genre'
+      params.genre === 'gender'
     ) {
       params.genre = 'all';
     }
-    if (!params.note || (params.note as any) === 'Note') {
+    if (!params.note || (params.note as any) === 'score') {
       params.note = 0;
     }
     if (!params.search) {
       params.search = '';
     }
-    if (!params.sort || params.sort === 'Trier par') {
+    if (!params.sort || params.sort === 'sortBy') {
       params.sort = 'download_count';
     }
-    if (!params.order || params.order === 'Ordre') {
+    if (!params.order || params.order === 'orderBy') {
       params.order = '';
     }
     console.log(params);
+    let paramsLang = new HttpParams().set('lang', this.translate.currentLang);
+
     return this.http.get(
       environment.AUTH_API +
         `movie/list?page=${params.page}
@@ -72,12 +76,14 @@ export class movieService {
       &search=${params.search}
       &sort=${params.sort}
       &order=${params.order}`,
-      httpOptions
+      { ...httpOptions, params: paramsLang }
     );
   }
 
   getDetailMovie(imdb_id: string, userId: string): Observable<any> {
-    let params = new HttpParams().set('userId', userId);
+    let params = new HttpParams()
+      .set('userId', userId)
+      .set('lang', this.translate.currentLang);
     return this.http.get(environment.AUTH_API + `movie/${imdb_id}/detail`, {
       ...httpOptions,
       params,
@@ -132,8 +138,11 @@ export class movieService {
   }
 
   getWatch(userId: string): Observable<any> {
+    let params = new HttpParams().set('lang', this.translate.currentLang);
+
     return this.http.get(environment.AUTH_API + `movie/watched/${userId}`, {
       ...httpOptions,
+      params,
     });
   }
 }

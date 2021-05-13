@@ -54,7 +54,6 @@ async function getYTSMovies(paramsYts, userId) {
       })
     );
   }
-  console.log("yts", movies);
   return movies;
 }
 
@@ -90,10 +89,9 @@ async function getRarbgMovies(page, genre, sort, userId) {
   return movies;
 }
 
-async function getInfoMovies(userId, movies) {
+async function getInfoMovies(userId, movies, lang) {
   return new Promise(async (resolve, reject) => {
     i = 0;
-    console.log("wesh", movies);
     if (movies?.length > 0) {
       //console.log(movies);
       resolve(
@@ -114,14 +112,26 @@ async function getInfoMovies(userId, movies) {
                   `https://api.themoviedb.org/3/movie/${m.imdb_code}?api_key=5b9a9289b9a6931460aa319b2b3a6d33`
                 )
                 .catch((err) => undefined);
-              console.log(movie);
 
               if (movie?.data.vote_average === 0 || !movie) {
                 return undefined;
               }
+
+              const movieTranslations = await axios
+                .get(
+                  `https://api.themoviedb.org/3/movie/${m.imdb_code}/translations?api_key=5b9a9289b9a6931460aa319b2b3a6d33`
+                )
+                .catch((err) => undefined);
+
+              let titleTranslation = undefined;
+              if (lang !== undefined) {
+                titleTranslation = movieTranslations.data.translations.find(
+                  (translation) => translation.iso_3166_1 === lang.toUpperCase()
+                )?.data?.title;
+              }
               return {
                 imdb_code: m.imdb_code,
-                title: movie.data.title,
+                title: titleTranslation ? titleTranslation : movie.data.title,
                 year: m.year
                   ? m.year
                   : dateFns.getYear(new Date(movie.data.release_date)),
@@ -152,6 +162,8 @@ exports.getListMovie = async (req, res) => {
   const sort = req.query.sort.trim();
   const search = req.query.search.trim();
   const order = req.query.order.trim();
+  const lang = req.query.lang.trim();
+
   const paramsYts = { page, genre, sort, note, search, order };
   console.log(paramsYts);
   YTSmovies = await getYTSMovies(paramsYts, userId);
@@ -175,7 +187,7 @@ exports.getListMovie = async (req, res) => {
               JSON.stringify(obj.imdb_code) === JSON.stringify(object.imdb_code)
           )
       );
-      movies = await getInfoMovies(userId, YTSmovies);
+      movies = await getInfoMovies(userId, YTSmovies, lang);
     }
     if (RARBGmovies !== undefined) {
       RARBGmovies = RARBGmovies.filter(
@@ -187,7 +199,7 @@ exports.getListMovie = async (req, res) => {
           )
       );
       console.log("RARBG movies");
-      RARBGmovies_filtred = await getInfoMovies(userId, RARBGmovies);
+      RARBGmovies_filtred = await getInfoMovies(userId, RARBGmovies, lang);
       movies = movies.concat(RARBGmovies_filtred);
     }
     res.json({
@@ -201,7 +213,7 @@ exports.getListMovie = async (req, res) => {
         status: true,
       });
     } else {
-      movies_filtred = await getInfoMovies(userId, YTSmovies);
+      movies_filtred = await getInfoMovies(userId, YTSmovies, lang);
       console.log(movies_filtred);
       res.json({
         status: true,
@@ -300,24 +312,37 @@ async function getHashRARBG(imdb_code) {
   return movies;
 }
 
-async function getInfoMovie(imdb_code) {
-  console.log(imdb_code);
+async function getInfoMovie(imdb_code, lang) {
   return new Promise(async (resolve, reject) => {
-    console.log(imdb_code);
     const movie = await axios
       .get(
         `https://api.themoviedb.org/3/movie/${imdb_code}?api_key=5b9a9289b9a6931460aa319b2b3a6d33`
       )
       .catch((err) => undefined);
-    console.log(movie);
 
     if (movie?.data.vote_average === 0 || !movie) {
       resolve(undefined);
     }
 
+    const movieTranslations = await axios
+      .get(
+        `https://api.themoviedb.org/3/movie/${imdb_code}/translations?api_key=5b9a9289b9a6931460aa319b2b3a6d33`
+      )
+      .catch((err) => undefined);
+
+    console.log(movieTranslations.data.translations, lang);
+
+    let movieTranslation = undefined;
+    if (lang !== undefined) {
+      movieTranslation = movieTranslations.data.translations.find(
+        (translation) => translation.iso_3166_1 === lang.toUpperCase()
+      );
+    }
     resolve({
       imdb_code: imdb_code,
-      title: movie.data.title,
+      title: movieTranslation?.data?.title
+        ? movieTranslation?.data?.title
+        : movie.data.title,
       year: dateFns.getYear(new Date(movie.data.release_date)),
       rating: movie.data.vote_average,
       poster:
@@ -326,7 +351,9 @@ async function getInfoMovie(imdb_code) {
           : undefined,
       runtime: movie.data.runtime + " min",
       genre: movie.data.genres.map((genre) => genre.name).join(", "),
-      resume: movie.data.overview,
+      resume: movieTranslation?.data?.overview
+        ? movieTranslation?.data?.overview
+        : movie.data.overview,
       rating: movie.data.vote_average,
     });
   });
@@ -335,6 +362,8 @@ async function getInfoMovie(imdb_code) {
 exports.getDetailMovie = async (req, res) => {
   const imdb_id = req.params.imdb_id;
   const userId = req.query.userId;
+  const lang = req.query.lang;
+
   hashs = null;
   var hashs = await getHashRARBG(imdb_id);
   if (hashs) {
@@ -346,7 +375,7 @@ exports.getDetailMovie = async (req, res) => {
     hashs.sort(function (a, b) {
       return b.seeds - a.seeds;
     });
-  movieDetail = await getInfoMovie(imdb_id);
+  movieDetail = await getInfoMovie(imdb_id, lang);
   res.json({
     status: true,
     hashs: hashs,
@@ -421,12 +450,13 @@ exports.deleteFav = async (req, res) => {
 
 exports.getWatched = async (req, res) => {
   const userId = req.params.user_id;
+  const lang = req.query.lang;
 
   const user = await getUser({ id: userId });
   if (user) {
     console.log(user);
     const results = await Promise.all(
-      user.moviesWatched.map(async (movieId) => getInfoMovie(movieId))
+      user.moviesWatched.map(async (movieId) => getInfoMovie(movieId, lang))
     );
     console.log(results);
     return res.json({

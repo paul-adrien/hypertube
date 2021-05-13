@@ -181,6 +181,19 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
 
   switchLang(lang: string) {
     this.translate.use(lang);
+    const currentRoute = this.router.url;
+
+    if (currentRoute === '/home') {
+      this.router
+        .navigateByUrl('/list-Movies', { skipLocationChange: true })
+        .then(() => {
+          this.router.navigate([currentRoute]); // navigate to same route
+        });
+    } else {
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate([currentRoute]); // navigate to same route
+      });
+    }
   }
 
   public selectItem(id: string) {
