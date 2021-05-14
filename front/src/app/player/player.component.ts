@@ -171,9 +171,10 @@ export class PlayerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const user = this.authService.getUser();
     this.source =
       'http://localhost:8080' +
-      `/movie/convert/${this.hash}/${this.quality}?token=${this.token}`;
+      `/movie/convert/${this.hash}/${this.quality}?token=${this.token}&userId=${user.id}`;
     console.log(this.source);
     this.getSubtitles();
     this.cd.detectChanges();

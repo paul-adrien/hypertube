@@ -36,7 +36,6 @@
       object-fit: contain;
       border: 2px solid grey;
       background: white;
-      cursor: pointer;
     }
     .input-file {
       display: none;
@@ -80,7 +79,7 @@
       .block {
         display: flex;
         align-items: baseline;
-        margin: 0.5rem;
+        margin: 0.5rem 0;
 
         .text {
           width: 9rem;

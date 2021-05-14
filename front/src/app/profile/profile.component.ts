@@ -12,6 +12,7 @@ import { AuthService } from '../_services/auth_service';
 import { ProfileService } from '../_services/profile_service';
 import { movieService } from '../_services/movie_service';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 function ValidatorUserNameLength(control: FormControl) {
   const test = /^(?=.{3,20}$)[a-zA-Z0-9]+(?:[-' ][a-zA-Z0-9]+)*$/;
@@ -36,7 +37,8 @@ function ValidatorLength(control: FormControl) {
 }
 
 function ValidatorEmail(control: FormControl) {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (!re.test(String(control.value).toLowerCase())) {
     return { error: 'Mauvais format' };
   }
@@ -142,6 +144,25 @@ function ValidatorEmail(control: FormControl) {
               </div>
             </div>
           </div>
+          <div class="block">
+            <div class="text">Langue</div>
+            <div class="input-container">
+              <select class="input" #selectedLang formControlName="lang">
+                <option
+                  *ngFor="let language of translate.getLangs()"
+                  [value]="language"
+                >
+                  {{ language }}
+                </option>
+              </select>
+              <div
+                class="error"
+                *ngIf="this.userForm.get('email').errors?.error"
+              >
+                {{ this.userForm.get('email').errors.error }}
+              </div>
+            </div>
+          </div>
           <button (ngSubmit)="this.onSubmit()" class="primary-button">
             Enregistrer
           </button>
@@ -152,7 +173,7 @@ function ValidatorEmail(control: FormControl) {
       <div class="list-container">
         <span class="title">{{ 'watchList' | translate }}</span>
         <div class="watch-list-container">
-          <div *ngFor="let movie of this.moviesList" class="movie-container">
+          <div *ngFor="let movie of this.moviesFavList" class="movie-container">
             <img
               src="{{ movie.poster }}"
               (click)="viewDetail(movie.imdb_code)"
@@ -188,8 +209,53 @@ function ValidatorEmail(control: FormControl) {
               </div>
             </div>
           </div>
-          <div *ngIf="this.moviesList.length === 0" class="no-watch-list">
+          <div *ngIf="this.moviesFavList.length === 0" class="no-watch-list">
             {{ 'noWatchList' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-container">
+      <div class="list-container">
+        <span class="title">{{ 'watchMovies' | translate }}</span>
+        <div class="watch-list-container">
+          <div
+            *ngFor="let movie of this.moviesWatchList"
+            class="movie-container"
+          >
+            <img
+              src="{{ movie.poster }}"
+              (click)="viewDetail(movie.imdb_code)"
+              class="movie-img"
+            />
+
+            <div class="bottom-movie-container">
+              <div class="movie-title" [title]="movie.title">
+                <span class="text">
+                  {{ movie.title }}
+                </span>
+                <img
+                  class="eye"
+                  *ngIf="movie.see"
+                  src="./assets/eye-green-2.svg"
+                />
+              </div>
+              <div class="movie-info">
+                <span>{{ movie.year }}</span>
+                <div class="right-container">
+                  <span class="right-info">
+                    {{ movie.runtime }}
+                  </span>
+                  <img src="./assets/star-yellow.svg" />
+                  <span class="right-info">
+                    {{ movie.rating }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="this.moviesWatchList?.length === 0" class="no-watch-list">
+            {{ 'noWatchMovie' | translate }}
           </div>
         </div>
       </div>
@@ -200,15 +266,18 @@ function ValidatorEmail(control: FormControl) {
 })
 export class ProfileComponent implements OnInit {
   public user: User;
-  public moviesList = [];
+  public moviesFavList = [];
+  public moviesWatchList = [];
+
   constructor(
     private auth_service: AuthService,
     private profile_service: ProfileService,
     private dialog: MatDialog,
     private cd: ChangeDetectorRef,
     private movieService: movieService,
-    private route: Router
-  ) { }
+    private route: Router,
+    public translate: TranslateService
+  ) {}
 
   public userForm = new FormGroup({
     userName: new FormControl('', ValidatorUserNameLength),
@@ -216,6 +285,7 @@ export class ProfileComponent implements OnInit {
     lastName: new FormControl('', ValidatorLength),
     email: new FormControl('', ValidatorEmail),
     picture: new FormControl(''),
+    lang: new FormControl(''),
   });
 
   public picture = '';
@@ -227,7 +297,19 @@ export class ProfileComponent implements OnInit {
     this.movieService.getFav(this.user.id).subscribe(
       (data) => {
         console.log(data);
-        this.moviesList = data.movies;
+        this.moviesFavList = data.movies;
+        this.cd.detectChanges();
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+    this.movieService.getWatch(this.user.id).subscribe(
+      (data) => {
+        console.log(data);
+        if (data?.movies) {
+          this.moviesWatchList = data.movies;
+        }
         this.cd.detectChanges();
       },
       (err) => {
@@ -277,6 +359,7 @@ export class ProfileComponent implements OnInit {
       .updateProfile(this.user.id, this.userForm.getRawValue())
       .subscribe((data) => {
         this.auth_service.saveUser(data);
+        this.switchLang((data as any).lang);
       });
   }
 
@@ -287,7 +370,7 @@ export class ProfileComponent implements OnInit {
   deleteFav(movie: any) {
     this.movieService.deleteFav(movie, this.user.id).subscribe(
       (data) => {
-        this.moviesList = this.moviesList.filter(
+        this.moviesFavList = this.moviesFavList.filter(
           (res) => res.imdb_code !== movie.imdb_code
         );
 
@@ -298,5 +381,23 @@ export class ProfileComponent implements OnInit {
         console.log(err);
       }
     );
+  }
+
+  switchLang(lang: string) {
+    this.translate.use(lang);
+    this.translate.setDefaultLang(lang);
+    const currentRoute = this.route.url;
+
+    if (currentRoute === '/home') {
+      this.route
+        .navigateByUrl('/list-Movies', { skipLocationChange: true })
+        .then(() => {
+          this.route.navigate([currentRoute]); // navigate to same route
+        });
+    } else {
+      this.route.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.route.navigate([currentRoute]); // navigate to same route
+      });
+    }
   }
 }

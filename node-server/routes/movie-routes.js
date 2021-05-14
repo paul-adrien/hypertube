@@ -66,7 +66,12 @@ router.get(
   [authJwt.verifyTokenAxios],
   (req, res) => {
     playerController
-      .getInfos({ res: res, params: req.params, token: req.query.token })
+      .getInfos({
+        res: res,
+        params: req.params,
+        token: req.query.token,
+        userId: req.query.userId,
+      })
       .then(playerController.convert)
       .catch((data) => {
         data.res.send({

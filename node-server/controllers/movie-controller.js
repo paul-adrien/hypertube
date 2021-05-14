@@ -330,7 +330,7 @@ async function getInfoMovie(imdb_code, lang) {
       )
       .catch((err) => undefined);
 
-    console.log(movieTranslations.data.translations, lang);
+    console.log(movie.data, lang);
 
     let movieTranslation = undefined;
     if (lang !== undefined) {

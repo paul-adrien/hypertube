@@ -33,6 +33,7 @@ passport.use(
           lastName: profile._json.last_name,
           firstName: profile._json.first_name,
           picture: profile._json.image_url,
+          lang: "en",
         });
 
         user.save((err, user) => {
@@ -73,6 +74,7 @@ passport.use(
           lastName: profile._json.family_name,
           firstName: profile._json.given_name,
           picture: profile._json.picture,
+          lang: "en",
         });
 
         user.save((err, user) => {
@@ -112,6 +114,7 @@ passport.use(
           userName: profile._json.login,
           picture: profile._json.avatar_url.replace("?v=4", ""),
           email: profile.emails[0].value,
+          lang: "en",
         });
         user.save((err, user) => {
           if (err) {

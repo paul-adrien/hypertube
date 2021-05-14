@@ -28,7 +28,8 @@ function ValidatorLength(control: FormControl) {
 }
 
 function ValidatorEmail(control: FormControl) {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (!re.test(String(control.value).toLowerCase())) {
     return { error: 'Mauvais format' };
   }
@@ -68,7 +69,7 @@ function ValidatorPass(control: FormControl) {
             formControlName="userName"
             id="userName"
             required
-            placeholder="{{'userName' | translate}}"
+            placeholder="{{ 'userName' | translate }}"
             [class.error-input]="
               this.registerForm.get('userName').errors?.error &&
               this.isSuccessful === false
@@ -88,7 +89,7 @@ function ValidatorPass(control: FormControl) {
             type="text"
             formControlName="lastName"
             required
-            placeholder="{{'lastName' | translate}}"
+            placeholder="{{ 'lastName' | translate }}"
             [class.error-input]="
               this.registerForm.get('lastName').errors?.error &&
               this.isSuccessful === false
@@ -114,7 +115,7 @@ function ValidatorPass(control: FormControl) {
             type="text"
             formControlName="firstName"
             required
-            placeholder="{{'firstName' | translate}}"
+            placeholder="{{ 'firstName' | translate }}"
             [class.error-input]="
               this.registerForm.get('firstName').errors?.error &&
               this.isSuccessful === false
@@ -155,7 +156,7 @@ function ValidatorPass(control: FormControl) {
             type="password"
             formControlName="password"
             required
-            placeholder="{{'Password' | translate}}"
+            placeholder="{{ 'Password' | translate }}"
             [class.error-input]="
               this.registerForm.get('password').errors?.error &&
               this.isSuccessful === false
@@ -174,7 +175,9 @@ function ValidatorPass(control: FormControl) {
         </div>
         <div class="error">{{ this.errorMessageReg }}</div>
         <button class="primary-button" (click)="test()">
-          {{ this.loginMode ? ('signUp' | translate) : ('signIn' | translate) }}
+          {{
+            !this.loginMode ? ('signUp' | translate) : ('signIn' | translate)
+          }}
         </button>
       </form>
       <form
@@ -196,7 +199,7 @@ function ValidatorPass(control: FormControl) {
               this.registerForm.get('userName').errors?.error &&
               this.isSuccessful === false
             "
-            placeholder="{{'userName' | translate}}"
+            placeholder="{{ 'userName' | translate }}"
           />
           <div
             class="error"
@@ -211,7 +214,7 @@ function ValidatorPass(control: FormControl) {
             type="password"
             formControlName="password"
             required
-            placeholder="{{'Password' | translate}}"
+            placeholder="{{ 'Password' | translate }}"
             [class.error-input]="
               this.registerForm.get('password').errors?.error &&
               this.isSuccessful === false
@@ -220,7 +223,9 @@ function ValidatorPass(control: FormControl) {
         </div>
         <div class="error">{{ this.errorMessageLog }}</div>
         <button class="primary-button" (click)="test()">
-          {{ this.loginMode ? ('signUp' | translate) : ('signIn' | translate) }}
+          {{
+            !this.loginMode ? ('signUp' | translate) : ('signIn' | translate)
+          }}
         </button>
       </form>
       <a
@@ -284,7 +289,7 @@ export class LoginComponent implements OnInit {
     private route: Router,
     private router: ActivatedRoute,
     private cd: ChangeDetectorRef
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.router.queryParams.subscribe((params) => {

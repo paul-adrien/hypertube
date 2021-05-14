@@ -34,6 +34,10 @@ export class AppComponent implements AfterContentInit {
   }
 
   ngAfterContentInit() {
+    const user = this.authService.getUser();
+    if (user?.lang) {
+      this.translate.setDefaultLang(user.lang);
+    }
     if (
       this.route.url.includes('profile') &&
       !this.route.url.includes('profile-')

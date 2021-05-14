@@ -860,6 +860,9 @@ module.exports = {
                     type: 'string'
                 }
             },
+            lang: {
+                type: 'string'
+            },
             Convert: {
                 type: 'object',
                 properties: {
@@ -1131,6 +1134,9 @@ module.exports = {
                     },
                     moviesWatched: {
                         $ref: '#/components/schemas/moviesWatched'
+                    },
+                    lang: {
+                        $ref: '#/components/schemas/lang'
                     }
                 }
             },

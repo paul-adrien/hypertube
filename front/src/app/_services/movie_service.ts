@@ -65,7 +65,10 @@ export class movieService {
       params.order = '';
     }
     console.log(params);
-    let paramsLang = new HttpParams().set('lang', this.translate.currentLang);
+    let paramsLang = new HttpParams().set(
+      'lang',
+      this.translate.getDefaultLang()
+    );
 
     return this.http.get(
       environment.AUTH_API +
@@ -83,7 +86,7 @@ export class movieService {
   getDetailMovie(imdb_id: string, userId: string): Observable<any> {
     let params = new HttpParams()
       .set('userId', userId)
-      .set('lang', this.translate.currentLang);
+      .set('lang', this.translate.getDefaultLang());
     return this.http.get(environment.AUTH_API + `movie/${imdb_id}/detail`, {
       ...httpOptions,
       params,
@@ -138,7 +141,7 @@ export class movieService {
   }
 
   getWatch(userId: string): Observable<any> {
-    let params = new HttpParams().set('lang', this.translate.currentLang);
+    let params = new HttpParams().set('lang', this.translate.getDefaultLang());
 
     return this.http.get(environment.AUTH_API + `movie/watched/${userId}`, {
       ...httpOptions,

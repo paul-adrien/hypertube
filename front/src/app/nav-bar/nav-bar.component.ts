@@ -32,7 +32,7 @@ import { TranslateService } from '@ngx-translate/core';
             *ngIf="item.id === 'profile'"
             class="picture"
             [class.checked]="item.selected"
-            [src]="this.profilPicture"
+            [src]="this.profilPicture ? this.profilPicture : '/assets/user.svg'"
           />
         </a>
       </div>
@@ -66,7 +66,7 @@ import { TranslateService } from '@ngx-translate/core';
         <option
           *ngFor="let language of translate.getLangs()"
           [value]="language"
-          [selected]="language === translate.currentLang"
+          [selected]="language === translate.getDefaultLang()"
         >
           {{ language }}
         </option>

@@ -63,7 +63,11 @@ function ValidatorLength(control: FormControl) {
         <div *ngFor="let comment of comments" class="comment">
           <img
             class="picture-comment"
-            [src]="this.getProfileInfo(comment.userId)?.picture"
+            [src]="
+              this.getProfileInfo(comment.userId)?.picture
+                ? this.getProfileInfo(comment.userId)?.picture
+                : './assets/user.svg'
+            "
             (click)="this.viewProfile(comment.userId)"
           />
           <div class="text-container">
@@ -367,5 +371,9 @@ export class DetailMovieComponent implements OnInit {
     return this.translate
       .get(genders.split(', '))
       .pipe(map((genders) => Object.values(genders).join(', ')));
+  }
+
+  viewDetail(imdb_code) {
+    this.router.navigate(['/detail-movie/' + imdb_code]);
   }
 }

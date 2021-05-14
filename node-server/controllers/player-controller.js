@@ -132,7 +132,13 @@ module.exports.getInfos = (data) => {
 };
 
 module.exports.convert = (data) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
+    console.log(data);
+    const userId = data.userId;
+    await User.updateOne(
+      { id: userId },
+      { $addToSet: { moviesWatched: data.params.info.id } }
+    ).exec();
     if (data.params.quality === "x264" || data.params.quality === "XviD")
       data.params.quality = "480p";
     if (data.params.quality.search("BD") >= 0) data.params.quality = "1080p";
@@ -232,7 +238,7 @@ module.exports.stream = (data) => {
               "Content-Type": "video/webm",
             };
             data.res.writeHead(206, headers);
-            console.log(data)
+            console.log(data);
             file.pipe(data.res);
           } else {
             let file = fs.createReadStream(path);
@@ -241,7 +247,7 @@ module.exports.stream = (data) => {
               "Content-Type": "video/webm",
             };
             data.res.writeHead(200, headers);
-            console.log(data)
+            console.log(data);
             file.pipe(data.res);
           }
           resolve(data);
@@ -412,28 +418,32 @@ async function DlSubs(link, lang, imdb_id) {
             recursive: true,
           });
         console.log(
-          `${parsedPath.name}.${parsedPath.ext} Saving as ` + config.movie_folder + `/${imdb_id}/subs/${lang}/${imdb_id}.srt...`
+          `${parsedPath.name}.${parsedPath.ext} Saving as ` +
+            config.movie_folder +
+            `/${imdb_id}/subs/${lang}/${imdb_id}.srt...`
         );
         return parsedPath.ext == ".srt"
           ? entry
-            .pipe(srt2vtt())
-            .pipe(
-              fs.createWriteStream(
-                config.movie_folder + `/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
+              .pipe(srt2vtt())
+              .pipe(
+                fs.createWriteStream(
+                  config.movie_folder +
+                    `/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
+                )
               )
-            )
-            .on("error", (e) => {
-              throw new Error(e.message);
-            })
+              .on("error", (e) => {
+                throw new Error(e.message);
+              })
           : entry
-            .pipe(
-              fs.createWriteStream(
-                config.movie_folder + `/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
+              .pipe(
+                fs.createWriteStream(
+                  config.movie_folder +
+                    `/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
+                )
               )
-            )
-            .on("error", (e) => {
-              throw new Error(e.message);
-            });
+              .on("error", (e) => {
+                throw new Error(e.message);
+              });
       },
       {
         catch: (e) => console.log(`Streamz Error: ${e.message}`),
@@ -471,9 +481,13 @@ exports.getSubtitles = async (req, res) => {
     });
   }
   if (!enfilesExist)
-    await fs.mkdirSync(config.movie_folder + `/${imdb_id}/subs/en/`, { recursive: true });
+    await fs.mkdirSync(config.movie_folder + `/${imdb_id}/subs/en/`, {
+      recursive: true,
+    });
   if (!frfilesExist)
-    await fs.mkdirSync(config.movie_folder + `/${imdb_id}/subs/fr/`, { recursive: true });
+    await fs.mkdirSync(config.movie_folder + `/${imdb_id}/subs/fr/`, {
+      recursive: true,
+    });
   if ((links = await getSubsLink(imdb_id))) {
     subs = [];
     if (links.English) {

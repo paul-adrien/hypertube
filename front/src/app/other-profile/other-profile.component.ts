@@ -20,7 +20,7 @@ import { ActivatedRoute, Router } from '@angular/router';
       <div class="user-container">
         <img
           class="profile-picture"
-          [src]="this.picture ? this.picture : './assets/plus.svg'"
+          [src]="this.picture ? this.picture : './assets/user-grey.svg'"
         />
         <div *ngIf="user?.userName" class="username">{{ user.userName }}</div>
         <div class="name" *ngIf="user?.firstName && user?.lastName">
@@ -86,8 +86,8 @@ import { ActivatedRoute, Router } from '@angular/router';
               </div>
             </div>
           </div>
-          <div *ngIf="this.moviesList.length === 0" class="no-watch-list">
-            {{ 'noWatchList' | translate }}
+          <div *ngIf="this.moviesList?.length === 0" class="no-watch-list">
+            {{ 'noWatchMovie' | translate }}
           </div>
         </div>
       </div>
@@ -119,7 +119,9 @@ export class OtherProfileComponent implements OnInit {
       this.movieService.getWatch(this.user.id).subscribe(
         (data) => {
           console.log(data);
-          this.moviesList = data.movies;
+          if (data?.movies) {
+            this.moviesList = data.movies;
+          }
           this.cd.detectChanges();
         },
         (err) => {

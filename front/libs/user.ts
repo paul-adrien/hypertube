@@ -6,6 +6,7 @@ export interface User {
   password: string;
   userName: string;
   picture: string;
+  lang: string;
 }
 
 export function mapUserBackToUserFront(user: any): Partial<User> {
@@ -15,5 +16,7 @@ export function mapUserBackToUserFront(user: any): Partial<User> {
     firstName: user['firstName'],
     lastName: user['lastName'],
     email: user['email'],
+    picture: user['picture'],
+    lang: user['lang'],
   };
 }

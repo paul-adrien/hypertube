@@ -29,6 +29,7 @@ exports.signup = (req, res) => {
     lastName: req.body.lastName,
     firstName: req.body.firstName,
     password: bcrypt.hashSync(req.body.password, 8),
+    lang: "en",
   });
 
   user.id = user._id;
@@ -91,6 +92,7 @@ exports.signin = (req, res) => {
       lastName: user.lastName,
       firstName: user.firstName,
       accessToken: token,
+      lang: "en",
     });
   });
 };
