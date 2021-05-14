@@ -52,7 +52,7 @@ import { TranslateService } from '@ngx-translate/core';
         [routerLink]="'login'"
         routerLinkActive="active"
       >
-        Log in
+        {{ 'signIn' | translate }}
       </div>
       <div class="case" *ngIf="this.islog">
         <img (click)="this.logOut()" src="./assets/log-out.svg" />
@@ -118,20 +118,17 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     public translate: TranslateService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.authService.checkIfUserCo().subscribe(
       (data) => {
-
         if (JSON.parse(data)['status'] === true) {
           this.islog = true;
         }
         this.cd.detectChanges();
       },
-      (err) => {
-
-      }
+      (err) => {}
     );
     if (this.selectedId) {
       this.selectItem(this.selectedId);
@@ -212,5 +209,5 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     this.selectItem('home');
   }
 
-  ngOnDestroy() { }
+  ngOnDestroy() {}
 }

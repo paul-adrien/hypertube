@@ -1,1 +1,26 @@
-@import '~video.js/dist/video-js.css';
+@import "~video.js/dist/video-js.css";
+
+.option {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+
+  .buttons {
+    display: flex;
+
+    button {
+      margin-right: 1rem;
+      border: 2px solid white;
+      border-radius: 2px;
+      padding: 3px 6px;
+      cursor: pointer;
+    }
+  }
+
+  select {
+    border: 2px solid white;
+    border-radius: 2px;
+    padding: 3px 6px;
+    cursor: pointer;
+  }
+}

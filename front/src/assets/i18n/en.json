@@ -15,7 +15,7 @@
   "noWatchList": "You don’t have any movies on your watchlist",
   "noWatchMovie": "No movie seen",
   "info": "Information",
-  "hotMovies": "Hot movies",
+  "hotMovies": "The hottest movies",
   "watchMovies": "Movies watched",
   "Action": "Action",
   "Adventure": "Adventure",
@@ -54,7 +54,13 @@
   "gender": "Gender",
   "forgotPassword": "Forgot password ?",
   "addWatchList": "Add to my list",
-  "removeWatchList": "Remove to my list"
+  "removeWatchList": "Remove to my list",
+  "language": "Language",
+  "similarTitles": "Similar titles",
+  "comments": "Comments"
+
+
+
 
 
 }

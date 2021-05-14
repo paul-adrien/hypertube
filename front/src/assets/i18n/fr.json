@@ -53,7 +53,9 @@
   "gender": "Genre",
   "forgotPassword": "Mot de passe oublié ?",
   "addWatchList": "Ajouter à ma liste",
-  "removeWatchList": "Retirer de ma liste"
-
+  "removeWatchList": "Retirer de ma liste",
+  "langage": "Langue",
+  "similarTitles": "Titres similaires",
+  "comments": "Commentaires"
 
 }

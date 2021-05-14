@@ -83,7 +83,7 @@ function ValidatorEmail(control: FormControl) {
                 class="input"
                 formControlName="userName"
                 required
-                placeholder="Nom d'utilisateur"
+                placeholder="{{ 'userName' | translate }}"
               />
               <div
                 class="error"
@@ -100,7 +100,7 @@ function ValidatorEmail(control: FormControl) {
                 class="input"
                 formControlName="firstName"
                 required
-                placeholder="Prénom"
+                placeholder="{{ 'firstName' | translate }}"
               />
               <div
                 class="error"
@@ -117,7 +117,7 @@ function ValidatorEmail(control: FormControl) {
                 class="input"
                 formControlName="lastName"
                 required
-                placeholder="Nom"
+                placeholder="{{ 'lastName' | translate }}"
               />
               <div
                 class="error"
@@ -145,7 +145,7 @@ function ValidatorEmail(control: FormControl) {
             </div>
           </div>
           <div class="block">
-            <div class="text">Langue</div>
+            <div class="text">{{ 'language' | translate }}</div>
             <div class="input-container">
               <select class="input" #selectedLang formControlName="lang">
                 <option
@@ -164,7 +164,7 @@ function ValidatorEmail(control: FormControl) {
             </div>
           </div>
           <button (ngSubmit)="this.onSubmit()" class="primary-button">
-            Enregistrer
+            {{ 'update' | translate }}
           </button>
         </form>
       </div>
@@ -277,7 +277,7 @@ export class ProfileComponent implements OnInit {
     private movieService: movieService,
     private route: Router,
     public translate: TranslateService
-  ) { }
+  ) {}
 
   public userForm = new FormGroup({
     userName: new FormControl('', ValidatorUserNameLength),
@@ -296,25 +296,19 @@ export class ProfileComponent implements OnInit {
     this.picture = this.user.picture;
     this.movieService.getFav(this.user.id).subscribe(
       (data) => {
-
         this.moviesFavList = data.movies;
         this.cd.detectChanges();
       },
-      (err) => {
-
-      }
+      (err) => {}
     );
     this.movieService.getWatch(this.user.id).subscribe(
       (data) => {
-
         if (data?.movies) {
           this.moviesWatchList = data.movies;
         }
         this.cd.detectChanges();
       },
-      (err) => {
-
-      }
+      (err) => {}
     );
   }
 
@@ -393,11 +387,8 @@ export class ProfileComponent implements OnInit {
         );
 
         this.cd.detectChanges();
-
       },
-      (err) => {
-
-      }
+      (err) => {}
     );
   }
 

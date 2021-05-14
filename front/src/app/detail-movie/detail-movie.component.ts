@@ -69,8 +69,12 @@ function ValidatorLength(control: FormControl) {
         [imdb_code]="detailMovie.imdb_code"
         [lang]="user.lang"
       ></app-player>
+      <mat-spinner
+        class="spinner"
+        *ngIf="this.isChooseT && !loadPlayer"
+      ></mat-spinner>
 
-      <div class="title-comment">Commentaire</div>
+      <div class="title-comment">{{ 'comments' | translate }}</div>
       <div class="comment-container" *ngIf="comments !== null">
         <div *ngFor="let comment of comments" class="comment">
           <img
@@ -124,7 +128,7 @@ function ValidatorLength(control: FormControl) {
           {{ this.commentForm.get('comment').errors.error }}
         </div>
       </form>
-      <div class="title-comment">Titre similaire</div>
+      <div class="title-comment">{{ 'similarTitles' | translate }}</div>
       <div *ngIf="this.suggestionList" class="list">
         <div *ngFor="let movie of this.suggestionList" class="movie-container">
           <img
@@ -201,7 +205,7 @@ export class DetailMovieComponent implements OnInit {
     private movieService: movieService,
     private profileService: ProfileService,
     public translate: TranslateService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.imdb_code = this.route.snapshot.params['imdb_code'];
@@ -228,8 +232,7 @@ export class DetailMovieComponent implements OnInit {
         this.getSuggestionMovieList(1);
         this.cd.detectChanges();
       },
-      (err) => {
-      }
+      (err) => {}
     );
   }
 
@@ -263,8 +266,7 @@ export class DetailMovieComponent implements OnInit {
         ].fav = true;
         this.cd.detectChanges();
       },
-      (err) => {
-      }
+      (err) => {}
     );
   }
 
@@ -279,8 +281,7 @@ export class DetailMovieComponent implements OnInit {
 
         this.cd.detectChanges();
       },
-      (err) => {
-      }
+      (err) => {}
     );
   }
 
@@ -316,8 +317,7 @@ export class DetailMovieComponent implements OnInit {
         } else this.comments = null;
         this.cd.detectChanges();
       },
-      (err) => {
-      }
+      (err) => {}
     );
   }
 
@@ -331,8 +331,7 @@ export class DetailMovieComponent implements OnInit {
             this.commentForm.get('comment').setValue('');
             this.getComments();
           },
-          (err) => {
-          }
+          (err) => {}
         );
       this.getComments();
       this.cd.detectChanges();
@@ -362,8 +361,7 @@ export class DetailMovieComponent implements OnInit {
           }
           this.cd.detectChanges();
         },
-        (err) => {
-        }
+        (err) => {}
       );
   }
 
