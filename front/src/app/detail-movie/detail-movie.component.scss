@@ -14,12 +14,17 @@
     justify-content: center;
     margin-bottom: 1rem;
 
+    .primary-button {
+      margin: 1rem 0;
+    }
+
     .info-container {
       display: flex;
       flex-direction: column;
       width: 68%;
       flex-grow: 1;
       margin: 1rem;
+      margin-top: 0;
       text-align: justify;
       font-family: Roboto-light;
 

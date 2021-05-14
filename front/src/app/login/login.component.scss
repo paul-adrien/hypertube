@@ -109,6 +109,12 @@
 
     .primary-button {
       margin-top: 1rem;
+
+      .img-button {
+        height: 100%;
+        object-fit: contain;
+        margin-right: 1rem;
+      }
     }
 
     .forty-two {

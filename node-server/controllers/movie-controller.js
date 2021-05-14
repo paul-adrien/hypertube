@@ -15,6 +15,9 @@ var searchCancelTokenFetch = { id: null, source: null };
 async function getYTSMovies(paramsYts, userId) {
   const source = axios.CancelToken.source();
   searchCancelTokenFetch.source = source;
+  if (paramsYts?.search && !paramsYts?.sort) {
+    paramsYts.sort = "title";
+  }
   const data = await axios
     .get(YTS_LIST, {
       params: {
@@ -139,7 +142,7 @@ async function getInfoMovies(userId, movies, lang) {
                 poster:
                   movie.data.poster_path !== null
                     ? "https://image.tmdb.org/t/p/original" +
-                    movie.data.poster_path
+                      movie.data.poster_path
                     : undefined,
                 seeds: m.seeds,
                 runtime: movie.data.runtime + " min",
@@ -301,14 +304,16 @@ async function getHashRARBG(imdb_code) {
         })
       );
     })
-    .catch((err) => {
-
-    });
+    .catch((err) => {});
   return movies;
 }
 
-async function getInfoMovie(imdb_code, lang) {
+async function getInfoMovie(imdb_code, lang, userId) {
   return new Promise(async (resolve, reject) => {
+    let favorite = !!(await Fav.findOne({
+      $query: { imdb_code: imdb_code, userId: userId },
+    }).exec());
+
     const movie = await axios
       .get(
         `https://api.themoviedb.org/3/movie/${imdb_code}?api_key=5b9a9289b9a6931460aa319b2b3a6d33`
@@ -318,6 +323,13 @@ async function getInfoMovie(imdb_code, lang) {
     if (movie?.data.vote_average === 0 || !movie) {
       resolve(undefined);
     }
+
+    const credits = await axios
+      .get(
+        `https://api.themoviedb.org/3/movie/${imdb_code}/credits?api_key=5b9a9289b9a6931460aa319b2b3a6d33`
+      )
+      .catch((err) => undefined);
+    console.log(credits);
 
     const movieTranslations = await axios
       .get(
@@ -331,8 +343,13 @@ async function getInfoMovie(imdb_code, lang) {
         (translation) => translation.iso_3166_1 === lang.toUpperCase()
       );
     }
+    let see = false;
+    if (userId) {
+      see = await checkUserSeeMovie(userId, imdb_code);
+    }
     resolve({
       imdb_code: imdb_code,
+      cast: credits?.data?.cast?.map((res) => res.name).join(", "),
       title: movieTranslation?.data?.title
         ? movieTranslation?.data?.title
         : movie.data.title,
@@ -348,6 +365,8 @@ async function getInfoMovie(imdb_code, lang) {
         ? movieTranslation?.data?.overview
         : movie.data.overview,
       rating: movie.data.vote_average,
+      see: see,
+      fav: favorite,
     });
   });
 }
@@ -366,12 +385,10 @@ exports.getDetailMovie = async (req, res) => {
   }
   if (hashs)
     await hashs.sort(function (a, b) {
-      if (b.seeds && a.seeds)
-        return b.seeds - a.seeds;
-      else
-        return -1;
+      if (b.seeds && a.seeds) return b.seeds - a.seeds;
+      else return -1;
     });
-  movieDetail = await getInfoMovie(imdb_id, lang);
+  movieDetail = await getInfoMovie(imdb_id, lang, userId);
   res.json({
     status: true,
     hashs: hashs,
@@ -465,25 +482,24 @@ exports.getWatched = async (req, res) => {
 
 exports.getFav = async (req, res) => {
   const userId = req.params.user_id;
+  const lang = req.query.lang;
 
-  Fav.find({ $query: { userId: userId } }).exec((err, results) => {
-    if (err) {
-      return res.json({
-        status: false,
-        message: err,
-      });
-    } else if (results) {
-      return res.json({
-        status: true,
-        movies: results,
-      });
-    } else {
-      return res.json({
-        status: true,
-        movies: null,
-      });
-    }
-  });
+  const results = await Fav.find({ $query: { userId: userId } }).exec();
+
+  if (results) {
+    const resultsLang = await Promise.all(
+      results.map(async (movie) => getInfoMovie(movie.imdb_code, lang, userId))
+    );
+    return res.json({
+      status: true,
+      movies: resultsLang,
+    });
+  } else {
+    return res.json({
+      status: true,
+      movies: null,
+    });
+  }
 };
 
 exports.dellMovies = async (req, res) => {
@@ -505,8 +521,7 @@ exports.dellMovies = async (req, res) => {
           fs.rmdir(
             config.movie_folder + `/${movie.id}/${movie.folder}`,
             { recursive: true },
-            (err) => {
-            }
+            (err) => {}
           );
           Movies.deleteOne({
             imdb_code: movie.imdb_code,

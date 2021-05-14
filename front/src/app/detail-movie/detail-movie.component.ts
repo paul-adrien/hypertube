@@ -22,7 +22,16 @@ function ValidatorLength(control: FormControl) {
   template: `
     <div *ngIf="this.detailMovie">
       <div class="top-container">
-        <img [src]="detailMovie.poster" class="poster" />
+        <div>
+          <img [src]="detailMovie.poster" class="poster" />
+          <div class="primary-button" (click)="addOrRemoveFav()">
+            {{
+              !detailMovie.fav
+                ? ('addWatchList' | translate)
+                : ('removeWatchList' | translate)
+            }}
+          </div>
+        </div>
         <div class="info-container">
           <div class="title">{{ detailMovie.title }}</div>
           <div>
@@ -33,6 +42,8 @@ function ValidatorLength(control: FormControl) {
             <span class="info-movie">{{ detailMovie.year }}</span>
           </div>
 
+          <div *ngIf="detailMovie.cast" class="sub-title">Casting</div>
+          <div *ngIf="detailMovie.cast">{{ detailMovie.cast }}</div>
           <div class="sub-title">Description</div>
           <div>{{ detailMovie.resume }}</div>
         </div>
@@ -222,6 +233,26 @@ export class DetailMovieComponent implements OnInit {
     );
   }
 
+  addOrRemoveFav() {
+    if (!this.detailMovie.fav) {
+      this.movieService.addToFav(this.detailMovie, this.user.id).subscribe(
+        (data) => {
+          this.detailMovie.fav = true;
+          this.cd.detectChanges();
+        },
+        (err) => {}
+      );
+    } else {
+      this.movieService.deleteFav(this.detailMovie, this.user.id).subscribe(
+        (data) => {
+          this.detailMovie.fav = false;
+          this.cd.detectChanges();
+        },
+        (err) => {}
+      );
+    }
+  }
+
   sendToFav(movie: any) {
     this.movieService.addToFav(movie, this.user.id).subscribe(
       (data) => {
@@ -358,6 +389,9 @@ export class DetailMovieComponent implements OnInit {
   }
 
   viewDetail(imdb_code) {
-    this.router.navigate(['/detail-movie/' + imdb_code]);
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['/detail-movie/' + imdb_code]);
+    });
+    this.cd.detectChanges();
   }
 }

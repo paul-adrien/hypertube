@@ -34,7 +34,7 @@ import { Observable } from 'rxjs';
           <option value="gender" selected disabled hidden>
             {{ 'gender' | translate }}
           </option>
-          <option *ngFor="let option of this.genreOptions">
+          <option [ngValue]="option" *ngFor="let option of this.genreOptions">
             {{ option | translate }}
           </option>
         </select>
@@ -42,7 +42,7 @@ import { Observable } from 'rxjs';
           <option value="score" selected disabled hidden>
             {{ 'score' | translate }}
           </option>
-          <option *ngFor="let option of this.noteOptions">
+          <option [ngValue]="option" *ngFor="let option of this.noteOptions">
             {{ option }}
           </option>
         </select>
@@ -50,7 +50,7 @@ import { Observable } from 'rxjs';
           <option value="sortBy" selected disabled hidden>
             {{ 'sortBy' | translate }}
           </option>
-          <option *ngFor="let option of this.sortOptions">
+          <option [ngValue]="option" *ngFor="let option of this.sortOptions">
             {{ option | translate }}
           </option>
         </select>
@@ -59,7 +59,7 @@ import { Observable } from 'rxjs';
           <option value="orderBy" selected disabled hidden>
             {{ 'orderBy' | translate }}
           </option>
-          <option *ngFor="let option of this.orderOptions">
+          <option [ngValue]="option" *ngFor="let option of this.orderOptions">
             {{ option | translate }}
           </option>
         </select>

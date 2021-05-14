@@ -53,15 +53,17 @@ export class movieService {
     if (!params.search) {
       params.search = '';
     }
-    if (!params.sort || params.sort === 'sortBy') {
+    if ((!params.sort || params.sort === 'sortBy') && !params.search) {
       params.sort = 'download_count';
+    } else if (!params.sort || params.sort === 'sortBy') {
+      params.sort = '';
     }
     if (!params.order || params.order === 'orderBy') {
       params.order = 'title';
     }
     let paramsLang = new HttpParams().set(
       'lang',
-      this.translate.getDefaultLang()
+      this.translate.currentLang || this.translate.getDefaultLang()
     );
 
     return this.http.get(
@@ -80,7 +82,10 @@ export class movieService {
   getDetailMovie(imdb_id: string, userId: string): Observable<any> {
     let params = new HttpParams()
       .set('userId', userId)
-      .set('lang', this.translate.getDefaultLang());
+      .set(
+        'lang',
+        this.translate.currentLang || this.translate.getDefaultLang()
+      );
     return this.http.get(environment.AUTH_API + `movie/${imdb_id}/detail`, {
       ...httpOptions,
       params,
@@ -127,13 +132,22 @@ export class movieService {
   }
 
   getFav(userId: string): Observable<any> {
+    let params = new HttpParams().set(
+      'lang',
+      this.translate.currentLang || this.translate.getDefaultLang()
+    );
+
     return this.http.get(environment.AUTH_API + `movie/favorite/${userId}`, {
       ...httpOptions,
+      params,
     });
   }
 
   getWatch(userId: string): Observable<any> {
-    let params = new HttpParams().set('lang', this.translate.getDefaultLang());
+    let params = new HttpParams().set(
+      'lang',
+      this.translate.currentLang || this.translate.getDefaultLang()
+    );
 
     return this.http.get(environment.AUTH_API + `movie/watched/${userId}`, {
       ...httpOptions,

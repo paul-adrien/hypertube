@@ -331,14 +331,33 @@ export class ProfileComponent implements OnInit {
       if (file) {
         const img = new Image();
 
+        img.onerror = () => {
+          let dialogRef = this.dialog.open(PopUpComponent, {
+            data: {
+              title: 'Attention',
+              message:
+                "Votre photo n'est pas valide, veuillez essayer avec une autre photo.",
+            },
+          });
+        };
         img.onload = () => {
           const height = img.naturalHeight;
           const width = img.naturalWidth;
+          if (height && width) {
+            this.picture = reader.result as string;
+            this.userForm.get('picture').patchValue(reader.result as string);
+          } else {
+            let dialogRef = this.dialog.open(PopUpComponent, {
+              data: {
+                title: 'Attention',
+                message:
+                  "Votre photo n'est pas valide, veuillez essayer avec une autre photo.",
+              },
+            });
+          }
           this.cd.detectChanges();
         };
         if ((reader.result as string).length > 5) {
-          this.picture = reader.result as string;
-          this.userForm.get('picture').patchValue(reader.result as string);
           img.src = reader.result as string;
         } else {
           let dialogRef = this.dialog.open(PopUpComponent, {

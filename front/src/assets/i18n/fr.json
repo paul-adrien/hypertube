@@ -50,6 +50,10 @@
   "orderBy": "Ordre",
   "sortBy": "Trier par",
   "score": "Note",
-  "gender": "Genre"
+  "gender": "Genre",
+  "forgotPassword": "Mot de passe oublié ?",
+  "addWatchList": "Ajouter à ma liste",
+  "removeWatchList": "Retirer de ma liste"
+
 
 }

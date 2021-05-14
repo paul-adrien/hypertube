@@ -51,6 +51,10 @@
   "orderBy": "Order by",
   "sortBy": "Sort by",
   "score": "Score",
-  "gender": "Gender"
+  "gender": "Gender",
+  "forgotPassword": "Forgot password ?",
+  "addWatchList": "Add to my list",
+  "removeWatchList": "Remove to my list"
+
 
 }

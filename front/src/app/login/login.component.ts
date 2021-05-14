@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { User } from 'libs/user';
 import { AuthService } from '../_services/auth_service';
 
@@ -233,7 +234,7 @@ function ValidatorPass(control: FormControl) {
         *ngIf="this.loginMode"
         routerLink="/forgotPass"
         routerLinkActive="active"
-        >Mot de passe oublié ?
+        >{{ 'forgotPassword' | translate }}
       </a>
       <div class="log-button" (click)="this.loginMode = !loginMode">
         {{
@@ -249,12 +250,16 @@ function ValidatorPass(control: FormControl) {
       </div>
       <div class="buttons-auth">
         <div class="primary-button forty-two" (click)="this.Oauth42()">
+          <img class="img-button" src="./assets/42.png" />
           {{ 'signInWith' | translate }} 42
         </div>
         <div class="primary-button google" (click)="this.OauthGoogle()">
+          <img class="img-button" src="./assets/google.svg" />
+
           {{ 'signInWith' | translate }} Google
         </div>
         <div class="primary-button github" (click)="this.OauthGithub()">
+          <img class="img-button" src="./assets/github.png" />
           {{ 'signInWith' | translate }} Github
         </div>
       </div>
@@ -288,8 +293,9 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private route: Router,
     private router: ActivatedRoute,
-    private cd: ChangeDetectorRef
-  ) { }
+    private cd: ChangeDetectorRef,
+    public translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.router.queryParams.subscribe((params) => {
@@ -298,6 +304,7 @@ export class LoginComponent implements OnInit {
 
         this.authService.saveToken(data.token);
         this.authService.saveUser(data.user);
+        this.translate.setDefaultLang(data.user?.lang);
         this.route.navigate(['home']);
       }
     });
@@ -316,7 +323,6 @@ export class LoginComponent implements OnInit {
       const form: Partial<User> = this.registerForm.getRawValue();
       this.authService.register(form).subscribe(
         (data) => {
-
           if (data.status == 200) {
           } else {
             this.errorMessageReg = data.message;
@@ -331,7 +337,6 @@ export class LoginComponent implements OnInit {
       const form: Partial<User> = this.loginForm.getRawValue();
       this.authService.login(form).subscribe(
         (data) => {
-
           this.authService.saveToken(data.token);
           this.authService.saveUser(data.user);
 
