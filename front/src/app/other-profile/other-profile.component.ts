@@ -106,7 +106,7 @@ export class OtherProfileComponent implements OnInit {
     private movieService: movieService,
     private router: Router,
     public route: ActivatedRoute
-  ) {}
+  ) { }
 
   public userId: string = this.route.snapshot.params.id;
   public picture = '';

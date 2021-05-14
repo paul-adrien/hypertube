@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { AuthService } from '../_services/auth_service';
 import { movieService } from '../_services/movie_service';
@@ -148,7 +148,7 @@ import { movieService } from '../_services/movie_service';
   `,
   styleUrls: ['./player.component.scss'],
 })
-export class PlayerComponent implements OnInit {
+export class PlayerComponent implements OnInit, OnDestroy {
   public source = null;
   public loadPlayer = false;
   public subtitles = [];
@@ -168,7 +168,7 @@ export class PlayerComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private movieService: movieService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const user = this.authService.getUser();
@@ -178,6 +178,9 @@ export class PlayerComponent implements OnInit {
     console.log(this.source);
     this.getSubtitles();
     this.cd.detectChanges();
+  }
+  ngOnDestroy() {
+    window.location.reload();
   }
 
   changeQuality(quality: string) {
