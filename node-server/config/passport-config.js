@@ -16,8 +16,6 @@ passport.use(
       callbackURL: `http://localhost:8080/api/authenticate/42/callback`,
     },
     async function (accessToken, refreshToken, profile, done) {
-      console.log(profile);
-      console.log(await checkUserExist(`42_${profile._json.id}`));
       const user = await getUser({ id: `42_${profile._json.id}` });
       if (user && user !== null) return done(null, user.id);
       if (
@@ -58,8 +56,6 @@ passport.use(
       callbackURL: `http://localhost:8080/api/authenticate/google/callback`,
     },
     async function (accessToken, refreshToken, profile, done) {
-      console.log("strategy", profile);
-      console.log(await checkUserExist(`google_${profile.id}`));
       const user = await getUser({ id: `google_${profile.id}` });
       if (user && user !== null) return done(null, user.id);
       if (
@@ -100,8 +96,6 @@ passport.use(
       scope: ["user:email"],
     },
     async function (accessToken, refreshToken, profile, done) {
-      console.log("strategy git", profile);
-      console.log(await checkUserExist(`git_${profile.id}`));
       const user = await getUser({ id: `git_${profile.id}` });
       if (user && user !== null) return done(null, user.id);
       if (

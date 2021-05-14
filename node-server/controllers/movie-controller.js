@@ -142,7 +142,7 @@ async function getInfoMovies(userId, movies, lang) {
                 poster:
                   movie.data.poster_path !== null
                     ? "https://image.tmdb.org/t/p/original" +
-                      movie.data.poster_path
+                    movie.data.poster_path
                     : undefined,
                 seeds: m.seeds,
                 runtime: movie.data.runtime + " min",
@@ -304,7 +304,7 @@ async function getHashRARBG(imdb_code) {
         })
       );
     })
-    .catch((err) => {});
+    .catch((err) => { });
   return movies;
 }
 
@@ -329,7 +329,6 @@ async function getInfoMovie(imdb_code, lang, userId) {
         `https://api.themoviedb.org/3/movie/${imdb_code}/credits?api_key=5b9a9289b9a6931460aa319b2b3a6d33`
       )
       .catch((err) => undefined);
-    console.log(credits);
 
     const movieTranslations = await axios
       .get(
@@ -521,7 +520,7 @@ exports.dellMovies = async (req, res) => {
           fs.rmdir(
             config.movie_folder + `/${movie.id}/${movie.folder}`,
             { recursive: true },
-            (err) => {}
+            (err) => { }
           );
           Movies.deleteOne({
             imdb_code: movie.imdb_code,
