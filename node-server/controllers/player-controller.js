@@ -76,7 +76,6 @@ module.exports.saveTorrent = (data) => {
             );
           }
         } else {
-          console.log("wesh la team");
           await User.updateOne(
             { id: data.params.userId },
             { $addToSet: { moviesWatched: data.params.movieId } }
@@ -133,7 +132,7 @@ module.exports.getInfos = (data) => {
 
 module.exports.convert = (data) => {
   return new Promise(async (resolve, reject) => {
-    console.log(data);
+
     const userId = data.userId;
     await User.updateOne(
       { id: userId },
@@ -238,7 +237,7 @@ module.exports.stream = (data) => {
               "Content-Type": "video/webm",
             };
             data.res.writeHead(206, headers);
-            console.log(data);
+
             file.pipe(data.res);
           } else {
             let file = fs.createReadStream(path);
@@ -247,7 +246,7 @@ module.exports.stream = (data) => {
               "Content-Type": "video/webm",
             };
             data.res.writeHead(200, headers);
-            console.log(data);
+
             file.pipe(data.res);
           }
           resolve(data);
@@ -264,7 +263,6 @@ module.exports.stream = (data) => {
         let end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
         let chunksize = end - start + 1;
         let file = path.createReadStream({ start, end });
-        console.log(chunksize);
         let headers = {
           "Content-Range": `bytes ${start}-${end}/${fileSize}`,
           "Accept-Ranges": "bytes",
@@ -275,7 +273,6 @@ module.exports.stream = (data) => {
         file.pipe(data.res);
       } else {
         let file = path.createReadStream();
-        console.log(fileSize);
         let headers = {
           "Content-Length": fileSize,
           "Content-Type": "video/webm",
@@ -290,7 +287,6 @@ module.exports.stream = (data) => {
 
 module.exports.downloadTorrent = (data) => {
   return new Promise((resolve, reject) => {
-    console.log("test", data.params.hash, data.params.movieId);
     const path = config.movie_folder + `/${data.params.movieId}`;
     const options = {
       path,
@@ -311,7 +307,6 @@ module.exports.downloadTorrent = (data) => {
       engine.files.forEach((file, ind) => {
         if (ind === index) {
           file.select();
-          console.info(`Chosen file: ${file.name}`);
         } else file.deselect();
       });
       data.params.file = engine.files[index];
@@ -396,57 +391,45 @@ async function getSubsLink(imdb_id) {
 
 async function DlSubs(link, lang, imdb_id) {
   ret = true;
-  console.log(`downloading ${lang} subtitle...`);
 
   const download = await got.stream(link);
   download.on("error", (error) => {
     ret = false;
-    console.error(`Download failed: ${error.message}`);
   });
 
   download.pipe(unzipper()).pipe(
     streamz(
       async (entry) => {
-        console.log(`streaming to save to file...`);
         const parsedPath = path.parse(entry.path);
         const filesExist = await fs.existsSync(
           config.movie_folder + `/${imdb_id}/subs/${lang}`
         );
-        console.log(`fileExist? => ${filesExist}...`);
         if (!filesExist)
           await fs.mkdirSync(config.movie_folder + `/${imdb_id}/subs/${lang}`, {
             recursive: true,
           });
-        console.log(
-          `${parsedPath.name}.${parsedPath.ext} Saving as ` +
-            config.movie_folder +
-            `/${imdb_id}/subs/${lang}/${imdb_id}.srt...`
-        );
         return parsedPath.ext == ".srt"
           ? entry
-              .pipe(srt2vtt())
-              .pipe(
-                fs.createWriteStream(
-                  config.movie_folder +
-                    `/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
-                )
+            .pipe(srt2vtt())
+            .pipe(
+              fs.createWriteStream(
+                config.movie_folder +
+                `/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
               )
-              .on("error", (e) => {
-                throw new Error(e.message);
-              })
+            )
+            .on("error", (e) => {
+              throw new Error(e.message);
+            })
           : entry
-              .pipe(
-                fs.createWriteStream(
-                  config.movie_folder +
-                    `/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
-                )
+            .pipe(
+              fs.createWriteStream(
+                config.movie_folder +
+                `/${imdb_id}/subs/${lang}/${imdb_id}.vtt`
               )
-              .on("error", (e) => {
-                throw new Error(e.message);
-              });
-      },
-      {
-        catch: (e) => console.log(`Streamz Error: ${e.message}`),
+            )
+            .on("error", (e) => {
+              throw new Error(e.message);
+            });
       }
     )
   );
@@ -513,7 +496,6 @@ exports.getSubtitles = async (req, res) => {
       subs: subs,
     });
   }
-  console.log("no subs available");
   return res.json({
     status: true,
     subs: null,
@@ -522,19 +504,14 @@ exports.getSubtitles = async (req, res) => {
 
 exports.getSubtitleFile = async (req, res) => {
   var path = `/${req.params.imdb_id}/subs/${req.params.lang}/${req.params.imdb_id}.vtt`;
-  console.log(path);
   const filesExist = fs.existsSync(config.movie_folder + path);
   if (filesExist) {
     res.sendFile(config.movie_folder + path, function (err) {
       if (err) {
-        console.log(err);
         res.status(err.status).end();
-      } else {
-        console.log("Sent:", config.movie_folder + path);
       }
     });
   } else {
-    console.log("error", filesExist);
     res.send(null);
   }
 };

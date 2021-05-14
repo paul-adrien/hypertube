@@ -61,7 +61,6 @@ exports.forgotPass_send = async (req, res) => {
 
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
-        console.log(error)
       } else {
       }
     });

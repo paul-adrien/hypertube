@@ -289,15 +289,13 @@ export class LoginComponent implements OnInit {
     private route: Router,
     private router: ActivatedRoute,
     private cd: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.router.queryParams.subscribe((params) => {
       if (params.data) {
-        console.log(params.data);
-
         const data = JSON.parse(decodeURI(params.data));
-        console.log(data);
+
         this.authService.saveToken(data.token);
         this.authService.saveUser(data.user);
         this.route.navigate(['home']);
@@ -318,7 +316,7 @@ export class LoginComponent implements OnInit {
       const form: Partial<User> = this.registerForm.getRawValue();
       this.authService.register(form).subscribe(
         (data) => {
-          console.log(data);
+
           if (data.status == 200) {
           } else {
             this.errorMessageReg = data.message;
@@ -333,7 +331,7 @@ export class LoginComponent implements OnInit {
       const form: Partial<User> = this.loginForm.getRawValue();
       this.authService.login(form).subscribe(
         (data) => {
-          console.log(data);
+
           this.authService.saveToken(data.token);
           this.authService.saveUser(data.user);
 

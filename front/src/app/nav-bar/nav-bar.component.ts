@@ -118,19 +118,19 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     public translate: TranslateService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.authService.checkIfUserCo().subscribe(
       (data) => {
-        console.log(data);
+
         if (JSON.parse(data)['status'] === true) {
           this.islog = true;
-        } else console.log(data.message);
+        }
         this.cd.detectChanges();
       },
       (err) => {
-        console.log(err);
+
       }
     );
     if (this.selectedId) {
@@ -212,5 +212,5 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     this.selectItem('home');
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() { }
 }

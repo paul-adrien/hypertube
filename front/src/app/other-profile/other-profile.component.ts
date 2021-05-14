@@ -118,14 +118,14 @@ export class OtherProfileComponent implements OnInit {
       this.picture = this.user.picture;
       this.movieService.getWatch(this.user.id).subscribe(
         (data) => {
-          console.log(data);
+
           if (data?.movies) {
             this.moviesList = data.movies;
           }
           this.cd.detectChanges();
         },
         (err) => {
-          console.log(err);
+
         }
       );
     });

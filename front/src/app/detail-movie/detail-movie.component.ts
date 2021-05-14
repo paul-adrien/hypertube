@@ -56,6 +56,7 @@ function ValidatorLength(control: FormControl) {
         [hash]="hashs[this.index].hash"
         [quality]="hashs[this.index].quality"
         [imdb_code]="detailMovie.imdb_code"
+        [lang]="user.lang"
       ></app-player>
 
       <div class="title-comment">Commentaire</div>
@@ -189,7 +190,7 @@ export class DetailMovieComponent implements OnInit {
     private movieService: movieService,
     private profileService: ProfileService,
     public translate: TranslateService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.imdb_code = this.route.snapshot.params['imdb_code'];
@@ -212,13 +213,11 @@ export class DetailMovieComponent implements OnInit {
         this.hashs = data.hashs.filter(
           (torrent) => torrent !== null && torrent.source !== null
         );
-        console.log(data);
         this.getComments();
         this.getSuggestionMovieList(1);
         this.cd.detectChanges();
       },
       (err) => {
-        console.log(err);
       }
     );
   }
@@ -232,10 +231,8 @@ export class DetailMovieComponent implements OnInit {
           )
         ].fav = true;
         this.cd.detectChanges();
-        console.log(data);
       },
       (err) => {
-        console.log(err);
       }
     );
   }
@@ -250,10 +247,8 @@ export class DetailMovieComponent implements OnInit {
         ].fav = false;
 
         this.cd.detectChanges();
-        console.log(data);
       },
       (err) => {
-        console.log(err);
       }
     );
   }
@@ -262,7 +257,6 @@ export class DetailMovieComponent implements OnInit {
     this.isChooseT = true;
     this.cd.detectChanges();
     this.index = index;
-    console.log(index);
     if (this.hashs[index].state !== 'over') {
       let result = await this.movieService.download(
         this.hashs[index].hash,
@@ -271,7 +265,6 @@ export class DetailMovieComponent implements OnInit {
         this.hashs[index].quality,
         this.user.id
       );
-      console.log(result);
     }
     this.loadPlayer = true;
     this.cd.detectChanges();
@@ -289,13 +282,10 @@ export class DetailMovieComponent implements OnInit {
               }
             });
           });
-          console.log(this.usersComment);
         } else this.comments = null;
-        console.log(data);
         this.cd.detectChanges();
       },
       (err) => {
-        console.log(err);
       }
     );
   }
@@ -303,17 +293,14 @@ export class DetailMovieComponent implements OnInit {
   addComment() {
     const form = this.commentForm.getRawValue();
     if (form.comment.length > 0) {
-      console.log(form, this.detailMovie.imdb_code, this.user.id);
       this.commentsService
         .addComment(form, this.detailMovie.imdb_code, this.user.id)
         .subscribe(
           (data) => {
             this.commentForm.get('comment').setValue('');
             this.getComments();
-            console.log(data.message);
           },
           (err) => {
-            console.log('non');
           }
         );
       this.getComments();
@@ -323,7 +310,6 @@ export class DetailMovieComponent implements OnInit {
 
   getSuggestionMovieList(page: number) {
     let genre = this.detailMovie.genre.split(',');
-    console.log(genre);
     this.movieService
       .getListMovies({
         userId: this.user.id,
@@ -336,7 +322,6 @@ export class DetailMovieComponent implements OnInit {
       })
       .subscribe(
         (data) => {
-          console.log(data.movies);
           if (!data?.movies) {
             this.getSuggestionMovieList(page + 1);
           } else {
@@ -347,7 +332,6 @@ export class DetailMovieComponent implements OnInit {
           this.cd.detectChanges();
         },
         (err) => {
-          console.log(err);
         }
       );
   }

@@ -83,16 +83,14 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.authService.checkIfUserCo().subscribe(
       (data) => {
-        console.log(data);
         if (JSON.parse(data)['status'] === true) {
           this.islog = true;
           this.user = this.authService.getUser();
-        } else console.log(data.message);
+        }
         this.getMovieList(1);
         this.cd.detectChanges();
       },
       (err) => {
-        console.log(err);
       }
     );
   }
@@ -112,11 +110,9 @@ export class HomeComponent implements OnInit {
               this.moviesList = data.movies;
             else this.moviesList = this.moviesList.concat(data.movies);
             this.loadingMovie = false;
-            console.log(data);
             this.cd.detectChanges();
           },
           (err) => {
-            console.log(err);
           }
         );
     }
@@ -129,10 +125,8 @@ export class HomeComponent implements OnInit {
           this.moviesList.findIndex((res) => res.imdb_code === movie.imdb_code)
         ].fav = true;
         this.cd.detectChanges();
-        console.log(data);
       },
       (err) => {
-        console.log(err);
       }
     );
   }
@@ -145,10 +139,10 @@ export class HomeComponent implements OnInit {
         ].fav = false;
 
         this.cd.detectChanges();
-        console.log(data);
+
       },
       (err) => {
-        console.log(err);
+
       }
     );
   }

@@ -92,7 +92,7 @@ export class ListMoviesComponent implements OnInit {
     private route: Router,
     private movieService: movieService,
     private auth_service: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.user = this.auth_service.getUser();
@@ -106,10 +106,10 @@ export class ListMoviesComponent implements OnInit {
           this.moviesList.findIndex((res) => res.imdb_code === movie.imdb_code)
         ].fav = true;
         this.cd.detectChanges();
-        console.log(data);
+
       },
       (err) => {
-        console.log(err);
+
       }
     );
   }
@@ -122,10 +122,10 @@ export class ListMoviesComponent implements OnInit {
         ].fav = false;
 
         this.cd.detectChanges();
-        console.log(data);
+
       },
       (err) => {
-        console.log(err);
+
       }
     );
   }
@@ -134,7 +134,6 @@ export class ListMoviesComponent implements OnInit {
     if (!this.loadingMovie) {
       this.pageNum++;
     }
-    console.log(this.pageNum);
     this.getMovieList(this.pageNum);
   }
 
@@ -143,7 +142,6 @@ export class ListMoviesComponent implements OnInit {
     let res = src;
     image.src = src;
     image.onerror = function () {
-      console.log("c'est de la merde");
     };
     // image.onload = function () {
     //   console.log("c'est de la loading");
@@ -177,15 +175,6 @@ export class ListMoviesComponent implements OnInit {
     if (!this.loadingMovie) {
       this.loadingMovie = true;
       this.cd.detectChanges();
-      console.log({
-        userId: this.user.id,
-        page: page,
-        genre: this.paramsFilterSort?.genre,
-        sort: 'download_count',
-        note: this.paramsFilterSort?.note,
-        search: this.paramsFilterSort?.name,
-        order: this.paramsFilterSort?.orderBy,
-      });
       this.movieService
         .getListMovies({
           userId: this.user.id,
@@ -203,7 +192,7 @@ export class ListMoviesComponent implements OnInit {
             else if (data?.movies !== undefined)
               this.moviesList = this.moviesList.concat(data.movies);
             this.loadingMovie = false;
-            console.log(data);
+
             if (
               (this.moviesList?.length < 15 ||
                 data?.movies?.length === 0 ||
@@ -219,7 +208,7 @@ export class ListMoviesComponent implements OnInit {
             this.cd.detectChanges();
           },
           (err) => {
-            console.log(err);
+
           }
         );
     }

@@ -139,7 +139,7 @@ async function getInfoMovies(userId, movies, lang) {
                 poster:
                   movie.data.poster_path !== null
                     ? "https://image.tmdb.org/t/p/original" +
-                      movie.data.poster_path
+                    movie.data.poster_path
                     : undefined,
                 seeds: m.seeds,
                 runtime: movie.data.runtime + " min",
@@ -165,7 +165,6 @@ exports.getListMovie = async (req, res) => {
   const lang = req.query.lang.trim();
 
   const paramsYts = { page, genre, sort, note, search, order };
-  console.log(paramsYts);
   YTSmovies = await getYTSMovies(paramsYts, userId);
   movies = [];
   if (
@@ -177,7 +176,6 @@ exports.getListMovie = async (req, res) => {
     order === ""
   ) {
     RARBGmovies = await getRarbgMovies(page, genre, sort, userId);
-    console.log("test");
     if (YTSmovies !== undefined) {
       YTSmovies = YTSmovies.filter(
         (object, index) =>
@@ -198,7 +196,6 @@ exports.getListMovie = async (req, res) => {
               JSON.stringify(obj.imdb_code) === JSON.stringify(object.imdb_code)
           )
       );
-      console.log("RARBG movies");
       RARBGmovies_filtred = await getInfoMovies(userId, RARBGmovies, lang);
       movies = movies.concat(RARBGmovies_filtred);
     }
@@ -207,14 +204,12 @@ exports.getListMovie = async (req, res) => {
       movies: movies.filter((movie) => movie && movie.title && movie.poster),
     });
   } else {
-    console.log(YTSmovies);
     if (YTSmovies?.length === 0 || !YTSmovies) {
       res.json({
         status: true,
       });
     } else {
       movies_filtred = await getInfoMovies(userId, YTSmovies, lang);
-      console.log(movies_filtred);
       res.json({
         status: true,
         movies: movies_filtred.filter(
@@ -307,7 +302,7 @@ async function getHashRARBG(imdb_code) {
       );
     })
     .catch((err) => {
-      console.log(err);
+
     });
   return movies;
 }
@@ -329,8 +324,6 @@ async function getInfoMovie(imdb_code, lang) {
         `https://api.themoviedb.org/3/movie/${imdb_code}/translations?api_key=5b9a9289b9a6931460aa319b2b3a6d33`
       )
       .catch((err) => undefined);
-
-    console.log(movie.data, lang);
 
     let movieTranslation = undefined;
     if (lang !== undefined) {
@@ -371,9 +364,12 @@ exports.getDetailMovie = async (req, res) => {
   } else {
     hashs = await getHashYTS(imdb_id);
   }
-  if (hashs && hashs.seeds)
-    hashs.sort(function (a, b) {
-      return b.seeds - a.seeds;
+  if (hashs)
+    await hashs.sort(function (a, b) {
+      if (b.seeds && a.seeds)
+        return b.seeds - a.seeds;
+      else
+        return -1;
     });
   movieDetail = await getInfoMovie(imdb_id, lang);
   res.json({
@@ -395,7 +391,6 @@ exports.addToFav = async (req, res) => {
           message: err,
         });
       } else if (result) {
-        console.log(result);
         return res.json({
           status: false,
           message: "this film is already fav",
@@ -433,7 +428,6 @@ exports.deleteFav = async (req, res) => {
   const imdb_code = req.params.imdb_id;
   const userId = req.params.user_id;
 
-  console.log(imdb_code, userId);
   Fav.deleteOne({ imdb_code: imdb_code, userId: userId }).exec(
     (err, result) => {
       if (err) {
@@ -454,11 +448,9 @@ exports.getWatched = async (req, res) => {
 
   const user = await getUser({ id: userId });
   if (user) {
-    console.log(user);
     const results = await Promise.all(
       user.moviesWatched.map(async (movieId) => getInfoMovie(movieId, lang))
     );
-    console.log(results);
     return res.json({
       status: true,
       movies: results,
@@ -481,7 +473,6 @@ exports.getFav = async (req, res) => {
         message: err,
       });
     } else if (results) {
-      console.log(results);
       return res.json({
         status: true,
         movies: results,
@@ -510,13 +501,11 @@ exports.dellMovies = async (req, res) => {
           unit: "month",
         });
         diff = diff.split(" ");
-        console.log(diff[0]);
         if (diff[0] >= 1) {
           fs.rmdir(
             config.movie_folder + `/${movie.id}/${movie.folder}`,
             { recursive: true },
             (err) => {
-              console.log("Folder Deleted!" + err);
             }
           );
           Movies.deleteOne({

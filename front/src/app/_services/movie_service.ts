@@ -21,12 +21,7 @@ export class movieService {
     private route: Router,
     private authService: AuthService,
     public translate: TranslateService
-  ) {}
-
-  // watchMovie(imdb_id: string, hash: string): Observable<any> {
-  //     console.log(AUTH_API + `movie/watch/${imdb_id}?hash=${hash}`);
-  //     return this.http.get(AUTH_API + `movie/watch/${imdb_id}?hash=${hash}`);
-  // }
+  ) { }
 
   getSubtitles(imdb_id: string): Observable<any> {
     return this.http.post(
@@ -62,9 +57,8 @@ export class movieService {
       params.sort = 'download_count';
     }
     if (!params.order || params.order === 'orderBy') {
-      params.order = '';
+      params.order = 'title';
     }
-    console.log(params);
     let paramsLang = new HttpParams().set(
       'lang',
       this.translate.getDefaultLang()
@@ -72,7 +66,7 @@ export class movieService {
 
     return this.http.get(
       environment.AUTH_API +
-        `movie/list?page=${params.page}
+      `movie/list?page=${params.page}
       &userId=${params.userId}
       &genre=${params.genre}
       &note=${params.note}
@@ -106,11 +100,9 @@ export class movieService {
           userId: userId,
         })
         .then((result) => {
-          console.log(result);
           resolve(result);
         })
         .catch((err) => {
-          console.error(err);
           reject({ error: err });
         });
     });

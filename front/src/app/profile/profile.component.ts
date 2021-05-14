@@ -277,7 +277,7 @@ export class ProfileComponent implements OnInit {
     private movieService: movieService,
     private route: Router,
     public translate: TranslateService
-  ) {}
+  ) { }
 
   public userForm = new FormGroup({
     userName: new FormControl('', ValidatorUserNameLength),
@@ -296,24 +296,24 @@ export class ProfileComponent implements OnInit {
     this.picture = this.user.picture;
     this.movieService.getFav(this.user.id).subscribe(
       (data) => {
-        console.log(data);
+
         this.moviesFavList = data.movies;
         this.cd.detectChanges();
       },
       (err) => {
-        console.log(err);
+
       }
     );
     this.movieService.getWatch(this.user.id).subscribe(
       (data) => {
-        console.log(data);
+
         if (data?.movies) {
           this.moviesWatchList = data.movies;
         }
         this.cd.detectChanges();
       },
       (err) => {
-        console.log(err);
+
       }
     );
   }
@@ -354,7 +354,6 @@ export class ProfileComponent implements OnInit {
   }
 
   public onSubmit() {
-    console.log(this.userForm.getRawValue());
     this.profile_service
       .updateProfile(this.user.id, this.userForm.getRawValue())
       .subscribe((data) => {
@@ -375,10 +374,10 @@ export class ProfileComponent implements OnInit {
         );
 
         this.cd.detectChanges();
-        console.log(data);
+
       },
       (err) => {
-        console.log(err);
+
       }
     );
   }

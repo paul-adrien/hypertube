@@ -74,7 +74,7 @@ export class FilterAndSortComponent implements OnInit {
   @Input() public disabledButton = false;
   @Output() public sendParams = new EventEmitter();
 
-  constructor(private router: Router, private cd: ChangeDetectorRef) {}
+  constructor(private router: Router, private cd: ChangeDetectorRef) { }
 
   usersMatch = [];
 
@@ -132,7 +132,6 @@ export class FilterAndSortComponent implements OnInit {
   }
 
   filtreUsersBy() {
-    console.log(this.sliderForm.getRawValue());
     this.sendParams.emit(this.sliderForm.getRawValue());
     // localStorage.setItem(
     //   'filter-params',

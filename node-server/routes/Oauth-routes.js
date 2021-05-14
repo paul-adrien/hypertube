@@ -22,12 +22,7 @@ module.exports = function (app) {
         failureRedirect: "http://localhost:8081/login",
       },
       async (err, userId) => {
-        // Successful authentication, redirect home.
-        console.log("callback1", userId);
-
         const userDb = await getUser({ id: userId });
-        console.log("callback", userDb);
-
         const token = jwt.sign({ id: userDb._id }, config.secret, {
           expiresIn: 86400, // 24 hours
         });
@@ -58,7 +53,6 @@ module.exports = function (app) {
       async (err, userId) => {
         // Successful authentication, redirect home.
         const userDb = await getUser({ id: userId });
-        console.log("callback", userDb);
 
         const token = jwt.sign({ id: userDb._id }, config.secret, {
           expiresIn: 86400, // 24 hours
@@ -90,7 +84,6 @@ module.exports = function (app) {
       async (err, userId) => {
         // Successful authentication, redirect home.
         const userDb = await getUser({ id: userId });
-        console.log("callback", userDb);
 
         const token = jwt.sign({ id: userDb._id }, config.secret, {
           expiresIn: 86400, // 24 hours

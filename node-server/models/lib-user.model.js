@@ -19,7 +19,6 @@ const checkUserExist = async function (userId) {
 
 const updateUser = async function (userId, user) {
   const res = await User.updateOne({ id: userId }, { $set: user }).exec();
-  console.log(res);
   return res;
 };
 

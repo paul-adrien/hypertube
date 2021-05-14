@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { AuthService } from '../_services/auth_service';
 import { movieService } from '../_services/movie_service';
@@ -72,6 +72,7 @@ import { movieService } from '../_services/movie_service';
           *ngIf="subtitles && subtitles[0]"
           kind="subtitles"
           label="English"
+          id="en"
           [src]="
             'http://localhost:8080/movie/' +
             imdb_code +
@@ -84,6 +85,7 @@ import { movieService } from '../_services/movie_service';
           *ngIf="subtitles && subtitles[1]"
           kind="subtitles"
           label="Français"
+          id="fr"
           [src]="
             'http://localhost:8080/movie/' +
             imdb_code +
@@ -163,6 +165,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
   @Input() imdb_code: string;
   @Input() hash: string;
   @Input() quality: string;
+  @Input() lang: string;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -175,7 +178,6 @@ export class PlayerComponent implements OnInit, OnDestroy {
     this.source =
       'http://localhost:8080' +
       `/movie/convert/${this.hash}/${this.quality}?token=${this.token}&userId=${user.id}`;
-    console.log(this.source);
     this.getSubtitles();
     this.cd.detectChanges();
   }
@@ -186,12 +188,10 @@ export class PlayerComponent implements OnInit, OnDestroy {
   changeQuality(quality: string) {
     if (quality !== this.qualityChange) {
       this.currentTime = this.api.currentTime;
-      console.log(this.currentTime);
       this.source =
         'http://localhost:8080' +
         `/movie/convert/${this.hash}/${quality}?token=${this.token}`;
       this.qualityChange = quality;
-      console.log(this.source);
       this.cd.detectChanges();
     }
   }
@@ -205,13 +205,21 @@ export class PlayerComponent implements OnInit, OnDestroy {
   getSubtitles() {
     this.movieService.getSubtitles(this.imdb_code).subscribe(
       (data) => {
-        console.log(data);
+
         this.subtitles = data.subs;
         this.loadPlayer = true;
         this.cd.detectChanges();
+        if (this.lang === 'en') {
+          let ele = document.querySelector('#en')
+          ele.setAttribute("default", '')
+        }
+        if (this.lang === 'fr') {
+          let ele = document.querySelector('#fr')
+          ele.setAttribute("default", '')
+        }
       },
       (err) => {
-        console.log(err);
+
       }
     );
   }
@@ -223,7 +231,6 @@ export class PlayerComponent implements OnInit, OnDestroy {
       this.api.play();
     });
     this.api.getDefaultMedia().subscriptions.progress.subscribe((progress) => {
-      console.log(progress);
       if (this.api.canPlay) this.movieReady = true;
       if (!progress.srcElement) return;
     });
