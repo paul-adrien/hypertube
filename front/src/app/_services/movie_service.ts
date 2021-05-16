@@ -6,7 +6,7 @@ import axios from 'axios';
 import { AuthService } from './auth_service';
 import { environment } from 'src/environments/environment';
 import { TranslateService } from '@ngx-translate/core';
-import { map } from "rxjs/operators";
+import { map } from 'rxjs/operators';
 export var searchCancelTokenFetch = { id: null, source: null };
 
 const httpOptions = {
@@ -22,7 +22,7 @@ export class movieService {
     private route: Router,
     private authService: AuthService,
     public translate: TranslateService
-  ) { }
+  ) {}
 
   getSubtitles(imdb_id: string): Observable<any> {
     return this.http.post(
@@ -40,6 +40,7 @@ export class movieService {
     note?: number;
     search?: string;
     order?: string;
+    year?: number[];
   }): Observable<any> {
     if (
       params.genre === 'all' ||
@@ -62,6 +63,9 @@ export class movieService {
     if (!params.order || params.order === 'orderBy') {
       params.order = 'title';
     }
+    if (!params.year) {
+      params.year = [1900, 2021];
+    }
     let paramsLang = new HttpParams().set(
       'lang',
       this.translate.currentLang || this.translate.getDefaultLang()
@@ -69,13 +73,14 @@ export class movieService {
 
     return this.http.get(
       environment.AUTH_API +
-      `movie/list?page=${params.page}
+        `movie/list?page=${params.page}
       &userId=${params.userId}
       &genre=${params.genre}
       &note=${params.note}
       &search=${params.search}
       &sort=${params.sort}
-      &order=${params.order}`,
+      &order=${params.order}
+      &year=${params.year}`,
       { ...httpOptions, params: paramsLang }
     );
   }

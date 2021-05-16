@@ -46,17 +46,23 @@ export class AuthService {
   }
 
   register(user: Partial<User>): Observable<any> {
-    return this.http.post(
-      environment.AUTH_API + 'user/register',
-      {
-        userName: user.userName,
-        email: user.email,
-        password: user.password,
-        lastName: user.lastName,
-        firstName: user.firstName,
-      },
-      httpOptions
-    );
+    return this.http
+      .post(
+        environment.AUTH_API + 'user/register',
+        {
+          userName: user.userName,
+          email: user.email,
+          password: user.password,
+          lastName: user.lastName,
+          firstName: user.firstName,
+        },
+        httpOptions
+      )
+      .pipe(
+        map((res: any) => {
+          return { user: mapUserBackToUserFront(res), token: res.accessToken };
+        })
+      );
   }
 
   saveToken(token: string): void {
@@ -90,7 +96,7 @@ export class AuthService {
 
   forgotPass_s(user): Observable<any> {
     return this.http.post(
-      environment.AUTH_API + "user/forgotPass",
+      environment.AUTH_API + 'user/forgotPass',
       {
         email: user.email,
       },
@@ -100,11 +106,11 @@ export class AuthService {
 
   forgotPass_c(user, id): Observable<any> {
     return this.http.put(
-      environment.AUTH_API + "user/changePass",
+      environment.AUTH_API + 'user/changePass',
       {
         email: user.email,
         password: user.password,
-        id: id
+        id: id,
       },
       httpOptions
     );

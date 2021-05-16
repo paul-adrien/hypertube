@@ -76,7 +76,8 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "front:build:production"
+              "browserTarget": "front:build:production",
+              "sourceMap": false
             }
           }
         },

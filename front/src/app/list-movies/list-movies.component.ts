@@ -92,7 +92,7 @@ export class ListMoviesComponent implements OnInit {
     private route: Router,
     private movieService: movieService,
     private auth_service: AuthService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.user = this.auth_service.getUser();
@@ -106,11 +106,8 @@ export class ListMoviesComponent implements OnInit {
           this.moviesList.findIndex((res) => res.imdb_code === movie.imdb_code)
         ].fav = true;
         this.cd.detectChanges();
-
       },
-      (err) => {
-
-      }
+      (err) => {}
     );
   }
 
@@ -122,11 +119,8 @@ export class ListMoviesComponent implements OnInit {
         ].fav = false;
 
         this.cd.detectChanges();
-
       },
-      (err) => {
-
-      }
+      (err) => {}
     );
   }
 
@@ -141,8 +135,7 @@ export class ListMoviesComponent implements OnInit {
     var image = new Image();
     let res = src;
     image.src = src;
-    image.onerror = function () {
-    };
+    image.onerror = function () {};
     // image.onload = function () {
     //   console.log("c'est de la loading");
     // };
@@ -184,6 +177,7 @@ export class ListMoviesComponent implements OnInit {
           note: this.paramsFilterSort?.note,
           search: this.paramsFilterSort?.name,
           order: this.paramsFilterSort?.orderBy,
+          year: this.paramsFilterSort?.year,
         })
         .subscribe(
           (data) => {
@@ -207,9 +201,7 @@ export class ListMoviesComponent implements OnInit {
 
             this.cd.detectChanges();
           },
-          (err) => {
-
-          }
+          (err) => {}
         );
     }
   }

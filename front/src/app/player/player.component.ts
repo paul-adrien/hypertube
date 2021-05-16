@@ -1,4 +1,12 @@
-import { ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { AuthService } from '../_services/auth_service';
 import { movieService } from '../_services/movie_service';
@@ -143,6 +151,7 @@ import { movieService } from '../_services/movie_service';
         </option>
       </select>
     </div>
+    <mat-spinner class="spinner" *ngIf="!this.loadPlayer"></mat-spinner>
   `,
   styleUrls: ['./player.component.scss'],
 })
@@ -167,7 +176,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private movieService: movieService,
     private authService: AuthService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const user = this.authService.getUser();
@@ -196,13 +205,10 @@ export class PlayerComponent implements OnInit, OnDestroy {
     this.movieService.getSubtitles(this.imdb_code).subscribe(
       (data) => {
         this.subtitles = data.subs;
-        console.log(this.subtitles)
         this.loadPlayer = true;
         this.cd.detectChanges();
       },
-      (err) => {
-
-      }
+      (err) => {}
     );
   }
 

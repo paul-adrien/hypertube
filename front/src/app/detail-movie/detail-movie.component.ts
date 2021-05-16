@@ -88,7 +88,7 @@ function ValidatorLength(control: FormControl) {
           />
           <div class="text-container">
             <div
-              style="cursor: pointer"
+              style="cursor: pointer; width: fit-content"
               (click)="this.viewProfile(comment.userId)"
             >
               {{ this.getProfileInfo(comment.userId)?.userName || 'username' }}

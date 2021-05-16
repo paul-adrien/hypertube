@@ -41,7 +41,21 @@ exports.signup = (req, res) => {
         message: err,
       });
     }
-    res.send({ message: "User was registered successfully!" });
+
+    var token = jwt.sign({ id: user._id }, config.secret, {
+      expiresIn: 86400, // 24 hours
+    });
+
+    res.json({
+      status: true,
+      id: user.id,
+      userName: user.userName,
+      email: user.email,
+      lastName: user.lastName,
+      firstName: user.firstName,
+      accessToken: token,
+      lang: "en",
+    });
   });
 };
 

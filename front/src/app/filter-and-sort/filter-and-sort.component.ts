@@ -64,6 +64,10 @@ import { Observable } from 'rxjs';
           </option>
         </select>
       </div>
+      <div class="custom-slider">
+        <span>{{ 'yearProduction' | translate }}</span>
+        <ngx-slider [options]="yearOptions" formControlName="year"></ngx-slider>
+      </div>
     </form>
   `,
   styleUrls: ['./filter-and-sort.component.scss'],
@@ -74,7 +78,7 @@ export class FilterAndSortComponent implements OnInit {
   @Input() public disabledButton = false;
   @Output() public sendParams = new EventEmitter();
 
-  constructor(private router: Router, private cd: ChangeDetectorRef) { }
+  constructor(private router: Router, private cd: ChangeDetectorRef) {}
 
   usersMatch = [];
 
@@ -118,7 +122,15 @@ export class FilterAndSortComponent implements OnInit {
     sortBy: new FormControl('sortBy'),
     orderBy: new FormControl('orderBy'),
     genre: new FormControl('gender'),
+    year: new FormControl([1900, 2021]),
   });
+
+  yearOptions: Options = {
+    floor: 1900,
+    ceil: 2021,
+    minRange: 4,
+    hideLimitLabels: true,
+  };
 
   ngOnInit(): void {
     if (!this.isSuggestion) {

@@ -142,7 +142,7 @@ async function getInfoMovies(userId, movies, lang) {
                 poster:
                   movie.data.poster_path !== null
                     ? "https://image.tmdb.org/t/p/original" +
-                    movie.data.poster_path
+                      movie.data.poster_path
                     : undefined,
                 seeds: m.seeds,
                 runtime: movie.data.runtime + " min",
@@ -165,6 +165,8 @@ exports.getListMovie = async (req, res) => {
   const sort = req.query.sort.trim();
   const search = req.query.search.trim();
   const order = req.query.order.trim();
+  const year = req.query.year.split(",");
+
   const lang = req.query.lang.trim();
 
   const paramsYts = { page, genre, sort, note, search, order };
@@ -204,7 +206,14 @@ exports.getListMovie = async (req, res) => {
     }
     res.json({
       status: true,
-      movies: movies.filter((movie) => movie && movie.title && movie.poster),
+      movies: movies.filter(
+        (movie) =>
+          movie &&
+          movie.title &&
+          movie.poster &&
+          movie.year >= year[0] &&
+          movie.year <= year[1]
+      ),
     });
   } else {
     if (YTSmovies?.length === 0 || !YTSmovies) {
@@ -217,7 +226,12 @@ exports.getListMovie = async (req, res) => {
         status: true,
         movies: movies_filtred.filter(
           (movie) =>
-            movie && movie.title && movie.poster && movie.poster !== "N/A"
+            movie &&
+            movie.title &&
+            movie.poster &&
+            movie.poster !== "N/A" &&
+            movie.year >= year[0] &&
+            movie.year <= year[1]
         ),
       });
     }
@@ -304,7 +318,7 @@ async function getHashRARBG(imdb_code) {
         })
       );
     })
-    .catch((err) => { });
+    .catch((err) => {});
   return movies;
 }
 
@@ -520,7 +534,7 @@ exports.dellMovies = async (req, res) => {
           fs.rmdir(
             config.movie_folder + `/${movie.id}/${movie.folder}`,
             { recursive: true },
-            (err) => { }
+            (err) => {}
           );
           Movies.deleteOne({
             imdb_code: movie.imdb_code,

@@ -12,9 +12,10 @@
 
   .custom-slider {
     width: 100%;
-    max-width: 17rem;
+    max-width: 25rem;
     display: flex;
     align-items: center;
+    flex-direction: column;
 
     @media screen and (max-width: 440px) {
       justify-content: space-between;
@@ -35,6 +36,8 @@
 
     &.sort {
       max-width: 100%;
+      flex-direction: row;
+      justify-content: center;
     }
   }
 

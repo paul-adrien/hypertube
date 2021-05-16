@@ -23,4 +23,12 @@
     padding: 3px 6px;
     cursor: pointer;
   }
+
+  .spinner {
+    height: 10rem !important;
+    width: 100% !important;
+    left: 50%;
+    transform: translateX(-50px);
+    margin-top: 8rem;
+  }
 }

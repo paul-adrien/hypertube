@@ -323,7 +323,14 @@ export class LoginComponent implements OnInit {
       const form: Partial<User> = this.registerForm.getRawValue();
       this.authService.register(form).subscribe(
         (data) => {
-          if (data.status == 200) {
+          if (data) {
+            this.authService.saveToken(data.token);
+            this.authService.saveUser(data.user);
+
+            this.route.navigate(['/home']);
+            this.isSuccessful = true;
+            this.isSignUpFailed = false;
+            this.cd.detectChanges();
           } else {
             this.errorMessageReg = data.message;
             this.cd.detectChanges();
