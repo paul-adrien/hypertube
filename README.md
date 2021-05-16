@@ -20,6 +20,7 @@ sudo mongod
 
 //back
 mkdir /tmp/movies
+touch /tmp/movies/empty.vtt
 cd /node-server;
 npm install
 sudo n stable

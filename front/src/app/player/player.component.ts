@@ -98,10 +98,6 @@ import { movieService } from '../_services/movie_service';
     </vg-player>
 
     <div class="option" *ngIf="loadPlayer">
-      <div class="buttons">
-        <button (click)="this.changeTime(false)">- 30s</button
-        ><button (click)="this.changeTime(true)">+ 30s</button>
-      </div>
       <select>
         <option (click)="this.changeQuality('240p')">240p</option>
         <option
@@ -196,27 +192,13 @@ export class PlayerComponent implements OnInit, OnDestroy {
     }
   }
 
-  changeTime(value: boolean) {
-    if (value === true) this.api.currentTime += 30;
-    else if (this.api.currentTime > 30) this.api.currentTime -= 30;
-    else this.api.currentTime = 0;
-  }
-
   getSubtitles() {
     this.movieService.getSubtitles(this.imdb_code).subscribe(
       (data) => {
-
         this.subtitles = data.subs;
+        console.log(this.subtitles)
         this.loadPlayer = true;
         this.cd.detectChanges();
-        if (this.lang === 'en') {
-          let ele = document.querySelector('#en')
-          ele.setAttribute("default", '')
-        }
-        if (this.lang === 'fr') {
-          let ele = document.querySelector('#fr')
-          ele.setAttribute("default", '')
-        }
       },
       (err) => {
 

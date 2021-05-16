@@ -418,7 +418,7 @@ async function DlSubs(link, lang, imdb_id) {
               )
             )
             .on("error", (e) => {
-              throw new Error(e.message);
+              return;
             })
           : entry
             .pipe(
@@ -428,7 +428,7 @@ async function DlSubs(link, lang, imdb_id) {
               )
             )
             .on("error", (e) => {
-              throw new Error(e.message);
+              return;
             });
       }
     )
@@ -512,6 +512,10 @@ exports.getSubtitleFile = async (req, res) => {
       }
     });
   } else {
-    res.send(null);
+    res.sendFile(config.movie_folder + '/empty.vtt', function (err) {
+      if (err) {
+        res.status(err.status).end();
+      }
+    });
   }
 };

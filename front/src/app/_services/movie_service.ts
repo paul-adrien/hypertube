@@ -6,6 +6,7 @@ import axios from 'axios';
 import { AuthService } from './auth_service';
 import { environment } from 'src/environments/environment';
 import { TranslateService } from '@ngx-translate/core';
+import { map } from "rxjs/operators";
 export var searchCancelTokenFetch = { id: null, source: null };
 
 const httpOptions = {
