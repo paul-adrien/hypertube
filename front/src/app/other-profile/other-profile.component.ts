@@ -26,7 +26,6 @@ import { ActivatedRoute, Router } from '@angular/router';
         <div class="name" *ngIf="user?.firstName && user?.lastName">
           ({{ user.firstName + ' ' + user.lastName }})
         </div>
-        <div class="name">{{ user.email }}</div>
       </div>
       <div class="info-container">
         <div class="title">{{ 'info' | translate }}</div>
@@ -42,10 +41,6 @@ import { ActivatedRoute, Router } from '@angular/router';
           <div *ngIf="this.user.lastName" class="block">
             <div class="text">{{ 'lastName' | translate }}</div>
             <div class="input-container">{{ this.user.lastName }}</div>
-          </div>
-          <div *ngIf="this.user.email" class="block">
-            <div class="text">Email</div>
-            <div class="input-container">{{ this.user.email }}</div>
           </div>
         </div>
       </div>
@@ -106,7 +101,7 @@ export class OtherProfileComponent implements OnInit {
     private movieService: movieService,
     private router: Router,
     public route: ActivatedRoute
-  ) { }
+  ) {}
 
   public userId: string = this.route.snapshot.params.id;
   public picture = '';
@@ -118,15 +113,12 @@ export class OtherProfileComponent implements OnInit {
       this.picture = this.user.picture;
       this.movieService.getWatch(this.user.id).subscribe(
         (data) => {
-
           if (data?.movies) {
             this.moviesList = data.movies;
           }
           this.cd.detectChanges();
         },
-        (err) => {
-
-        }
+        (err) => {}
       );
     });
   }
