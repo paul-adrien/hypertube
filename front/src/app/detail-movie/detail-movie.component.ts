@@ -75,7 +75,10 @@ function ValidatorLength(control: FormControl) {
       ></mat-spinner>
 
       <div class="title-comment">{{ 'comments' | translate }}</div>
-      <div class="comment-container" *ngIf="comments !== null">
+      <div
+        class="comment-container"
+        *ngIf="comments !== null || comments?.length > 0"
+      >
         <div *ngFor="let comment of comments" class="comment">
           <img
             class="picture-comment"
