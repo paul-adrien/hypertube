@@ -209,6 +209,9 @@ export class PlayerComponent implements OnInit, OnDestroy {
         this.loadPlayer = true;
 
         this.cd.detectChanges();
+        document.getElementById('singleVideo').style.removeProperty('zoom');
+        this.cd.detectChanges();
+
         // document.getElementById('singleVideo').style.zoom = 'none';
         // document.getElementById('singleVideo').style.scale = '0.5';
         // document.getElementById('singleVideo').style.transformOrigin = '0 0';
