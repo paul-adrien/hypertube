@@ -13,7 +13,7 @@ passport.use(
     {
       clientID: keys["42"].clientID,
       clientSecret: keys["42"].clientSecret,
-      callbackURL: `http://localhost:8080/api/authenticate/42/callback`,
+      callbackURL: `http://localhost:8080/user/authenticate/42/callback`,
     },
     async function (accessToken, refreshToken, profile, done) {
       const user = await getUser({ id: `42_${profile._json.id}` });
@@ -23,7 +23,6 @@ passport.use(
         profile._json &&
         !(await checkUserExist(`42_${profile._json.id}`))
       ) {
-        console.log("ça rentre");
         const user = new User({
           id: `42_${profile._json.id}`,
           userName: profile._json.login,
@@ -53,7 +52,7 @@ passport.use(
     {
       clientID: keys["google"].clientID,
       clientSecret: keys["google"].clientSecret,
-      callbackURL: `http://localhost:8080/api/authenticate/google/callback`,
+      callbackURL: `http://localhost:8080/user/authenticate/google/callback`,
     },
     async function (accessToken, refreshToken, profile, done) {
       const user = await getUser({ id: `google_${profile.id}` });
@@ -92,7 +91,7 @@ passport.use(
     {
       clientID: keys.github.clientID,
       clientSecret: keys.github.clientSecret,
-      callbackURL: `http://localhost:8080/api/authenticate/github/callback`,
+      callbackURL: `http://localhost:8080/user/authenticate/github/callback`,
       scope: ["user:email"],
     },
     async function (accessToken, refreshToken, profile, done) {
