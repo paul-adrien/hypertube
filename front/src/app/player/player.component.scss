@@ -1,5 +1,10 @@
 @import "~video.js/dist/video-js.css";
 
+.video {
+  zoom: unset !important;
+  transform-origin: 0 0;
+}
+
 .option {
   display: flex;
   justify-content: space-between;

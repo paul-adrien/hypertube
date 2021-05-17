@@ -44,6 +44,7 @@ import { movieService } from '../_services/movie_service';
         id="singleVideo"
         preload="auto"
         crossorigin
+        class="video"
       >
         <source
           *ngIf="qualityChange === 'current'"
@@ -206,7 +207,11 @@ export class PlayerComponent implements OnInit, OnDestroy {
       (data) => {
         this.subtitles = data.subs;
         this.loadPlayer = true;
+
         this.cd.detectChanges();
+        // document.getElementById('singleVideo').style.zoom = 'none';
+        // document.getElementById('singleVideo').style.scale = '0.5';
+        // document.getElementById('singleVideo').style.transformOrigin = '0 0';
       },
       (err) => {}
     );
