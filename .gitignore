@@ -109,7 +109,7 @@ front/dist
 
 node-server/movies/
 movies/
-node-server/config/
+# node-server/config/
 
 # System Files
 .DS_Store
