@@ -15,7 +15,7 @@ sudo echo "deb http://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multive
 sudo apt-get update
 sudo apt-get install -y mongodb-org
 sudo mkdir -p /data/db/
-sudo chown -R nom_utilisateur:nom_utilisateur /data/db
+sudo chown -R user42:user42 /data/db
 sudo mongod
 
 //back
@@ -25,3 +25,7 @@ cd /node-server;
 npm install
 sudo n stable
 /usr/local/bin/node server.js
+
+//Pour enlever warning firefox VM
+sudo apt install firefox
+sudo apt upgrade //verifier avant si le instal n'a pas deja up
