@@ -42,6 +42,11 @@ export class movieService {
     order?: string;
     year?: number[];
   }): Observable<any> {
+    if ((!params.sort || params.sort === 'sortBy') && !params.search && !params.genre && !params.note) {
+      params.sort = 'download_count';
+    } else if (!params.sort || params.sort === 'sortBy') {
+      params.sort = 'title';
+    }
     if (
       params.genre === 'all' ||
       params.genre === undefined ||
@@ -55,13 +60,8 @@ export class movieService {
     if (!params.search) {
       params.search = '';
     }
-    if ((!params.sort || params.sort === 'sortBy') && !params.search) {
-      params.sort = 'download_count';
-    } else if (!params.sort || params.sort === 'sortBy') {
-      params.sort = '';
-    }
     if (!params.order || params.order === 'orderBy') {
-      params.order = 'title';
+      params.order = '';
     }
     if (!params.year) {
       params.year = [1900, 2021];

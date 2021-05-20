@@ -398,8 +398,8 @@ exports.getDetailMovie = async (req, res) => {
   }
   if (hashs)
     await hashs.sort(function (a, b) {
-      if (b.seeds && a.seeds) return b.seeds - a.seeds;
-      else return -1;
+      if (a && b && b.seeds && a.seeds) return b.seeds - a.seeds;
+      else return 0;
     });
   movieDetail = await getInfoMovie(imdb_id, lang, userId);
   res.json({
