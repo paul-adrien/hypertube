@@ -224,15 +224,16 @@ exports.getListMovie = async (req, res) => {
       movies_filtred = await getInfoMovies(userId, YTSmovies, lang);
       res.json({
         status: true,
-        movies: movies_filtred.filter(
-          (movie) =>
-            movie &&
-            movie.title &&
-            movie.poster &&
-            movie.poster !== "N/A" &&
-            movie.year >= year[0] &&
-            movie.year <= year[1]
-        ),
+        movies:
+          movies_filtred.filter(
+            (movie) =>
+              movie &&
+              movie.title &&
+              movie.poster &&
+              movie.poster !== "N/A" &&
+              movie.year >= year[0] &&
+              movie.year <= year[1]
+          ) || [],
       });
     }
   }

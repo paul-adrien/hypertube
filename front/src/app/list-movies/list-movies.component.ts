@@ -196,8 +196,9 @@ export class ListMoviesComponent implements OnInit {
               this.n++;
               this.pageNum++;
               this.getMovieList(this.pageNum);
+            } else {
+              this.n = 0;
             }
-            this.n = 0;
 
             this.cd.detectChanges();
           },
